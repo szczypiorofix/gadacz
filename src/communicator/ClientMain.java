@@ -23,8 +23,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.IOException;
@@ -32,6 +30,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 
@@ -39,10 +38,10 @@ public class ClientMain implements KeyListener, WindowListener
 {
 
 private int port = 1201;
-private String host = "89.70.80.201";
+private String host = "127.0.0.1";
 private Socket socket = new Socket();
-private ObjectInputStream ois = null;
-private ObjectOutputStream oos = null;
+private ObjectInputStream ois;
+private ObjectOutputStream oos;
 private JFrame ramka;
 private JPanel panelWpisu, panelDialLog, panelPrzycDialLog, panelDialRej, panelPrzycDialRej;
 private JTextArea info;
@@ -146,7 +145,7 @@ public ClientMain()
 	bLogowanie = new JButton("Logowanie");
 	bWyloguj = new JButton("Wyloguj");
 	bWyloguj.setEnabled(polaczono);
-	bRejestracja.setEnabled(false);
+	//bRejestracja.setEnabled(false);
 	
 	panelPoludniowy.add(bWyloguj);
 	panelPoludniowy.add(bLogowanie);
@@ -189,17 +188,17 @@ public ClientMain()
 				panelPrzycDialRej.add(bAnulujRej);
 				
 				poleNazwyURej = new JTextField();
-				poleNazwyURej.setText("Nazwa");
+				poleNazwyURej.setText("NazwaUsera");
 				poleEmailURej = new JTextField();
-				poleEmailURej.setText("e@mail");
+				poleEmailURej.setText("user@email.pl");
 				poleHaslaURej = new JPasswordField();
-				poleHaslaURej.setText("haslo");
+				poleHaslaURej.setText("Has³o");
 				poleImieniaURej = new JTextField();
-				poleImieniaURej.setText("Imie");
+				poleImieniaURej.setText("ImieUsera");
 				poleNazwiskaURej = new JTextField();
-				poleNazwiskaURej.setText("Nazwisko");
+				poleNazwiskaURej.setText("NazwiskoUsera");
 				poleAdresuRej = new JTextField();
-				poleAdresuRej.setText("89.70.80.201");
+				poleAdresuRej.setText("127.0.0.1");
 				polePortuRej = new JTextField();
 				polePortuRej.setText("1201");
 				
@@ -237,6 +236,64 @@ public ClientMain()
 				nazwaUsera = "temp";
 			}
 		});
+	
+	bAnulujRej.addActionListener((e) -> dialogRej.setVisible(false));
+	
+	bOKRej.addActionListener(new ActionListener()
+	{
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			dialogRej.setVisible(false);
+			numError = false;
+			
+			nazwaRej = poleNazwyURej.getText().toString();
+			imieRej = poleImieniaURej.getText().toString();
+			nazwiskoRej = poleNazwiskaURej.getText().toString();
+			emailRej = poleEmailURej.getText().toString();
+			hasloRej = poleHaslaURej.getPassword();
+			host = poleAdresuRej.getText().toString();
+			port = Integer.valueOf(polePortuRej.getText().toString());
+
+			boolean emailOK = false;
+			
+			if (emailRej.length() > 0)    // SPRAWDZENIE CZY ADRES EMAIL ZAWIERA "@"
+				for (int i = 0; i < emailRej.length(); i++)
+					{
+					if (emailRej.charAt(i) == '@' )	emailOK = true;
+					if (emailOK) break;
+					}
+			
+			if (!emailOK) JOptionPane.showMessageDialog(ramka, "WprowadŸ poprawny adres email!");
+				
+			try {
+			port = Integer.valueOf(polePortuRej.getText().toString());
+			}
+			catch (NumberFormatException nfe)
+			{
+				JOptionPane.showMessageDialog(ramka, "Tylko cyfry s¹ akceptowane!");
+				numError = true;
+			}
+			
+			try {
+				socket = new Socket();
+				socket.connect(new InetSocketAddress(host, port), 3000); // 3 sek. timeout
+				oos = new ObjectOutputStream(socket.getOutputStream());
+				dane = new Dane(TypDanych.REGISTER, 0, nazwaRej, imieRej, nazwiskoRej, emailRej, hasloRej, znajomi, ""); // 0 - wiadomoœc echo
+				oos.writeObject(dane);
+				oos.flush();
+				//oos.close();
+				//socket.close();
+			}
+			catch (IOException ioe)
+			{
+				ioe.printStackTrace();
+				System.exit(-1);
+			}
+			
+			JOptionPane.showMessageDialog(ramka, "Rejestracja powiod³a siê!");
+		}
+	});
 	
 	bLogowanie.addActionListener(new ActionListener()
 	{
@@ -280,51 +337,6 @@ public ClientMain()
 		}
 	});
 	
-	bAnulujRej.addActionListener((e) -> dialogRej.setVisible(false));
-	
-	bOKRej.addActionListener(new ActionListener()
-	{
-		@Override
-		public void actionPerformed(ActionEvent e)
-		{
-			dialogRej.setVisible(false);
-			numError = false;
-			
-			nazwaRej = poleNazwyURej.getText().toString();
-			imieRej = poleImieniaURej.getText().toString();
-			nazwiskoRej = poleNazwiskaURej.getText().toString();
-			emailRej = poleEmailURej.getText().toString();
-			hasloRej = poleHaslaURej.getPassword();
-			host = poleAdresuRej.getText().toString();
-			port = Integer.valueOf(polePortuRej.getText().toString());
-
-			boolean emailOK = false;
-			
-			if (emailRej.length() > 0)    // SPRAWDZENIE CZY ADRES EMAIL ZAWIERA "@"
-				for (int i = 0; i < emailRej.length(); i++)
-					{
-					if (emailRej.charAt(i) == '@' )	emailOK = true;
-					if (emailOK) break;
-					}
-			
-			if (!emailOK) JOptionPane.showMessageDialog(ramka, "WprowadŸ poprawny adres email!");
-				
-			try {
-			port = Integer.valueOf(polePortuRej.getText().toString());
-			}
-			catch (NumberFormatException nfe)
-			{
-				JOptionPane.showMessageDialog(ramka, "Tylko cyfry s¹ akceptowane!");
-				numError = true;
-			}
-						
-			//
-			// WYSY£ANIE REJESTRACJI ...
-			//
-			
-		}
-	});
-	
 	bAnulujLog.addActionListener((e) -> dialogLog.setVisible(false));
 	
 	bOKLog.addActionListener((e) ->
@@ -352,7 +364,23 @@ public ClientMain()
 				haslo = poleHaslaULog.getPassword();
 				nazwaUsera = poleNazwyULog.getText().toString();				
 				ramka.setTitle("Aolikacja klienta: " +nazwaUsera);
-								
+				
+				try {
+				socket.connect(new InetSocketAddress(host, port), 3000); // 3 sek. timeout
+				}
+				catch (IOException ioe)
+				{
+					ioe.printStackTrace();
+					System.exit(-1);
+				}
+				message("Po³¹czono z serwerem!");
+				
+				polaczono = true;
+				wpis.setEnabled(polaczono);
+				bWyslij.setEnabled(polaczono);
+				bLogowanie.setEnabled(!polaczono);
+				bWyloguj.setEnabled(polaczono);	
+				
 				r = new WatekKlienta();
 				t = new Thread(r);
 				t.start();
@@ -406,9 +434,15 @@ public void wyslij()
 		oos.flush();
 		message(nazwaUsera+": "+wpis.getText().toString());
 	}
+	catch (SocketException se)
+	{
+		se.printStackTrace();
+		System.exit(-1);
+	}
 	catch (IOException ioe)
 	{
 		ioe.printStackTrace();
+		System.exit(-1);
 	}
 	
 	wpis.setText("");
@@ -420,46 +454,37 @@ public class WatekKlienta implements Runnable
 {
 	@Override
 	public void run()
-	{
+	{		
+		
 		try {
-			
-			socket.connect(new InetSocketAddress(host, port), 3000); // 3 sek. timeout
-			
-			message("Po³¹czono z serwerem zosta³o ustanowione!");
-			
-			polaczono = true;
-			wpis.setEnabled(polaczono);
-			bWyslij.setEnabled(polaczono);
-			bLogowanie.setEnabled(!polaczono);
-			bWyloguj.setEnabled(polaczono);
-			
-			ois = new ObjectInputStream(socket.getInputStream());
-
-			dane = null;
-			
-			while (dane == null)
-			{			
+			while (polaczono)
+			{
+				ois = new ObjectInputStream(socket.getInputStream());
 				dane = (Dane) ois.readObject();
-			}
-			message(dane.getWiadomosc());
-
-			}
-		catch (SocketTimeoutException ste)
+				message(dane.getWiadomosc());
+			} // KONIEC WHILE
+			
+		}
+		catch (SocketTimeoutException stoe)
 		{
-			System.out.println("Min¹³ czas ...");
-			ste.printStackTrace();
-			System.exit(-1);
+			stoe.printStackTrace();
+			polaczono = false;
+			//System.exit(-1);
 		}
 		catch (IOException ioe)
 		{
+			message("B³¹d po³¹czenia z serwerem: " +ioe.getMessage());
 			ioe.printStackTrace();
-			System.exit(-1);
+			polaczono = false;
+			//System.exit(-1);
 		}
 		catch (ClassNotFoundException cnfe)
 		{
 			cnfe.printStackTrace();
-			System.exit(-1);
+			polaczono = false;
+			//System.exit(-1);
 		}
+		
 	}
 }
 

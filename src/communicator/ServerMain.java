@@ -55,6 +55,8 @@ public ServerMain()
 
 	historia = new JTextArea(h);
 	historia.setEditable(false);
+	historia.setLineWrap(true);
+	historia.setWrapStyleWord(true);
 	scroll = new JScrollPane(historia);
 	ramka.add(scroll);
 	ramka.setVisible(true);
@@ -79,10 +81,11 @@ public ServerMain()
 		message("Otwieranie gniazdka serwera. Port: " +port);
 		serverSocket = new ServerSocket(port);
 		message("Lokalny adres serwera: " +InetAddress.getLocalHost().toString());
-		whatismyip = new URL("http://checkip.amazonaws.com");
-		buffreader = new BufferedReader(new InputStreamReader(whatismyip.openStream()));
-		externalIP = buffreader.readLine();
-		message("ZewnÍtrzy adres serwera: " +externalIP);
+		
+		//whatismyip = new URL("http://checkip.amazonaws.com");
+		//buffreader = new BufferedReader(new InputStreamReader(whatismyip.openStream()));
+		//externalIP = buffreader.readLine();
+		//message("ZewnÍtrzny adres serwera: " +externalIP);
 				
 		try {
 			while (true)
@@ -130,49 +133,46 @@ public ServerThread(Socket s)
 @Override
 public void run()
 {
-	
 	try {
-		ois = new ObjectInputStream(this.socket.getInputStream());
-		//oos = new ObjectOutputStream(this.socket.getOutputStream());
 		
-	while (connected)
-	{	
+		while (connected)
+		{
+		ois = new ObjectInputStream(this.socket.getInputStream());
+		oos = new ObjectOutputStream(this.socket.getOutputStream());
+		
 		// ODBIERANIE WIADOMOåCI OD KLIENTA
 
-		try {
-		dane = (Dane) ois.readObject();
-		}
-		catch (EOFException eofe)
-		{
-			connected = false;
-			message("Klient siÍ roz≥πczy≥.");
-			//eofe.printStackTrace();
-			//System.err.println(eofe);
-		}
-		catch (ClassNotFoundException cnfe)
-		{
-			cnfe.printStackTrace();
-			System.exit(-1);
-		}
+		if (connected) dane = (Dane) ois.readObject();		
 		
-		if (connected) message("Klient: "+dane.getNazwa() +" (pass: " +new String(dane.getHaslo()) +") : " +dane.getWiadomosc());
+		if (dane.getTypDanych() == TypDanych.MESSAGE) message("Klient: "+dane.getNazwa() +" (pass: " +new String(dane.getHaslo()) +") : " +dane.getWiadomosc());
+		if (dane.getTypDanych() == TypDanych.REGISTER) {
+			message("Rejestracja nowego klienta: "+dane.getNazwa() +", " +dane.getImie() +", " +dane.getNazwisko() +", " +dane.getEmail() +", " +new String(dane.getHaslo()) +".");
+			ois.close();
+			oos.close();
+			connected = false;
+		}
 		
 		// ODPOWIEDè SERWERA DO KLIENTA
 		
-		if (connected)
-		{
-			dane.setWiadomosc("Serwer echo: " +dane.getWiadomosc());
-			oos.writeObject(dane);
-			oos.flush();
+		if (dane.getTypDanych() == TypDanych.MESSAGE) {
+		dane.setWiadomosc("Serwer echo: " +dane.getWiadomosc());
+		oos.writeObject(dane);
+		oos.flush();
+		}
 		}
 	}
+	catch (ClassNotFoundException cnfe)
+	{
+		cnfe.printStackTrace();
+		message("Klient roz≥πczy≥ siÍ.");
+		//System.exit(-1);
 	}
 	catch (IOException ioe)
 	{
 		ioe.printStackTrace();
 		System.exit(-1);
 	}
-}
+	}
 }
 
 
@@ -180,5 +180,4 @@ public void message(String s)
 {
 	historia.append(s+"\n");
 }
-
 }
