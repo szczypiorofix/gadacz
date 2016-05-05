@@ -1,19 +1,21 @@
 package communicator;
 
-
 import java.io.BufferedReader;
-import java.io.EOFException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
@@ -21,24 +23,26 @@ import javax.swing.JTextArea;
 public class ServerMain
 {
 
+private final static Logger LOGGER = Logger.getLogger(ServerMain.class.getName());
+private FileHandler fileHandler = null;
 private int port = 1201;
-private String nrPortu = null;
 private ServerSocket serverSocket;
 private Socket socket;
-private ObjectInputStream ois;
-private ObjectOutputStream oos;
 private JFrame ramka;
-private JTextArea historia;
+private JTextArea info;
 private JScrollPane scroll;
 private String h = "Serwer 1.0\n";
 private int count = 0;
-private boolean numberError;
 private URL whatismyip;
 private BufferedReader buffreader;
 private String externalIP;
 private Dane dane;
-private ServerThread r;
-private Thread t;
+private ServerThread serverThread;
+private ArrayList<Thread> watki;
+private ArrayList<Uzytkownik> bazaUzytkownikow;
+private Date currentDate;
+private SimpleDateFormat sdf;
+
 
 
 public static void main(String[] args)
@@ -48,59 +52,63 @@ public static void main(String[] args)
 
 public ServerMain()
 {
+	try {
+		fileHandler = new FileHandler("server.log", true);
+	} catch (SecurityException e1) {
+		e1.printStackTrace();
+		System.exit(-1);
+	} catch (IOException e1) {
+		e1.printStackTrace();
+		System.exit(-1);
+	}
+	
+	fileHandler.setFormatter(new SimpleFormatter());
+	fileHandler.setLevel(Level.WARNING);
+	LOGGER.addHandler(fileHandler);
+	
 	ramka = new JFrame("Serwer komunikatora");
 	ramka.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	ramka.setSize(400, 400);
+	ramka.setSize(450, 400);
 	ramka.setLocationRelativeTo(null);
 
-	historia = new JTextArea(h);
-	historia.setEditable(false);
-	historia.setLineWrap(true);
-	historia.setWrapStyleWord(true);
-	scroll = new JScrollPane(historia);
+	info = new JTextArea(h);
+	info.setEditable(false);
+	info.setLineWrap(true);
+	info.setWrapStyleWord(true);
+	scroll = new JScrollPane(info);
 	ramka.add(scroll);
 	ramka.setVisible(true);
-
-	do {
-		numberError = false;
-		nrPortu = JOptionPane.showInputDialog(ramka, "Podaj numer portu serwera (np.1201)", port);
-		try {
-			port = Integer.valueOf(nrPortu);
-		}
-		catch (NumberFormatException e)
-		{
-			JOptionPane.showMessageDialog(ramka, "Numer portu nie mo¿e zawieraæ liter!");
-			numberError = true;
-		}
-	}
-	while (numberError);
-
+	
+	message("Start serwera.", "Serwer");
+	message("Otwieranie gniazdka serwera. Port: " +port, "Serwer");
+	
+	watki = new ArrayList<Thread>(20);
+	bazaUzytkownikow = new ArrayList<Uzytkownik>(20);
+	
 	
 	try {
-		message("Start serwera.");
-		message("Otwieranie gniazdka serwera. Port: " +port);
+		
 		serverSocket = new ServerSocket(port);
-		message("Lokalny adres serwera: " +InetAddress.getLocalHost().toString());
+		message("Lokalny adres serwera: " +InetAddress.getLocalHost().toString(), "Serwer");
 		
 		//whatismyip = new URL("http://checkip.amazonaws.com");
 		//buffreader = new BufferedReader(new InputStreamReader(whatismyip.openStream()));
 		//externalIP = buffreader.readLine();
 		//message("Zewnêtrzny adres serwera: " +externalIP);
 				
-			while (true)
-			{
+		while (true)
+		{
 			socket = serverSocket.accept();
-			message("Po³¹czenie z klientem: " +count +" " +socket.getInetAddress());
-			r = new ServerThread(socket);
-			t = new Thread(r);
-			t.start();
+			message("Po³¹czenie z klientem: " +watki.size() +" " +socket.getInetAddress(), "Serwer");
+			serverThread = new ServerThread(socket);
+			watki.add(new Thread(serverThread));
+			watki.get(count).start();
 			count++;
-			}
+		}
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
-			System.exit(-1);
+			zrzutLoga(e);
 		}
 }
 
@@ -108,12 +116,12 @@ public class ServerThread implements Runnable
 {
 
 private Socket socket;
-private boolean connected;
+private ObjectInputStream ois;
+private ObjectOutputStream oos;
 
 public ServerThread(Socket s)
 {
 	this.socket = s;
-	connected = true;
 }
 	
 @Override
@@ -121,45 +129,71 @@ public void run()
 {
 	try {
 		
-		ois = new ObjectInputStream(this.socket.getInputStream());
-		oos = new ObjectOutputStream(this.socket.getOutputStream());
-		
-		while (true)
+		while (!this.socket.isClosed())
 		{
 		
-		// ODBIERANIE WIADOMOŒCI OD KLIENTA
+			if (ois == null) 
+				ois = new ObjectInputStream(this.socket.getInputStream());
+			
+			dane = (Dane) ois.readObject();		
+		
+			switch (dane.getTypDanych())
+			{
+			case MESSAGE: {
+				message(dane.getWiadomosc(), dane.getNazwa());
+				break;
+			}
+			case REGISTER: {
+				message(dane.getNazwa() +" " +dane.getImie() +" " +dane.getNazwisko() +" " +dane.getEmail() +" " +(new String(dane.getHaslo())) +" : " +dane.getWiadomosc(), "Zarejestrowano nowego u¿ytkownika: ");
+				bazaUzytkownikow.add(new Uzytkownik(bazaUzytkownikow.size(), dane.getNazwa(), dane.getImie(), dane.getNazwisko(), dane.getEmail(), dane.getHaslo(), dane.getZnajomi()));
+				dane.setDoKogo(bazaUzytkownikow.get(bazaUzytkownikow.size()-1).getNumer());
+				break;
+			}
+			case LOG: {
+				for (int i = 0; i < bazaUzytkownikow.size(); i++)
+				{
+					if ((dane.getEmail().equals(bazaUzytkownikow.get(i).getEmail())) && (dane.getDoKogo() == bazaUzytkownikow.get(i).getNumer()))
+					{
+						message("Zalogowany!", dane.getNazwa());
+					}
+				}
+				
+				break;
+			}
+			case UPDATE: {
+				break;
+			}
+			case PING: {
+				break;
+			}
+			}
 
-		dane = (Dane) ois.readObject();		
-		
-		if (dane.getTypDanych() == TypDanych.LOG) {
-			message("Klient: "+dane.getNazwa() +" " +dane.getWiadomosc());
-			dane.setWiadomosc("Zalogowano na serwerze!");
+			dane.setWiadomosc("ECHO: " +dane.getWiadomosc());
+			
+			if (oos == null) 
+				oos = new ObjectOutputStream(this.socket.getOutputStream());
+			
 			oos.writeObject(dane);
 			oos.flush();
-		}
-		if (dane.getTypDanych() == TypDanych.REGISTER) message("Rejestracja nowego klienta: "+count +" "+dane.getNazwa() +", " +dane.getImie() +", " +dane.getNazwisko() +", " +dane.getEmail() +", " +new String(dane.getHaslo()) +".");
-		
-		// ODPOWIED SERWERA DO KLIENTA
-		
-		if (dane.getTypDanych() == TypDanych.MESSAGE) {
-			message("Klient: "+dane.getNazwa() +" (pass: " +new String(dane.getHaslo()) +") : " +dane.getWiadomosc());
-			dane.setWiadomosc("Serwer echo: " +dane.getWiadomosc());
-			oos.writeObject(dane);
-			oos.flush();
-		}
 		}
 	}
 	catch (Exception e)
 	{
-		e.printStackTrace();
-		System.exit(-1);
+		zrzutLoga(e);
 	}
 	}
 }
 
-
-public void message(String s)
+public void zrzutLoga(Exception e)
 {
-	historia.append(s+"\n");
+	LOGGER.log(Level.WARNING, e.getMessage(), e);
+	//System.exit(-1);
+}
+
+public void message(String msg, String name)
+{
+	currentDate = new Date();
+	sdf = new SimpleDateFormat("HH:mm:ss");
+	info.append(sdf.format(currentDate) +" "+name +": " +msg +"\n");
 }
 }

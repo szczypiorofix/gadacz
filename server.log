@@ -1,0 +1,156 @@
+maj 05, 2016 4:12:06 PM communicator.ServerMain zrzutLoga
+WARNING: Connection reset
+java.net.SocketException: Connection reset
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.io.ObjectInputStream$PeekInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peekByte(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at communicator.ServerMain$ServerThread.run(ServerMain.java:134)
+	at java.lang.Thread.run(Unknown Source)
+
+maj 05, 2016 4:12:07 PM communicator.ServerMain zrzutLoga
+WARNING: Connection reset
+java.net.SocketException: Connection reset
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.io.ObjectInputStream$PeekInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peekByte(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at communicator.ServerMain$ServerThread.run(ServerMain.java:134)
+	at java.lang.Thread.run(Unknown Source)
+
+maj 05, 2016 4:16:38 PM communicator.ServerMain zrzutLoga
+WARNING: Connection reset
+java.net.SocketException: Connection reset
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.io.ObjectInputStream$PeekInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peekByte(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at communicator.ServerMain$ServerThread.run(ServerMain.java:134)
+	at java.lang.Thread.run(Unknown Source)
+
+maj 05, 2016 4:40:50 PM communicator.ServerMain zrzutLoga
+WARNING: Index: 1, Size: 1
+java.lang.IndexOutOfBoundsException: Index: 1, Size: 1
+	at java.util.ArrayList.rangeCheck(Unknown Source)
+	at java.util.ArrayList.get(Unknown Source)
+	at communicator.ServerMain$ServerThread.run(ServerMain.java:149)
+	at java.lang.Thread.run(Unknown Source)
+
+maj 05, 2016 4:41:10 PM communicator.ServerMain zrzutLoga
+WARNING: Index: 1, Size: 1
+java.lang.IndexOutOfBoundsException: Index: 1, Size: 1
+	at java.util.ArrayList.rangeCheck(Unknown Source)
+	at java.util.ArrayList.get(Unknown Source)
+	at communicator.ServerMain$ServerThread.run(ServerMain.java:149)
+	at java.lang.Thread.run(Unknown Source)
+
+maj 05, 2016 4:41:57 PM communicator.ServerMain zrzutLoga
+WARNING: Connection reset
+java.net.SocketException: Connection reset
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.io.ObjectInputStream$PeekInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peekByte(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at communicator.ServerMain$ServerThread.run(ServerMain.java:138)
+	at java.lang.Thread.run(Unknown Source)
+
+maj 05, 2016 4:41:58 PM communicator.ServerMain zrzutLoga
+WARNING: Connection reset
+java.net.SocketException: Connection reset
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.io.ObjectInputStream$PeekInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peekByte(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at communicator.ServerMain$ServerThread.run(ServerMain.java:138)
+	at java.lang.Thread.run(Unknown Source)
+
+maj 05, 2016 4:43:36 PM communicator.ServerMain zrzutLoga
+WARNING: Connection reset
+java.net.SocketException: Connection reset
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.io.ObjectInputStream$PeekInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peekByte(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at communicator.ServerMain$ServerThread.run(ServerMain.java:138)
+	at java.lang.Thread.run(Unknown Source)
+
+maj 05, 2016 4:43:37 PM communicator.ServerMain zrzutLoga
+WARNING: Connection reset
+java.net.SocketException: Connection reset
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.io.ObjectInputStream$PeekInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peekByte(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at communicator.ServerMain$ServerThread.run(ServerMain.java:138)
+	at java.lang.Thread.run(Unknown Source)
+
+maj 05, 2016 4:44:46 PM communicator.ServerMain zrzutLoga
+WARNING: Connection reset
+java.net.SocketException: Connection reset
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.io.ObjectInputStream$PeekInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peekByte(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at communicator.ServerMain$ServerThread.run(ServerMain.java:138)
+	at java.lang.Thread.run(Unknown Source)
+
+maj 05, 2016 4:46:46 PM communicator.ServerMain zrzutLoga
+WARNING: Connection reset
+java.net.SocketException: Connection reset
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.io.ObjectInputStream$PeekInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peekByte(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at communicator.ServerMain$ServerThread.run(ServerMain.java:138)
+	at java.lang.Thread.run(Unknown Source)
+
+maj 05, 2016 4:46:47 PM communicator.ServerMain zrzutLoga
+WARNING: Connection reset
+java.net.SocketException: Connection reset
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.io.ObjectInputStream$PeekInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peekByte(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at communicator.ServerMain$ServerThread.run(ServerMain.java:138)
+	at java.lang.Thread.run(Unknown Source)
+

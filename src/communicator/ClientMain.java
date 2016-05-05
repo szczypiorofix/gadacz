@@ -1,9 +1,15 @@
 package communicator;
 
 
+import java.util.Date;
 import java.util.HashMap;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -15,52 +21,60 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
+import java.text.SimpleDateFormat;
 
 
 public class ClientMain implements KeyListener
 {
 
+private final static Logger LOGGER = Logger.getLogger(ServerMain.class.getName());
+private FileHandler fileHandler = null;
 private int port = 1201;
 private String host = "127.0.0.1";
 private Socket socket;
 private ObjectInputStream ois;
 private ObjectOutputStream oos;
 private JFrame ramka;
-private JPanel panelWpisu, panelDialLog, panelPrzycDialLog, panelDialRej, panelPrzycDialRej;
 private JTextArea info;
-private JTextField wpis, poleAdresuLog, polePortuLog, poleNazwyULog, poleNazwyURej, poleEmailURej, poleImieniaURej, poleNazwiskaURej, poleAdresuRej, polePortuRej;
-private JPasswordField poleHaslaURej, poleHaslaULog;
-private JPanel panelCentralny, panelPoludniowy, panelWschodni;
+private JTextField wpis, poleAdresu, polePortu, poleNazwy, poleImienia, poleNazwiska, poleEmail;
+private JPasswordField poleHasla;
+private JPanel panelWpisu, panelCentralny, panelPoludniowy, panelWschodni, panelPolDial, panelTechDial, panelPrzycDial;
 private JScrollPane scroll;
-private JButton bRejestracja, bLogowanie, bWyloguj, bWyslij, bOKLog, bAnulujLog, bOKRej, bAnulujRej;
-private JDialog dialogLog, dialogRej;
+private JButton bPolacz, bWyslij, bOK, bAnuluj;
+private JDialog dialogPolacz;
+private JCheckBox logRej;
 private String historia = "";
 private JList<String> poleListyUserow;
-private DefaultListModel<String> modelListy;
+private DefaultListModel<String> modelList;
 private Runnable r;
 private Thread t;
-private String nazwaUsera = "", nazwaRej, imieRej, nazwiskoRej, emailRej;
-private char[] haslo = null, hasloRej = null;
-private boolean polaczono = false, numError = false;
-private HashMap<Integer, Boolean> znajomi;
-private Dane dane;
+private String userName = "", userFirstName, userLastName, userEmail;
+private int number = 0;
+private char[] userPassword = null;
+private boolean connected = false, registered = false;
+private HashMap<Integer, Boolean> friendsNumbers;
+private Dane data;
+private Date currentDate;
+private SimpleDateFormat sdf;
+
 
 
 public static void main(String[] args) {
@@ -76,7 +90,21 @@ EventQueue.invokeLater(new Runnable()
 
 public ClientMain()
 {
-	znajomi = new HashMap<Integer, Boolean>();
+	try {
+		fileHandler = new FileHandler("client.log", true);
+	} catch (SecurityException e1) {
+		e1.printStackTrace();
+		System.exit(-1);
+	} catch (IOException e1) {
+		e1.printStackTrace();
+		System.exit(-1);
+	}
+	
+	fileHandler.setFormatter(new SimpleFormatter());
+	fileHandler.setLevel(Level.WARNING);
+	LOGGER.addHandler(fileHandler);
+	
+	friendsNumbers = new HashMap<Integer, Boolean>();
 	
 	ramka = new JFrame("Aplikacja klienta");
 	ramka.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -84,18 +112,16 @@ public ClientMain()
 	ramka.setLocationRelativeTo(null);
 	ramka.setLayout(new BorderLayout());
 	
-	bOKRej = new JButton("OK");
-	bAnulujRej = new JButton("Anuluj");
-	bOKLog = new JButton("OK");
-	bAnulujLog = new JButton("Anuluj");
+	bOK = new JButton("OK");
+	bAnuluj = new JButton("Anuluj");
 	
 	panelCentralny = new JPanel(new BorderLayout());
 	panelPoludniowy = new JPanel(new FlowLayout());
 	panelWschodni = new JPanel(new BorderLayout());
 	
 	panelWschodni.add(new JLabel("U¿ytkownicy:     "), BorderLayout.NORTH);
-	modelListy = new DefaultListModel<>();
-	poleListyUserow = new JList<String>(modelListy);
+	modelList = new DefaultListModel<>();
+	poleListyUserow = new JList<String>(modelList);
 	
 	/**
 	poleListyUserow.addMouseListener(new MouseListener()
@@ -140,20 +166,15 @@ public ClientMain()
 	panelCentralny.add(scroll, BorderLayout.CENTER);
 	panelWpisu = new JPanel(new FlowLayout());
 
-	bRejestracja = new JButton("Zarejestruj siê");
-	bLogowanie = new JButton("Logowanie");
-	bWyloguj = new JButton("Wyloguj");
-	bWyloguj.setEnabled(polaczono);
-	//bRejestracja.setEnabled(false);
+	bPolacz = new JButton("Po³¹cz z serwerem");
+	bPolacz.setEnabled(!connected);
 	
-	panelPoludniowy.add(bWyloguj);
-	panelPoludniowy.add(bLogowanie);
-	panelPoludniowy.add(bRejestracja);	
+	panelPoludniowy.add(bPolacz);
 	
 	bWyslij = new JButton("Wyœlij");
-	bWyslij.setEnabled(polaczono);
+	bWyslij.setEnabled(connected);
 	wpis = new JTextField("", 36);
-	wpis.setEnabled(polaczono);
+	wpis.setEnabled(connected);
 	wpis.addKeyListener(this);
 	
 	panelWpisu.add(wpis);
@@ -168,288 +189,154 @@ public ClientMain()
 	ramka.setResizable(true);
 	ramka.setVisible(true);
 
-	bRejestracja.addActionListener(new ActionListener()
+	logRej = new JCheckBox("Rejestracja?", registered);
+	logRej.addItemListener(new ItemListener()
+	{
+		@Override
+		public void itemStateChanged(ItemEvent e)
 		{
-			@Override
-			public void actionPerformed(ActionEvent ae)
-			{
-				
-				dialogRej = new JDialog(ramka, "Zarejestruj u¿ytkownika", true);
-				dialogRej.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-				dialogRej.setResizable(false);
-				dialogRej.setLayout(new BorderLayout());
-				
-				panelDialRej = new JPanel(new GridLayout(7,2,10,10));
-				panelDialRej.setBorder(new EmptyBorder(5,5,5,5));
-				
-				panelPrzycDialRej = new JPanel(new FlowLayout());
-				panelPrzycDialRej.add(bOKRej);
-				panelPrzycDialRej.add(bAnulujRej);
-				
-				poleNazwyURej = new JTextField();
-				poleNazwyURej.setText("NazwaUsera");
-				poleEmailURej = new JTextField();
-				poleEmailURej.setText("user@email.pl");
-				poleHaslaURej = new JPasswordField();
-				poleHaslaURej.setText("Has³o");
-				poleImieniaURej = new JTextField();
-				poleImieniaURej.setText("ImieUsera");
-				poleNazwiskaURej = new JTextField();
-				poleNazwiskaURej.setText("NazwiskoUsera");
-				poleAdresuRej = new JTextField();
-				poleAdresuRej.setText("127.0.0.1");
-				polePortuRej = new JTextField();
-				polePortuRej.setText("1201");
-				
-				panelDialRej.add(new JLabel("Nazwa: "));
-				panelDialRej.add(poleNazwyURej);
-				
-				panelDialRej.add(new JLabel("Imiê: "));
-				panelDialRej.add(poleImieniaURej);
-				
-				panelDialRej.add(new JLabel("Nazwisko: "));
-				panelDialRej.add(poleNazwiskaURej);
-				
-				panelDialRej.add(new JLabel("E-mail: "));
-				panelDialRej.add(poleEmailURej);
-				
-				panelDialRej.add(new JLabel("Has³o: "));
-				panelDialRej.add(poleHaslaURej);
-				
-				panelDialRej.add(new JLabel("IP serwera: "));
-				panelDialRej.add(poleAdresuRej);
-				
-				panelDialRej.add(new JLabel("Port serwera: "));
-				panelDialRej.add(polePortuRej);
-				
-				panelPrzycDialLog = new JPanel(new FlowLayout());
-				
-				
-				dialogRej.add(panelDialRej, BorderLayout.CENTER);
-				dialogRej.add(panelPrzycDialRej, BorderLayout.SOUTH);
-				
-				dialogRej.setSize(280, 290);
-				dialogRej.setLocationRelativeTo(ramka);
-				dialogRej.setVisible(true);
-				
-				nazwaUsera = "temp";
-			}
-		});
+			registered = !registered;
+			poleImienia.setEnabled(registered);
+			poleNazwiska.setEnabled(registered);
+		}
+	});
 	
-	bAnulujRej.addActionListener((e) -> dialogRej.setVisible(false));
-	
-	bOKRej.addActionListener(new ActionListener()
+	bPolacz.addActionListener(new ActionListener()
 	{
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
-			dialogRej.setVisible(false);
-			numError = false;
 			
-			nazwaRej = poleNazwyURej.getText().toString();
-			imieRej = poleImieniaURej.getText().toString();
-			nazwiskoRej = poleNazwiskaURej.getText().toString();
-			emailRej = poleEmailURej.getText().toString();
-			hasloRej = poleHaslaURej.getPassword();
-			host = poleAdresuRej.getText().toString();
-			port = Integer.valueOf(polePortuRej.getText().toString());
-
-			boolean emailOK = false;
+			dialogPolacz = new JDialog(ramka, "Logowanie/Rejestracja", true);
+			dialogPolacz.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+			dialogPolacz.setResizable(false);
+			dialogPolacz.setSize(350, 400);
 			
-			if (emailRej.length() > 0)    // SPRAWDZENIE CZY ADRES EMAIL ZAWIERA "@"
-				for (int i = 0; i < emailRej.length(); i++)
-					{
-					if (emailRej.charAt(i) == '@' )	emailOK = true;
-					if (emailOK) break;
-					}
+			dialogPolacz.setLayout(new BorderLayout());
+						
+			panelPolDial = new JPanel(new GridLayout(7, 2, 5, 5));
+			panelPolDial.setBorder(new EmptyBorder(10,10,10,10));
 			
-			if (!emailOK) JOptionPane.showMessageDialog(ramka, "WprowadŸ poprawny adres email!");
-				
-			try {
-			port = Integer.valueOf(polePortuRej.getText().toString());
-			}
-			catch (NumberFormatException nfe)
-			{
-				JOptionPane.showMessageDialog(ramka, "Tylko cyfry s¹ akceptowane!");
-				numError = true;
-			}
+			poleNazwy = new JTextField("Kowal77");
+			poleEmail = new JTextField("kowal77@o2.pl");
+			poleHasla = new JPasswordField("has³o");
+			poleImienia = new JTextField("Jan");
+			poleNazwiska = new JTextField("Kowalski");
+			poleAdresu = new JTextField("127.0.0.1");
+			polePortu = new JTextField("1201");
+			poleImienia.setEnabled(registered);
+			poleNazwiska.setEnabled(registered);
+			
+			panelPolDial.add(new JLabel("Nazwa: "));
+			panelPolDial.add(poleNazwy);
+			
+			panelPolDial.add(new JLabel("Imiê: "));
+			panelPolDial.add(poleImienia);
+			
+			panelPolDial.add(new JLabel("Nazwisko: "));
+			panelPolDial.add(poleNazwiska);
+			
+			panelPolDial.add(new JLabel("Email: "));
+			panelPolDial.add(poleEmail);
+			
+			panelPolDial.add(new JLabel("Has³o: "));
+			panelPolDial.add(poleHasla);
+			panelPolDial.add(logRej);
+			
+			
+			panelTechDial = new JPanel(new GridLayout(2, 2, 5, 5));
+			panelTechDial.setBorder(new EmptyBorder(10,10,10,10));
+			
+			panelTechDial.add(new JLabel("Adres serwera: "));
+			panelTechDial.add(poleAdresu);
+			panelTechDial.add(new JLabel("Adres portu: "));
+			panelTechDial.add(polePortu);			
+			
+			panelPrzycDial = new JPanel(new FlowLayout());
+			panelPrzycDial.setBorder(new EmptyBorder(10,10,10,10));
+			
+			panelPrzycDial.add(bOK);
+			panelPrzycDial.add(bAnuluj);
+			
+			dialogPolacz.add(panelTechDial, BorderLayout.NORTH);
+			dialogPolacz.add(panelPolDial, BorderLayout.CENTER);
+			dialogPolacz.add(panelPrzycDial, BorderLayout.SOUTH);
+			
+			dialogPolacz.setLocationRelativeTo(ramka);
+			dialogPolacz.setVisible(true);
+		}
+	});
+	
+	bOK.addActionListener(new ActionListener()
+	{
+		public void actionPerformed(ActionEvent e)
+		{
+			dialogPolacz.setVisible(false);
+			
+			userName = poleNazwy.getText().toString();
+			userFirstName = poleImienia.getText().toString();
+			userLastName = poleNazwiska.getText().toString();
+			userEmail = poleEmail.getText().toString();
+			userPassword = poleHasla.getPassword();
 			
 			try {
 				socket = new Socket();
 				socket.connect(new InetSocketAddress(host, port), 3000); // 3 sek. timeout
-				oos = new ObjectOutputStream(socket.getOutputStream());
-				dane = new Dane(TypDanych.REGISTER, 0, nazwaRej, imieRej, nazwiskoRej, emailRej, hasloRej, znajomi, ""); // 0 - wiadomoœc echo
-				oos.writeObject(dane);
-				oos.flush();
-				
-				message("Rejestracja u¿ytkownika: "+nazwaRej +" zakoñczona pomyœlnie!");
-				message("Po³¹czono z serwerem!");
-				
-				polaczono = true;
-				wpis.setEnabled(polaczono);
-				bWyslij.setEnabled(polaczono);
-				bLogowanie.setEnabled(!polaczono);
-				bWyloguj.setEnabled(polaczono);	
-				
-				message(dane.getWiadomosc());
-				
-				r = new WatekKlienta();
-				t = new Thread(r);
-				t.start();
-			}
-			catch (Exception ex)
-			{
-				ex.printStackTrace();
-				System.exit(-1);
-			}
-		}
-	});
-	
-	bLogowanie.addActionListener(new ActionListener()
-	{
-		@Override
-		public void actionPerformed(ActionEvent ea)
-		{
-			dialogLog = new JDialog(ramka, "Podaj dane do logowania:", true);
-			dialogLog.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-			dialogLog.setResizable(false);
-			dialogLog.setLayout(new BorderLayout());
-				
-			panelDialLog = new JPanel(new GridLayout(4,2,10,10));
-			panelDialLog.setBorder(new EmptyBorder(5,5,5,5));
-				
-			poleNazwyULog = new JTextField("Temp");
-			poleHaslaULog = new JPasswordField();
-			poleAdresuLog = new JTextField(host);
-			polePortuLog = new JTextField(port+"");
-				
-			panelDialLog.add(new JLabel("Nazwa u¿ytkownika: "));
-			panelDialLog.add(poleNazwyULog);
-				
-			panelDialLog.add(new JLabel("Has³o u¿ytkownika: "));
-			panelDialLog.add(poleHaslaULog);
-				
-			panelDialLog.add(new JLabel("Adres hosta: "));
-			panelDialLog.add(poleAdresuLog);
-			panelDialLog.add(new JLabel("Port po³¹czenia: "));
-			panelDialLog.add(polePortuLog);
-				
-			panelPrzycDialLog = new JPanel(new FlowLayout());
-			panelPrzycDialLog.add(bOKLog);
-			panelPrzycDialLog.add(bAnulujLog);
-						
-			dialogLog.add(panelDialLog, BorderLayout.CENTER);
-			dialogLog.add(panelPrzycDialLog, BorderLayout.SOUTH);
-				
-			dialogLog.setSize(280, 200);
-			dialogLog.setLocationRelativeTo(ramka);
-			dialogLog.setVisible(true);
-		}
-	});
-	
-	bAnulujLog.addActionListener((e) -> dialogLog.setVisible(false));
-	
-	bOKLog.addActionListener((e) ->
-		{
-			if (poleNazwyULog.getText().length()>0)
-			{
-			numError = false;
-			dialogLog.setVisible(false);
-			
-			host = poleAdresuLog.getText();
-			try {
-			port = Integer.valueOf(polePortuLog.getText());
-			}
-			catch (NumberFormatException nbr)
-			{
-				JOptionPane.showMessageDialog(ramka, "Tylko cyfry s¹ akceptowalne!");
-				numError = true;
-			}
-					
-			if (!numError)
-			{
-				historia=historia+"Nawi¹zywanie po³¹czenia z hostem: " +host +":"+ port+" ...\n";
-				info.setText(historia);
-				
-				haslo = poleHaslaULog.getPassword();
-				nazwaUsera = poleNazwyULog.getText().toString();				
-				ramka.setTitle("Aolikacja klienta: " +nazwaUsera);
-				
-				try {
-					socket = new Socket();
-					socket.connect(new InetSocketAddress(host, port), 3000); // 3 sek. timeout
-				}
-				catch (IOException ioe)
-				{
-					ioe.printStackTrace();
-					System.exit(-1);
-				}
-				message("Po³¹czono z serwerem!");
-				
-				polaczono = true;
-				wpis.setEnabled(polaczono);
-				bWyslij.setEnabled(polaczono);
-				bLogowanie.setEnabled(!polaczono);
-				bWyloguj.setEnabled(polaczono);	
-				
-				r = new WatekKlienta();
-				t = new Thread(r);
-				t.start();
-			}
-			}
-			else JOptionPane.showMessageDialog(ramka, "Podaj jak¹œ ksywkê");
-		});
-	
-	bWyloguj.addActionListener(new ActionListener()
-	{
-		@Override
-		public void actionPerformed(ActionEvent e)
-		{
-			bLogowanie.setEnabled(true);
-			bWyloguj.setEnabled(false);
-			bWyslij.setEnabled(false);
-			wpis.setEnabled(false);
-			try {
-			socket.close();
 			}
 			catch (IOException ioe)
 			{
-				ioe.printStackTrace();
+				zrzutLoga(ioe);
 			}
+			message("Po³¹czono z serwerem!");
+			
+			if (registered) {
+				wyslij(TypDanych.REGISTER, "Chcê siê zajestrowaæ!", 0);
+				registered = false;
+			}
+			else wyslij(TypDanych.LOG, "Chcê siê zalogowaæ!", 0);
+			
+			connected = true;
+			wpis.setEnabled(connected);
+			bWyslij.setEnabled(connected);
+			bPolacz.setEnabled(!connected);
+			
+			r = new WatekKlienta();
+			t = new Thread(r);
+			t.start();	
 		}
-	}
-	);
+	});
+	
+	bAnuluj.addActionListener(new ActionListener()
+	{
+		public void actionPerformed(ActionEvent e)
+		{
+			dialogPolacz.setVisible(false);	
+		}
+	});
 	
 	bWyslij.addActionListener(new ActionListener()
 	{
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{					
-			wyslij();				
+			wyslij(TypDanych.MESSAGE, wpis.getText().toString(), 0);				
 		}
 	});	
 }
 
-public void message(String s)
-{
-	info.append(s+"\n");
-}
-
-public void wyslij()
+public void wyslij(TypDanych td, String s, int doKogo)
 {
 	try {
-		oos = new ObjectOutputStream(socket.getOutputStream());
-		dane = new Dane(TypDanych.MESSAGE, 0, nazwaUsera, "", "", "", haslo, znajomi, wpis.getText().toString()); // 0 - wiadomoœc echo
-		oos.writeObject(dane);
+		if (oos == null) oos = new ObjectOutputStream(socket.getOutputStream());
+		data = new Dane(td, doKogo, userName, userFirstName, userLastName, userEmail, userPassword, friendsNumbers, s); // 0 - wiadomoœc echo
+		oos.writeObject(data);
 		oos.flush();
-		message(nazwaUsera+": "+wpis.getText().toString());
+		message(s);
 	}
 	catch (Exception e)
 	{
-		e.printStackTrace();
-		System.exit(-1);
+		zrzutLoga(e);
 	}
-
 	wpis.setText("");
 	wpis.requestFocus();
 }
@@ -464,18 +351,20 @@ public class WatekKlienta implements Runnable
 			
 			if (ois == null) ois = new ObjectInputStream(socket.getInputStream());
 			
-			while ((dane = (Dane) ois.readObject()) != null)
+			while (true)
 			{
-				dane = (Dane) ois.readObject();
-				message(dane.getWiadomosc());
-			} // KONIEC WHILE
+				data = (Dane) ois.readObject();
+				message(data.getWiadomosc());
+				if (data.getTypDanych() == TypDanych.REGISTER) {
+					message("Nadano nowy numer: "+data.getDoKogo() +" !");
+					number = data.getDoKogo();
+				}
+			}
 			
 		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			System.exit(-1);
-		}		
+		catch (Exception e) {
+				zrzutLoga(e);
+			}		
 	}
 }
 
@@ -483,7 +372,7 @@ public class WatekKlienta implements Runnable
 public void keyPressed(KeyEvent arg0) {
 	if ((arg0.getKeyCode() == KeyEvent.VK_ENTER) && (bWyslij.isEnabled()))
 	{
-		wyslij();
+		wyslij(TypDanych.MESSAGE, wpis.getText().toString(), 0);
 	}
 }
 
@@ -493,4 +382,16 @@ public void keyReleased(KeyEvent arg0) {}
 @Override
 public void keyTyped(KeyEvent arg0) {}
 
+public void zrzutLoga(Exception e)
+{
+	LOGGER.log(Level.WARNING, e.getMessage(), e);
+	//System.exit(-1);
+}
+
+public void message(String s)
+{
+	currentDate = new Date();
+	sdf = new SimpleDateFormat("HH:mm:ss");
+	info.append(sdf.format(currentDate) +" " +userName +" (" +number +") " +": " +s +"\n");
+}
 }
