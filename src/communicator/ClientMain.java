@@ -34,12 +34,12 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 
-public class ClientMain implements KeyListener, WindowListener
+public class ClientMain implements KeyListener
 {
 
 private int port = 1201;
 private String host = "127.0.0.1";
-private Socket socket = new Socket();
+private Socket socket;
 private ObjectInputStream ois;
 private ObjectOutputStream oos;
 private JFrame ramka;
@@ -83,7 +83,6 @@ public ClientMain()
 	ramka.setSize(600, 500);
 	ramka.setLocationRelativeTo(null);
 	ramka.setLayout(new BorderLayout());
-	ramka.addWindowListener(this);
 	
 	bOKRej = new JButton("OK");
 	bAnulujRej = new JButton("Anuluj");
@@ -282,16 +281,27 @@ public ClientMain()
 				dane = new Dane(TypDanych.REGISTER, 0, nazwaRej, imieRej, nazwiskoRej, emailRej, hasloRej, znajomi, ""); // 0 - wiadomoœc echo
 				oos.writeObject(dane);
 				oos.flush();
-				//oos.close();
-				//socket.close();
+				
+				message("Rejestracja u¿ytkownika: "+nazwaRej +" zakoñczona pomyœlnie!");
+				message("Po³¹czono z serwerem!");
+				
+				polaczono = true;
+				wpis.setEnabled(polaczono);
+				bWyslij.setEnabled(polaczono);
+				bLogowanie.setEnabled(!polaczono);
+				bWyloguj.setEnabled(polaczono);	
+				
+				message(dane.getWiadomosc());
+				
+				r = new WatekKlienta();
+				t = new Thread(r);
+				t.start();
 			}
-			catch (IOException ioe)
+			catch (Exception ex)
 			{
-				ioe.printStackTrace();
+				ex.printStackTrace();
 				System.exit(-1);
 			}
-			
-			JOptionPane.showMessageDialog(ramka, "Rejestracja powiod³a siê!");
 		}
 	});
 	
@@ -366,7 +376,8 @@ public ClientMain()
 				ramka.setTitle("Aolikacja klienta: " +nazwaUsera);
 				
 				try {
-				socket.connect(new InetSocketAddress(host, port), 3000); // 3 sek. timeout
+					socket = new Socket();
+					socket.connect(new InetSocketAddress(host, port), 3000); // 3 sek. timeout
 				}
 				catch (IOException ioe)
 				{
@@ -384,7 +395,6 @@ public ClientMain()
 				r = new WatekKlienta();
 				t = new Thread(r);
 				t.start();
-		
 			}
 			}
 			else JOptionPane.showMessageDialog(ramka, "Podaj jak¹œ ksywkê");
@@ -434,17 +444,12 @@ public void wyslij()
 		oos.flush();
 		message(nazwaUsera+": "+wpis.getText().toString());
 	}
-	catch (SocketException se)
+	catch (Exception e)
 	{
-		se.printStackTrace();
+		e.printStackTrace();
 		System.exit(-1);
 	}
-	catch (IOException ioe)
-	{
-		ioe.printStackTrace();
-		System.exit(-1);
-	}
-	
+
 	wpis.setText("");
 	wpis.requestFocus();
 }
@@ -455,36 +460,22 @@ public class WatekKlienta implements Runnable
 	@Override
 	public void run()
 	{		
-		
-		try {
-			while (polaczono)
+		try {		
+			
+			if (ois == null) ois = new ObjectInputStream(socket.getInputStream());
+			
+			while ((dane = (Dane) ois.readObject()) != null)
 			{
-				ois = new ObjectInputStream(socket.getInputStream());
 				dane = (Dane) ois.readObject();
 				message(dane.getWiadomosc());
 			} // KONIEC WHILE
 			
 		}
-		catch (SocketTimeoutException stoe)
+		catch (Exception e)
 		{
-			stoe.printStackTrace();
-			polaczono = false;
-			//System.exit(-1);
-		}
-		catch (IOException ioe)
-		{
-			message("B³¹d po³¹czenia z serwerem: " +ioe.getMessage());
-			ioe.printStackTrace();
-			polaczono = false;
-			//System.exit(-1);
-		}
-		catch (ClassNotFoundException cnfe)
-		{
-			cnfe.printStackTrace();
-			polaczono = false;
-			//System.exit(-1);
-		}
-		
+			e.printStackTrace();
+			System.exit(-1);
+		}		
 	}
 }
 
@@ -501,42 +492,5 @@ public void keyReleased(KeyEvent arg0) {}
 
 @Override
 public void keyTyped(KeyEvent arg0) {}
-
-
-@Override
-public void windowActivated(WindowEvent arg0) {}
-
-@Override
-public void windowClosed(WindowEvent arg0) {}
-
-@Override
-public void windowClosing(WindowEvent arg0) {
-	try {
-	
-	//if ((!socket.isClosed()) && (socket != null)) socket.close();
-	
-	if (socket.isConnected()) socket.close();
-		
-	if (ois != null) ois.close();
-	if (oos != null) oos.close();
-	}
-	catch (IOException ioe)
-	{
-		ioe.printStackTrace();
-		System.exit(-1);
-	}
-}
-
-@Override
-public void windowDeactivated(WindowEvent arg0) {}
-
-@Override
-public void windowDeiconified(WindowEvent arg0) {}
-
-@Override
-public void windowIconified(WindowEvent arg0) {}
-
-@Override
-public void windowOpened(WindowEvent arg0) {}
 
 }

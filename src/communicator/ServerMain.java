@@ -87,7 +87,6 @@ public ServerMain()
 		//externalIP = buffreader.readLine();
 		//message("ZewnÍtrzny adres serwera: " +externalIP);
 				
-		try {
 			while (true)
 			{
 			socket = serverSocket.accept();
@@ -97,25 +96,12 @@ public ServerMain()
 			t.start();
 			count++;
 			}
-			}
-			catch (IOException ioe)
-			{
-				ioe.printStackTrace();
-				System.exit(-1);
-			}
-
 		}
-		catch (SocketException se)
+		catch (Exception e)
 		{
-			se.printStackTrace();
+			e.printStackTrace();
 			System.exit(-1);
 		}
-		catch (IOException ioe)
-		{
-			ioe.printStackTrace();
-			System.exit(-1);
-		}
-
 }
 
 public class ServerThread implements Runnable
@@ -135,41 +121,37 @@ public void run()
 {
 	try {
 		
-		while (connected)
-		{
 		ois = new ObjectInputStream(this.socket.getInputStream());
 		oos = new ObjectOutputStream(this.socket.getOutputStream());
 		
+		while (true)
+		{
+		
 		// ODBIERANIE WIADOMOåCI OD KLIENTA
 
-		if (connected) dane = (Dane) ois.readObject();		
+		dane = (Dane) ois.readObject();		
 		
-		if (dane.getTypDanych() == TypDanych.MESSAGE) message("Klient: "+dane.getNazwa() +" (pass: " +new String(dane.getHaslo()) +") : " +dane.getWiadomosc());
-		if (dane.getTypDanych() == TypDanych.REGISTER) {
-			message("Rejestracja nowego klienta: "+dane.getNazwa() +", " +dane.getImie() +", " +dane.getNazwisko() +", " +dane.getEmail() +", " +new String(dane.getHaslo()) +".");
-			ois.close();
-			oos.close();
-			connected = false;
+		if (dane.getTypDanych() == TypDanych.LOG) {
+			message("Klient: "+dane.getNazwa() +" " +dane.getWiadomosc());
+			dane.setWiadomosc("Zalogowano na serwerze!");
+			oos.writeObject(dane);
+			oos.flush();
 		}
+		if (dane.getTypDanych() == TypDanych.REGISTER) message("Rejestracja nowego klienta: "+count +" "+dane.getNazwa() +", " +dane.getImie() +", " +dane.getNazwisko() +", " +dane.getEmail() +", " +new String(dane.getHaslo()) +".");
 		
 		// ODPOWIEDè SERWERA DO KLIENTA
 		
 		if (dane.getTypDanych() == TypDanych.MESSAGE) {
-		dane.setWiadomosc("Serwer echo: " +dane.getWiadomosc());
-		oos.writeObject(dane);
-		oos.flush();
+			message("Klient: "+dane.getNazwa() +" (pass: " +new String(dane.getHaslo()) +") : " +dane.getWiadomosc());
+			dane.setWiadomosc("Serwer echo: " +dane.getWiadomosc());
+			oos.writeObject(dane);
+			oos.flush();
 		}
 		}
 	}
-	catch (ClassNotFoundException cnfe)
+	catch (Exception e)
 	{
-		cnfe.printStackTrace();
-		message("Klient roz≥πczy≥ siÍ.");
-		//System.exit(-1);
-	}
-	catch (IOException ioe)
-	{
-		ioe.printStackTrace();
+		e.printStackTrace();
 		System.exit(-1);
 	}
 	}
