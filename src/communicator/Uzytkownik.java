@@ -1,8 +1,11 @@
 package communicator;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
-public class Uzytkownik {
+public class Uzytkownik implements Serializable{
+
+private static final long serialVersionUID = 1L;
 
 private int numer;
 private String nazwa, imie, nazwisko, email;

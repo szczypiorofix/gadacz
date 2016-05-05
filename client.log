@@ -12,3 +12,205 @@ java.net.SocketException: Connection reset
 	at communicator.ClientMain$WatekKlienta.run(ClientMain.java:356)
 	at java.lang.Thread.run(Unknown Source)
 
+maj 05, 2016 10:03:55 PM communicator.ClientMain zrzutLoga
+WARNING: Socket closed
+java.net.SocketException: Socket closed
+	at java.net.SocketInputStream.socketRead0(Native Method)
+	at java.net.SocketInputStream.socketRead(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.io.ObjectInputStream$PeekInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peekByte(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at communicator.ClientMain$WatekKlienta.run(ClientMain.java:358)
+	at java.lang.Thread.run(Unknown Source)
+
+maj 05, 2016 10:10:01 PM communicator.ClientMain zrzutLoga
+WARNING: Socket closed
+java.net.SocketException: Socket closed
+	at java.net.SocketInputStream.socketRead0(Native Method)
+	at java.net.SocketInputStream.socketRead(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.io.ObjectInputStream$PeekInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peekByte(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at communicator.ClientMain$WatekKlienta.run(ClientMain.java:358)
+	at java.lang.Thread.run(Unknown Source)
+
+maj 05, 2016 10:12:05 PM communicator.ClientMain windowClosing
+WARNING: Socket null? false
+maj 05, 2016 10:12:05 PM communicator.ClientMain windowClosing
+WARNING: Socket isClosed? false
+maj 05, 2016 10:12:05 PM communicator.ClientMain windowClosing
+WARNING: Socket isConnected? true
+maj 05, 2016 10:12:05 PM communicator.ClientMain windowClosing
+WARNING: OIS null? false
+maj 05, 2016 10:12:05 PM communicator.ClientMain windowClosing
+WARNING: OOS null? false
+maj 05, 2016 10:12:05 PM communicator.ClientMain zrzutLoga
+WARNING: Socket closed
+java.net.SocketException: Socket closed
+	at java.net.SocketInputStream.socketRead0(Native Method)
+	at java.net.SocketInputStream.socketRead(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.io.ObjectInputStream$PeekInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peekByte(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at communicator.ClientMain$WatekKlienta.run(ClientMain.java:358)
+	at java.lang.Thread.run(Unknown Source)
+
+maj 05, 2016 10:14:06 PM communicator.ClientMain windowClosing
+WARNING: Socket null? false
+maj 05, 2016 10:14:06 PM communicator.ClientMain windowClosing
+WARNING: Socket isClosed? false
+maj 05, 2016 10:14:06 PM communicator.ClientMain windowClosing
+WARNING: Socket isConnected? true
+maj 05, 2016 10:14:06 PM communicator.ClientMain windowClosing
+WARNING: OIS null? false
+maj 05, 2016 10:14:06 PM communicator.ClientMain windowClosing
+WARNING: OOS null? false
+maj 05, 2016 10:14:56 PM communicator.ClientMain windowClosing
+WARNING: Socket null? false
+maj 05, 2016 10:14:56 PM communicator.ClientMain windowClosing
+WARNING: Socket isClosed? false
+maj 05, 2016 10:14:56 PM communicator.ClientMain windowClosing
+WARNING: Socket isConnected? true
+maj 05, 2016 10:14:56 PM communicator.ClientMain windowClosing
+WARNING: OIS null? false
+maj 05, 2016 10:14:56 PM communicator.ClientMain windowClosing
+WARNING: OOS null? false
+maj 05, 2016 10:14:56 PM communicator.ClientMain zrzutLoga
+WARNING: Socket closed
+java.net.SocketException: Socket closed
+	at java.net.SocketInputStream.socketRead0(Native Method)
+	at java.net.SocketInputStream.socketRead(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.io.ObjectInputStream$PeekInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peekByte(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at communicator.ClientMain$WatekKlienta.run(ClientMain.java:358)
+	at java.lang.Thread.run(Unknown Source)
+
+maj 05, 2016 10:16:15 PM communicator.ClientMain windowClosing
+WARNING: Socket null? false
+maj 05, 2016 10:16:15 PM communicator.ClientMain windowClosing
+WARNING: Socket isClosed? false
+maj 05, 2016 10:16:15 PM communicator.ClientMain windowClosing
+WARNING: Socket isConnected? true
+maj 05, 2016 10:16:15 PM communicator.ClientMain windowClosing
+WARNING: OIS null? false
+maj 05, 2016 10:16:15 PM communicator.ClientMain windowClosing
+WARNING: OOS null? false
+maj 05, 2016 10:16:15 PM communicator.ClientMain zrzutLoga
+WARNING: Socket closed
+java.net.SocketException: Socket closed
+	at java.net.SocketInputStream.socketRead0(Native Method)
+	at java.net.SocketInputStream.socketRead(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.io.ObjectInputStream$PeekInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peekByte(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at communicator.ClientMain$WatekKlienta.run(ClientMain.java:358)
+	at java.lang.Thread.run(Unknown Source)
+
+maj 05, 2016 10:17:39 PM communicator.ClientMain windowClosing
+WARNING: Socket null? false
+maj 05, 2016 10:17:39 PM communicator.ClientMain windowClosing
+WARNING: Socket isClosed? false
+maj 05, 2016 10:17:39 PM communicator.ClientMain windowClosing
+WARNING: Socket isConnected? true
+maj 05, 2016 10:17:39 PM communicator.ClientMain windowClosing
+WARNING: OIS null? false
+maj 05, 2016 10:17:39 PM communicator.ClientMain windowClosing
+WARNING: OOS null? false
+maj 05, 2016 10:17:39 PM communicator.ClientMain zrzutLoga
+WARNING: Socket closed
+java.net.SocketException: Socket closed
+	at java.net.SocketInputStream.socketRead0(Native Method)
+	at java.net.SocketInputStream.socketRead(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.io.ObjectInputStream$PeekInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peekByte(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at communicator.ClientMain$WatekKlienta.run(ClientMain.java:358)
+	at java.lang.Thread.run(Unknown Source)
+
+maj 05, 2016 10:58:26 PM communicator.ClientMain zrzutLoga
+WARNING: Connection reset
+java.net.SocketException: Connection reset
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.io.ObjectInputStream$PeekInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peekByte(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at communicator.ClientMain$WatekKlienta.run(ClientMain.java:351)
+	at java.lang.Thread.run(Unknown Source)
+
+maj 05, 2016 11:17:40 PM communicator.ClientMain zrzutLoga
+WARNING: Connection reset
+java.net.SocketException: Connection reset
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.io.ObjectInputStream$PeekInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peekByte(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at communicator.ClientMain$WatekKlienta.run(ClientMain.java:351)
+	at java.lang.Thread.run(Unknown Source)
+
+maj 05, 2016 11:22:43 PM communicator.ClientMain zrzutLoga
+WARNING: Connection reset
+java.net.SocketException: Connection reset
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.io.ObjectInputStream$PeekInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peekByte(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at communicator.ClientMain$WatekKlienta.run(ClientMain.java:351)
+	at java.lang.Thread.run(Unknown Source)
+
+maj 05, 2016 11:26:25 PM communicator.ClientMain zrzutLoga
+WARNING: Connection reset
+java.net.SocketException: Connection reset
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.io.ObjectInputStream$PeekInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peekByte(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at communicator.ClientMain$WatekKlienta.run(ClientMain.java:351)
+	at java.lang.Thread.run(Unknown Source)
+

@@ -154,3 +154,117 @@ java.net.SocketException: Connection reset
 	at communicator.ServerMain$ServerThread.run(ServerMain.java:138)
 	at java.lang.Thread.run(Unknown Source)
 
+maj 05, 2016 8:13:29 PM communicator.ServerMain zrzutLoga
+WARNING: Connection reset
+java.net.SocketException: Connection reset
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.io.ObjectInputStream$PeekInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peekByte(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at communicator.ServerMain$ServerThread.run(ServerMain.java:139)
+	at java.lang.Thread.run(Unknown Source)
+
+maj 05, 2016 8:13:30 PM communicator.ServerMain zrzutLoga
+WARNING: Connection reset
+java.net.SocketException: Connection reset
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.io.ObjectInputStream$PeekInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peekByte(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at communicator.ServerMain$ServerThread.run(ServerMain.java:139)
+	at java.lang.Thread.run(Unknown Source)
+
+maj 05, 2016 9:44:50 PM communicator.ServerMain zrzutLoga
+WARNING: Connection reset
+java.net.SocketException: Connection reset
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.io.ObjectInputStream$PeekInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peekByte(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at communicator.ServerMain$ServerThread.run(ServerMain.java:139)
+	at java.lang.Thread.run(Unknown Source)
+
+maj 05, 2016 10:03:55 PM communicator.ServerMain zrzutLoga
+WARNING: null
+java.io.EOFException
+	at java.io.ObjectInputStream$BlockDataInputStream.peekByte(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at communicator.ServerMain$ServerThread.run(ServerMain.java:140)
+	at java.lang.Thread.run(Unknown Source)
+
+maj 05, 2016 10:10:01 PM communicator.ServerMain zrzutLoga
+WARNING: null
+java.io.EOFException
+	at java.io.ObjectInputStream$BlockDataInputStream.peekByte(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at communicator.ServerMain$ServerThread.run(ServerMain.java:140)
+	at java.lang.Thread.run(Unknown Source)
+
+maj 05, 2016 10:12:05 PM communicator.ServerMain zrzutLoga
+WARNING: null
+java.io.EOFException
+	at java.io.ObjectInputStream$BlockDataInputStream.peekByte(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at communicator.ServerMain$ServerThread.run(ServerMain.java:140)
+	at java.lang.Thread.run(Unknown Source)
+
+maj 05, 2016 10:14:06 PM communicator.ServerMain zrzutLoga
+WARNING: null
+java.io.EOFException
+	at java.io.ObjectInputStream$BlockDataInputStream.peekByte(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at communicator.ServerMain$ServerThread.run(ServerMain.java:140)
+	at java.lang.Thread.run(Unknown Source)
+
+maj 05, 2016 10:14:51 PM communicator.ServerMain zrzutLoga
+WARNING: null
+java.io.EOFException
+	at java.io.ObjectInputStream$BlockDataInputStream.peekByte(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at communicator.ServerMain$ServerThread.run(ServerMain.java:140)
+	at java.lang.Thread.run(Unknown Source)
+
+maj 05, 2016 10:14:56 PM communicator.ServerMain zrzutLoga
+WARNING: null
+java.io.EOFException
+	at java.io.ObjectInputStream$BlockDataInputStream.peekByte(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at communicator.ServerMain$ServerThread.run(ServerMain.java:140)
+	at java.lang.Thread.run(Unknown Source)
+
+maj 05, 2016 10:16:15 PM communicator.ServerMain zrzutLoga
+WARNING: null
+java.io.EOFException
+	at java.io.ObjectInputStream$BlockDataInputStream.peekByte(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at communicator.ServerMain$ServerThread.run(ServerMain.java:140)
+	at java.lang.Thread.run(Unknown Source)
+
+maj 05, 2016 10:17:39 PM communicator.ServerMain zrzutLoga
+WARNING: null
+java.io.EOFException
+	at java.io.ObjectInputStream$BlockDataInputStream.peekByte(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at communicator.ServerMain$ServerThread.run(ServerMain.java:140)
+	at java.lang.Thread.run(Unknown Source)
+

@@ -14,17 +14,13 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -49,7 +45,7 @@ private final static Logger LOGGER = Logger.getLogger(ServerMain.class.getName()
 private FileHandler fileHandler = null;
 private int port = 1201;
 private String host = "127.0.0.1";
-private Socket socket;
+private Socket socket = new Socket();
 private ObjectInputStream ois;
 private ObjectOutputStream oos;
 private JFrame ramka;
@@ -222,8 +218,8 @@ public ClientMain()
 			poleHasla = new JPasswordField("has³o");
 			poleImienia = new JTextField("Jan");
 			poleNazwiska = new JTextField("Kowalski");
-			poleAdresu = new JTextField("127.0.0.1");
-			polePortu = new JTextField("1201");
+			poleAdresu = new JTextField(host);
+			polePortu = new JTextField(port +"");
 			poleImienia.setEnabled(registered);
 			poleNazwiska.setEnabled(registered);
 			
@@ -280,14 +276,13 @@ public ClientMain()
 			userPassword = poleHasla.getPassword();
 			
 			try {
-				socket = new Socket();
 				socket.connect(new InetSocketAddress(host, port), 3000); // 3 sek. timeout
 			}
 			catch (IOException ioe)
 			{
 				zrzutLoga(ioe);
 			}
-			message("Po³¹czono z serwerem!");
+			message("Po³¹czono z serwerem!" +host +" : " +port);
 			
 			if (registered) {
 				wyslij(TypDanych.REGISTER, "Chcê siê zajestrowaæ!", 0);
