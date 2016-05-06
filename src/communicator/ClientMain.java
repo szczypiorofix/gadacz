@@ -30,6 +30,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -50,12 +52,12 @@ private ObjectInputStream ois;
 private ObjectOutputStream oos;
 private JFrame ramka;
 private JTextArea info;
-private JTextField wpis, poleAdresu, polePortu, poleNazwy, poleImienia, poleNazwiska, poleEmail;
+private JTextField wpis, poleAdresu, polePortu, poleNazwy, poleImienia, poleNazwiska, poleEmail, numerZnajomego, nazwaZnajomego;
 private JPasswordField poleHasla;
-private JPanel panelWpisu, panelCentralny, panelPoludniowy, panelWschodni, panelPolDial, panelTechDial, panelPrzycDial;
+private JPanel panelWpisu, panelCentralny, panelPoludniowy, panelWschodni, panelPolDial, panelTechDial, panelPrzycDial, panelDanychZnajomego;
 private JScrollPane scroll;
-private JButton bPolacz, bWyslij, bOK, bAnuluj;
-private JDialog dialogPolacz;
+private JButton bPolacz, bWyslij, bOK, bAnuluj, bDodajZnajomego, bDodaj;
+private JDialog dialogPolacz, dialogDodajZnajomego;
 private JCheckBox logRej;
 private String historia = "";
 private JList<String> poleListyUserow;
@@ -104,12 +106,14 @@ public ClientMain()
 	
 	ramka = new JFrame("Aplikacja klienta");
 	ramka.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	ramka.setSize(600, 500);
+	ramka.setSize(650, 500);
 	ramka.setLocationRelativeTo(null);
 	ramka.setLayout(new BorderLayout());
 	
 	bOK = new JButton("OK");
 	bAnuluj = new JButton("Anuluj");
+	bDodajZnajomego = new JButton("Dodaj znajomego");
+	bDodaj = new JButton("Dodaj");
 	
 	panelCentralny = new JPanel(new BorderLayout());
 	panelPoludniowy = new JPanel(new FlowLayout());
@@ -119,7 +123,6 @@ public ClientMain()
 	modelList = new DefaultListModel<>();
 	poleListyUserow = new JList<String>(modelList);
 	
-	/**
 	poleListyUserow.addMouseListener(new MouseListener()
 			{
 				@Override
@@ -128,9 +131,9 @@ public ClientMain()
 					JList<String> list = (JList)m.getSource();
 					if (m.getClickCount()==2)
 					{
-						for (int i = 0; i < liczby.size(); i++) System.out.println("Wartoœci: " +liczby.get(i));
+						for (int i = 0; i < modelList.size(); i++) System.out.println("Wartoœci: " +modelList.get(i));
 						int indeks = list.locationToIndex(m.getPoint());
-						wpis.setText("/"+liczby.get(indeks));
+						wpis.setText("/"+modelList.get(indeks));
 					}
 				}
 
@@ -150,9 +153,10 @@ public ClientMain()
 				public void mouseReleased(MouseEvent e) {
 				}
 			});
-	**/
+
 	
 	panelWschodni.add(poleListyUserow, BorderLayout.CENTER);
+	panelWschodni.add(bDodajZnajomego, BorderLayout.SOUTH);
 	
 	info = new JTextArea(1,1);
 	info.setEditable(false);
@@ -197,6 +201,42 @@ public ClientMain()
 		}
 	});
 	
+	bDodajZnajomego.addActionListener(new ActionListener()
+	{
+		public void actionPerformed(ActionEvent e)
+		{
+			dialogDodajZnajomego = new JDialog(ramka, "Dodaj znajomego", true);
+			dialogDodajZnajomego.setResizable(false);
+			dialogDodajZnajomego.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+			dialogDodajZnajomego.setSize(220,115);
+			dialogDodajZnajomego.setLayout(new BorderLayout());
+			dialogDodajZnajomego.setLocationRelativeTo(ramka);
+			panelDanychZnajomego = new JPanel(new GridLayout(2,2,5,5));
+			panelDanychZnajomego.add(new JLabel("Nazwa: "));
+			nazwaZnajomego = new JTextField("");
+			panelDanychZnajomego.add(nazwaZnajomego);
+			panelDanychZnajomego.add(new JLabel("Numer: "));
+			numerZnajomego = new JTextField("");
+			panelDanychZnajomego.add(numerZnajomego);
+			dialogDodajZnajomego.add(bDodaj, BorderLayout.SOUTH);
+			dialogDodajZnajomego.add(panelDanychZnajomego, BorderLayout.CENTER);
+			dialogDodajZnajomego.setVisible(true);
+		}
+	});
+	
+	bDodaj.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					if (numerZnajomego.getText().length() > 0) modelList.addElement(numerZnajomego.getText());
+					dialogDodajZnajomego.setVisible(false);
+					poleListyUserow.revalidate();
+					poleListyUserow.repaint();
+				}
+			}
+			);
+	
 	bPolacz.addActionListener(new ActionListener()
 	{
 		@Override
@@ -207,7 +247,6 @@ public ClientMain()
 			dialogPolacz.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 			dialogPolacz.setResizable(false);
 			dialogPolacz.setSize(350, 400);
-			
 			dialogPolacz.setLayout(new BorderLayout());
 						
 			panelPolDial = new JPanel(new GridLayout(7, 2, 5, 5));

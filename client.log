@@ -214,3 +214,17 @@ java.net.SocketException: Connection reset
 	at communicator.ClientMain$WatekKlienta.run(ClientMain.java:351)
 	at java.lang.Thread.run(Unknown Source)
 
+maj 06, 2016 3:38:42 PM communicator.ClientMain zrzutLoga
+WARNING: Connection reset
+java.net.SocketException: Connection reset
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.io.ObjectInputStream$PeekInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peek(Unknown Source)
+	at java.io.ObjectInputStream$BlockDataInputStream.peekByte(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at communicator.ClientMain$WatekKlienta.run(ClientMain.java:351)
+	at java.lang.Thread.run(Unknown Source)
+

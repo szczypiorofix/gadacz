@@ -1,6 +1,7 @@
 package communicator;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.BufferedInputStream;
@@ -28,6 +29,7 @@ import java.util.logging.SimpleFormatter;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 
 
@@ -38,7 +40,7 @@ private final static Logger LOGGER = Logger.getLogger(ServerMain.class.getName()
 private FileHandler fileHandler = null;
 private int port = 1201;
 private ServerSocket serverSocket;
-private Socket socket;
+private ArrayList<Socket> sockets;
 private JFrame ramka;
 private JTextArea info;
 private JPanel panelCentralny, panelWschodni;
@@ -49,8 +51,8 @@ private URL whatismyip;
 private BufferedReader buffreader;
 private String externalIP;
 private Dane dane;
+private Thread t;
 private ServerThread serverThread;
-private ArrayList<Thread> watki;
 private ArrayList<Uzytkownik> bazaUzytkownikow;
 private Date currentDate;
 private SimpleDateFormat sdf;
@@ -61,6 +63,7 @@ private FileInputStream fis;
 private ObjectInputStream ois;
 private BufferedInputStream bis;
 private JTextArea users;
+private JSplitPane split1;
 private String usersString;
 private final File file = new File("dane.txt");
 
@@ -167,32 +170,38 @@ public ServerMain()
 	panelWschodni.add(scrollEast, BorderLayout.CENTER);
 	
 	
-	ramka.add(panelCentralny, BorderLayout.CENTER);
-	ramka.add(panelWschodni, BorderLayout.EAST);
+	//ramka.add(panelCentralny, BorderLayout.CENTER);
+	//ramka.add(panelWschodni, BorderLayout.EAST);
+	
+	split1 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panelCentralny, panelWschodni);
+	split1.setDividerLocation(450);
+	split1.setDividerSize(3);
+	ramka.add(split1, BorderLayout.CENTER);
+	
 	ramka.setVisible(true);
 	
-	message("Start serwera.", "Serwer");
-	message("Otwieranie gniazdka serwera. Port: " +port, "Serwer");
-	
-	watki = new ArrayList<Thread>(20);	
-	
+	message("Serwer", "Start serwera.");
+	message("Serwer", "Otwieranie gniazdka serwera. Port: " +port);
+		
 	try {
 		
 		serverSocket = new ServerSocket(port);
-		message("Lokalny adres serwera: " +InetAddress.getLocalHost().toString(), "Serwer");
+		message("Serwer", "Lokalny adres serwera: " +InetAddress.getLocalHost().toString());
 		
 		whatismyip = new URL("http://checkip.amazonaws.com");
 		buffreader = new BufferedReader(new InputStreamReader(whatismyip.openStream()));
 		externalIP = buffreader.readLine();
-		message("Zewnêtrzny adres serwera: " +externalIP, "Serwer");
-				
+		message("Serwer", "Zewnêtrzny adres serwera: " +externalIP);
+		
+		sockets = new ArrayList<Socket>(20);
+		
 		while (true)
 		{
-			socket = serverSocket.accept();
-			message("Po³¹czenie z klientem: " +watki.size() +" " +socket.getInetAddress(), "Serwer");
-			serverThread = new ServerThread(socket);
-			watki.add(new Thread(serverThread));
-			watki.get(count).start();
+			sockets.add(serverSocket.accept());
+			message("Serwer", "Po³¹czenie z klientem: " +count +" " +sockets.get(count).getInetAddress());
+			serverThread = new ServerThread(sockets, count);
+			t = new Thread(serverThread);
+			t.start();
 			count++;
 		}
 		}
@@ -205,13 +214,18 @@ public ServerMain()
 public class ServerThread implements Runnable
 {
 
+private ArrayList<Socket> sockets;
 private Socket socket;
 private ObjectInputStream ois;
 private ObjectOutputStream oos;
+private int numer = 0;
+private int liczbaUzytkownikow = 0;
 
-public ServerThread(Socket s)
+public ServerThread(ArrayList<Socket> s, int c)
 {
-	this.socket = s;
+	sockets = s;
+	numer = c;
+	this.socket = s.get(numer);
 }
 	
 @Override
@@ -230,21 +244,40 @@ public void run()
 			switch (dane.getTypDanych())
 			{
 			case MESSAGE: {
-				message(dane.getWiadomosc(), dane.getNazwa());
+				
+				if (dane.getDoKogo() == 0)  {
+					dane.setWiadomosc("ECHO MSG: " +dane.getWiadomosc());
+					message(dane.getNazwa(), dane.getWiadomosc());
+				}
+				
+				if (oos == null) 
+					oos = new ObjectOutputStream(this.socket.getOutputStream());
+				
+				oos.writeObject(dane);
+				oos.flush();
 				break;
 			}
 			case REGISTER: {
-				message(dane.getNazwa() +" " +dane.getImie() +" " +dane.getNazwisko() +" " +dane.getEmail() +" " +(new String(dane.getHaslo())) +" : " +dane.getWiadomosc(), "Zarejestrowano nowego u¿ytkownika: ");
+				message("Zarejestrowano nowego u¿ytkownika: ", dane.getNazwa() +" " +dane.getImie() +" " +dane.getNazwisko() +" " +dane.getEmail() +" " +(new String(dane.getHaslo())) +" '" +dane.getWiadomosc() +"'");
+				
 				bazaUzytkownikow.add(new Uzytkownik(bazaUzytkownikow.size(), dane.getNazwa(), dane.getImie(), dane.getNazwisko(), dane.getEmail(), dane.getHaslo(), dane.getZnajomi()));
+				liczbaUzytkownikow=bazaUzytkownikow.size()-1;
 				
 				usersString = "Users:";
 				for (int i = 0; i < bazaUzytkownikow.size(); i++)
 				{
 					usersString = usersString + "\n" +bazaUzytkownikow.get(i).getNumer()+"."+bazaUzytkownikow.get(i).getNazwa();
 				}
-				
 				users.setText(usersString);
-				dane.setDoKogo(bazaUzytkownikow.get(bazaUzytkownikow.size()-1).getNumer());
+				
+				dane.setDoKogo(bazaUzytkownikow.get(liczbaUzytkownikow).getNumer());
+				dane.setWiadomosc("ECHO REGISTER: " +dane.getWiadomosc());
+				
+				if (oos == null) 
+					oos = new ObjectOutputStream(this.socket.getOutputStream());
+				
+				oos.writeObject(dane);
+				oos.flush();
 				break;
 			}
 			case LOG: {
@@ -252,7 +285,11 @@ public void run()
 				{
 					if ((dane.getEmail().equals(bazaUzytkownikow.get(i).getEmail())) && (dane.getDoKogo() == bazaUzytkownikow.get(i).getNumer()))
 					{
-						message("Zalogowany!", dane.getNazwa());
+						message(dane.getNazwa(), dane.getWiadomosc());
+					}
+					else {
+						users.setText(usersString);
+						dane.setDoKogo(bazaUzytkownikow.get(bazaUzytkownikow.size()-1).getNumer());
 					}
 				}
 				
@@ -265,20 +302,12 @@ public void run()
 				break;
 			}
 			}
-
-			dane.setWiadomosc("ECHO: " +dane.getWiadomosc());
-			
-			if (oos == null) 
-				oos = new ObjectOutputStream(this.socket.getOutputStream());
-			
-			oos.writeObject(dane);
-			oos.flush();
 		}
 	}
 	catch (SocketException e)
 	{
 		//zrzutLoga(e);
-		message("roz³¹czy³ siê.", dane.getNazwa());
+		message(dane.getNazwa(), "roz³¹czy³ siê. " +e.getMessage());
 		//e.printStackTrace();
 	}
 	catch (Exception e)
@@ -294,7 +323,7 @@ public void zrzutLoga(Exception e)
 	//System.exit(-1);
 }
 
-public void message(String msg, String name)
+public void message(String name, String msg)
 {
 	currentDate = new Date();
 	sdf = new SimpleDateFormat("HH:mm:ss");

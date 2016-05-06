@@ -268,3 +268,11 @@ java.io.EOFException
 	at communicator.ServerMain$ServerThread.run(ServerMain.java:140)
 	at java.lang.Thread.run(Unknown Source)
 
+maj 06, 2016 3:07:34 PM communicator.ServerMain zrzutLoga
+WARNING: Index: 8, Size: 8
+java.lang.IndexOutOfBoundsException: Index: 8, Size: 8
+	at java.util.ArrayList.rangeCheck(Unknown Source)
+	at java.util.ArrayList.get(Unknown Source)
+	at communicator.ServerMain$ServerThread.run(ServerMain.java:267)
+	at java.lang.Thread.run(Unknown Source)
+
