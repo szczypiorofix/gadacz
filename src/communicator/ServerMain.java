@@ -3,8 +3,11 @@ package communicator;
 import java.awt.BorderLayout;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -23,7 +26,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -40,7 +42,7 @@ private Socket socket;
 private JFrame ramka;
 private JTextArea info;
 private JPanel panelCentralny, panelWschodni;
-private JScrollPane scrollCenter;
+private JScrollPane scrollCenter, scrollEast;
 private String h = "Serwer 1.0\n";
 private int count = 0;
 private URL whatismyip;
@@ -55,8 +57,12 @@ private SimpleDateFormat sdf;
 private FileOutputStream fos;
 private ObjectOutputStream oos;
 private BufferedOutputStream bos;
+private FileInputStream fis;
+private ObjectInputStream ois;
+private BufferedInputStream bis;
 private JTextArea users;
 private String usersString;
+private final File file = new File("dane.txt");
 
 
 
@@ -82,6 +88,62 @@ public ServerMain()
 	fileHandler.setLevel(Level.WARNING);
 	LOGGER.addHandler(fileHandler);
 	
+	bazaUzytkownikow = new ArrayList<Uzytkownik>(20);
+	
+	if ((file.exists()) && (!file.isDirectory()))
+	{
+	try {
+			fis = new FileInputStream(file);
+			bis = new BufferedInputStream(fis);
+			ois = new ObjectInputStream(bis);
+			
+			bazaUzytkownikow = (ArrayList<Uzytkownik>) ois.readObject(); 
+			
+			/**
+			Object odczyt = ois.readObject();
+			if (odczyt instanceof ArrayList<?>)
+			{
+				ArrayList<?> a1 = (ArrayList<?>) odczyt;
+				if (a1.size() > 0)
+				{
+					for (int i = 0; i < a1.size(); i++)
+					{
+						Object o = a1.get(i);
+						if (o instanceof Uzytkownik)
+						{
+							bazaUzytkownikow.add((Uzytkownik) o);
+						}
+					}
+				}
+			}
+			**/
+			
+			usersString = "Users:";
+			for (int i = 0; i < bazaUzytkownikow.size(); i++)
+			{
+				usersString = usersString + "\n" +bazaUzytkownikow.get(i).getNumer()+"."+bazaUzytkownikow.get(i).getNazwa();
+			}
+			
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		try {
+			ois.close();
+			bis.close();
+			fis.close();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	else {
+		usersString = "Users:";
+	}
+	
 	ramka = new JFrame("Serwer komunikatora");
 	ramka.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	ramka.setSize(600, 450);
@@ -98,10 +160,11 @@ public ServerMain()
 	panelCentralny = new JPanel(new BorderLayout());
 	panelCentralny.add(scrollCenter, BorderLayout.CENTER);
 	panelWschodni = new JPanel(new BorderLayout());
-	usersString = "Users:";
+
 	users = new JTextArea(usersString);
 	users.setEditable(false);
-	panelWschodni.add(users, BorderLayout.CENTER);
+	scrollEast = new JScrollPane(users);
+	panelWschodni.add(scrollEast, BorderLayout.CENTER);
 	
 	
 	ramka.add(panelCentralny, BorderLayout.CENTER);
@@ -111,9 +174,7 @@ public ServerMain()
 	message("Start serwera.", "Serwer");
 	message("Otwieranie gniazdka serwera. Port: " +port, "Serwer");
 	
-	watki = new ArrayList<Thread>(20);
-	bazaUzytkownikow = new ArrayList<Uzytkownik>(20);
-	
+	watki = new ArrayList<Thread>(20);	
 	
 	try {
 		
