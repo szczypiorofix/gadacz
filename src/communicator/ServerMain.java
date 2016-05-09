@@ -1,7 +1,6 @@
 package communicator;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.BufferedInputStream;
@@ -11,9 +10,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -22,6 +23,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,7 +42,9 @@ private final static Logger LOGGER = Logger.getLogger(ServerMain.class.getName()
 private FileHandler fileHandler = null;
 private int port = 1201;
 private ServerSocket serverSocket;
+private Socket s;
 private ArrayList<Socket> sockets;
+private ArrayList <ObjectOutputStream> outStreams;
 private JFrame ramka;
 private JTextArea info;
 private JPanel panelCentralny, panelWschodni;
@@ -58,9 +62,9 @@ private Date currentDate;
 private SimpleDateFormat sdf;
 private FileOutputStream fos;
 private ObjectOutputStream oos;
+private ObjectInputStream ois;
 private BufferedOutputStream bos;
 private FileInputStream fis;
-private ObjectInputStream ois;
 private BufferedInputStream bis;
 private JTextArea users;
 private JSplitPane split1;
@@ -78,7 +82,7 @@ public static void main(String[] args)
 public ServerMain()
 {
 	try {
-		fileHandler = new FileHandler("server.log", true);
+		fileHandler = new FileHandler("server.log", false);
 	} catch (SecurityException e1) {
 		e1.printStackTrace();
 		System.exit(-1);
@@ -93,6 +97,7 @@ public ServerMain()
 	
 	bazaUzytkownikow = new ArrayList<Uzytkownik>(20);
 	
+	/**
 	if ((file.exists()) && (!file.isDirectory()))
 	{
 	try {
@@ -119,7 +124,7 @@ public ServerMain()
 					}
 				}
 			}
-			**/
+			
 			
 			usersString = "Users:";
 			for (int i = 0; i < bazaUzytkownikow.size(); i++)
@@ -146,10 +151,12 @@ public ServerMain()
 	else {
 		usersString = "Users:";
 	}
+	**/usersString = "Users:";
+	
 	
 	ramka = new JFrame("Serwer komunikatora");
 	ramka.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	ramka.setSize(600, 450);
+	ramka.setSize(600, 400);
 	ramka.setLocationRelativeTo(null);
 	ramka.setLayout(new BorderLayout());
 	ramka.addWindowListener(this);
@@ -193,13 +200,17 @@ public ServerMain()
 		externalIP = buffreader.readLine();
 		message("Serwer", "Zewnêtrzny adres serwera: " +externalIP);
 		
-		sockets = new ArrayList<Socket>(20);
+		sockets = new ArrayList<Socket>();
+		outStreams = new ArrayList<ObjectOutputStream>();
 		
 		while (true)
 		{
-			sockets.add(serverSocket.accept());
+			s = serverSocket.accept();
+			sockets.add(s);
+			outStreams.add(new ObjectOutputStream(s.getOutputStream()));
+			
 			message("Serwer", "Po³¹czenie z klientem: " +count +" " +sockets.get(count).getInetAddress());
-			serverThread = new ServerThread(sockets, count);
+			serverThread = new ServerThread(sockets, outStreams, count);
 			t = new Thread(serverThread);
 			t.start();
 			count++;
@@ -215,17 +226,20 @@ public class ServerThread implements Runnable
 {
 
 private ArrayList<Socket> sockets;
+private ArrayList<ObjectOutputStream> streamsOut;
 private Socket socket;
-private ObjectInputStream ois;
-private ObjectOutputStream oos;
+private InputStream streamIn;
+private ObjectInputStream objectStreamIn;
+private ObjectOutputStream objectStreamOut;
 private int numer = 0;
 private int liczbaUzytkownikow = 0;
 
-public ServerThread(ArrayList<Socket> s, int c)
+public ServerThread(ArrayList<Socket> s, ArrayList<ObjectOutputStream> outMap, int c)
 {
 	sockets = s;
+	streamsOut = outMap;
 	numer = c;
-	this.socket = s.get(numer);
+	this.socket = s.get(c);
 }
 	
 @Override
@@ -233,28 +247,25 @@ public void run()
 {
 	try {
 		
-		while (!this.socket.isClosed())
+		streamIn = socket.getInputStream();
+		objectStreamIn = new ObjectInputStream(streamIn);
+				
+		while (true)
 		{
-		
-			if (ois == null) 
-				ois = new ObjectInputStream(this.socket.getInputStream());
 			
-			if (!socket.isClosed()) dane = (Dane) ois.readObject();		
-		
+			dane = (Dane) objectStreamIn.readObject();
+			
+			message(dane.getNazwa() +"("+numer+")", "nawi¹za³ po³¹czenie z serwerem.");
+			
 			switch (dane.getTypDanych())
 			{
 			case MESSAGE: {
 				
-				if (dane.getDoKogo() == 0)  {
-					dane.setWiadomosc("ECHO MSG: " +dane.getWiadomosc());
-					message(dane.getNazwa(), dane.getWiadomosc());
-				}
+				message(dane.getNazwa()+" pisze: ", dane.getWiadomosc() + " do: " +dane.getDoKogo());
 				
-				if (oos == null) 
-					oos = new ObjectOutputStream(this.socket.getOutputStream());
+				streamsOut.get(dane.getDoKogo()).writeObject(dane);
+				streamsOut.get(dane.getDoKogo()).flush();
 				
-				oos.writeObject(dane);
-				oos.flush();
 				break;
 			}
 			case REGISTER: {
@@ -272,12 +283,10 @@ public void run()
 				
 				dane.setDoKogo(bazaUzytkownikow.get(liczbaUzytkownikow).getNumer());
 				dane.setWiadomosc("ECHO REGISTER: " +dane.getWiadomosc());
+
 				
-				if (oos == null) 
-					oos = new ObjectOutputStream(this.socket.getOutputStream());
-				
-				oos.writeObject(dane);
-				oos.flush();
+				objectStreamOut.writeObject(dane);
+				objectStreamOut.flush();
 				break;
 			}
 			case LOG: {

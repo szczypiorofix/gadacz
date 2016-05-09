@@ -16,11 +16,11 @@ private String mImie;
 private String mNazwisko;
 private String mEmail;
 private char[] mHaslo;
-private HashMap<Integer, Boolean> mZnajomi;
+private HashMap<Integer, Znajomy> mZnajomi;
 private String mWiadomosc;
 
 
-public Dane(TypDanych typDanych, int doKogo, String nazwa, String imie, String nazwisko, String email, char[] haslo, HashMap<Integer, Boolean> znajomi, String wiadomosc)
+public Dane(TypDanych typDanych, int doKogo, String nazwa, String imie, String nazwisko, String email, char[] haslo, HashMap<Integer, Znajomy> znajomi, String wiadomosc)
 {
 	mTypDanych = typDanych;
 	mDoKogo = doKogo;
@@ -104,12 +104,12 @@ public void setHaslo(char[] haslo) {
 }
 
 
-public HashMap<Integer, Boolean> getZnajomi() {
+public HashMap<Integer, Znajomy> getZnajomi() {
 	return mZnajomi;
 }
 
 
-public void setZnajomi(HashMap<Integer, Boolean> znajomi) {
+public void setZnajomi(HashMap<Integer, Znajomy> znajomi) {
 	mZnajomi = znajomi;
 }
 

@@ -32,6 +32,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -68,7 +70,8 @@ private String userName = "", userFirstName, userLastName, userEmail;
 private int number = 0;
 private char[] userPassword = null;
 private boolean connected = false, registered = false;
-private HashMap<Integer, Boolean> friendsNumbers;
+private HashMap<Integer, Znajomy> znajomi;
+private Znajomy znajomy;
 private Dane data;
 private Date currentDate;
 private SimpleDateFormat sdf;
@@ -89,7 +92,7 @@ EventQueue.invokeLater(new Runnable()
 public ClientMain()
 {
 	try {
-		fileHandler = new FileHandler("client.log", true);
+		fileHandler = new FileHandler("client.log", false);
 	} catch (SecurityException e1) {
 		e1.printStackTrace();
 		System.exit(-1);
@@ -102,17 +105,18 @@ public ClientMain()
 	fileHandler.setLevel(Level.WARNING);
 	LOGGER.addHandler(fileHandler);
 	
-	friendsNumbers = new HashMap<Integer, Boolean>();
+	znajomi = new HashMap<Integer, Znajomy>();
 	
 	ramka = new JFrame("Aplikacja klienta");
 	ramka.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	ramka.setSize(650, 500);
+	ramka.setSize(500, 300);
 	ramka.setLocationRelativeTo(null);
 	ramka.setLayout(new BorderLayout());
 	
 	bOK = new JButton("OK");
 	bAnuluj = new JButton("Anuluj");
 	bDodajZnajomego = new JButton("Dodaj znajomego");
+	//bDodajZnajomego.setEnabled(false);
 	bDodaj = new JButton("Dodaj");
 	
 	panelCentralny = new JPanel(new BorderLayout());
@@ -131,9 +135,9 @@ public ClientMain()
 					JList<String> list = (JList)m.getSource();
 					if (m.getClickCount()==2)
 					{
-						for (int i = 0; i < modelList.size(); i++) System.out.println("Wartoœci: " +modelList.get(i));
 						int indeks = list.locationToIndex(m.getPoint());
-						wpis.setText("/"+modelList.get(indeks));
+						wpis.setText("/"+znajomi.get(indeks).getNumer());
+						new Czat(indeks);
 					}
 				}
 
@@ -173,7 +177,7 @@ public ClientMain()
 	
 	bWyslij = new JButton("Wyœlij");
 	bWyslij.setEnabled(connected);
-	wpis = new JTextField("", 36);
+	wpis = new JTextField("", 22);
 	wpis.setEnabled(connected);
 	wpis.addKeyListener(this);
 	
@@ -208,7 +212,7 @@ public ClientMain()
 			dialogDodajZnajomego = new JDialog(ramka, "Dodaj znajomego", true);
 			dialogDodajZnajomego.setResizable(false);
 			dialogDodajZnajomego.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-			dialogDodajZnajomego.setSize(220,115);
+			dialogDodajZnajomego.setSize(220,110);
 			dialogDodajZnajomego.setLayout(new BorderLayout());
 			dialogDodajZnajomego.setLocationRelativeTo(ramka);
 			panelDanychZnajomego = new JPanel(new GridLayout(2,2,5,5));
@@ -229,7 +233,11 @@ public ClientMain()
 				@Override
 				public void actionPerformed(ActionEvent e)
 				{
-					if (numerZnajomego.getText().length() > 0) modelList.addElement(numerZnajomego.getText());
+					if ((nazwaZnajomego.getText().length() > 0) && (numerZnajomego.getText().length() > 0)) {
+						znajomy = new Znajomy(Integer.valueOf(numerZnajomego.getText().toString()), nazwaZnajomego.getText().toString(), false);
+						znajomi.put(znajomi.size(), znajomy);
+						modelList.addElement(nazwaZnajomego.getText()+"("+znajomy.getNumer()+")");
+					}
 					dialogDodajZnajomego.setVisible(false);
 					poleListyUserow.revalidate();
 					poleListyUserow.repaint();
@@ -321,6 +329,7 @@ public ClientMain()
 			{
 				zrzutLoga(ioe);
 			}
+			ramka.setTitle("Aplikacja klienta: " +userName);
 			message("Po³¹czono z serwerem!" +host +" : " +port);
 			
 			if (registered) {
@@ -361,8 +370,11 @@ public ClientMain()
 public void wyslij(TypDanych td, String s, int doKogo)
 {
 	try {
-		if (oos == null) oos = new ObjectOutputStream(socket.getOutputStream());
-		data = new Dane(td, doKogo, userName, userFirstName, userLastName, userEmail, userPassword, friendsNumbers, s); // 0 - wiadomoœc echo
+		
+		if (oos == null)
+			oos = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+		
+		data = new Dane(td, doKogo, userName, userFirstName, userLastName, userEmail, userPassword, znajomi, s); // 0 - wiadomoœc echo
 		oos.writeObject(data);
 		oos.flush();
 		message(s);
@@ -372,34 +384,103 @@ public void wyslij(TypDanych td, String s, int doKogo)
 		zrzutLoga(e);
 	}
 	wpis.setText("");
-	wpis.requestFocus();
+	//wpis.requestFocus();
 }
 
 
 public class WatekKlienta implements Runnable
 {
-	@Override
-	public void run()
-	{		
+	
+@Override
+public void run()
+{
 		try {		
 			
-			if (ois == null) ois = new ObjectInputStream(socket.getInputStream());
-			
+			try {
+			if (ois == null)
+				ois = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
+			 
 			while (true)
 			{
 				data = (Dane) ois.readObject();
-				message(data.getWiadomosc());
+				
+				message(data.getNazwa() +": " +data.getWiadomosc());
+				
+				
 				if (data.getTypDanych() == TypDanych.REGISTER) {
 					message("Nadano nowy numer: "+data.getDoKogo() +" !");
 					number = data.getDoKogo();
 				}
 			}
-			
+			}
+			finally
+			{
+				ois.close();
+				oos.close();
+				socket.close();
+			}
 		}
-		catch (Exception e) {
-				zrzutLoga(e);
-			}		
+		catch (Exception e)
+		{
+			zrzutLoga(e);
+		}		
 	}
+}
+
+public class Czat extends JDialog
+{
+
+private static final long serialVersionUID = 3L;
+private int doUzytkownika;
+private JTextArea historiaCzat;
+private JTextField wpisCzat;
+
+public Czat(int doKogo)
+{
+	super(ramka, znajomi.get(doKogo).getNazwa()+" ("+znajomi.get(doKogo).getNumer() +")", false);
+	doUzytkownika = znajomi.get(doKogo).getNumer();
+	setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+	setSize(500,350);
+	//setResizable(false);
+	setLocationRelativeTo(ramka);
+	setLayout(new BorderLayout());
+	
+	historiaCzat = new JTextArea();
+	historiaCzat.setEditable(false);
+	wpisCzat = new JTextField(35);
+	JButton bW = new JButton("Wyœlij");
+	JPanel panelHistorii = new JPanel(new BorderLayout());
+	JScrollPane sp = new JScrollPane(historiaCzat);
+	panelHistorii.setBorder(new EmptyBorder(5,5,5,5));
+	JPanel panelWpis = new JPanel(new FlowLayout());
+	
+	panelHistorii.add(sp, BorderLayout.CENTER);
+	panelWpis.add(wpisCzat);
+	panelWpis.add(bW);
+	
+	add(panelHistorii, BorderLayout.CENTER);
+	add(panelWpis, BorderLayout.SOUTH);
+	wpisCzat.requestFocus();
+	setVisible(true);
+	
+	bW.addActionListener(new ActionListener()
+	{
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			wyslij(TypDanych.MESSAGE, wpisCzat.getText().toString() , getDoUzytkownika());
+			historiaCzat.append("Do: " +getDoUzytkownika()+" "+wpisCzat.getText().toString()+"\n");
+			wpisCzat.setText("");
+			wpisCzat.requestFocus();
+		}
+	});
+}
+
+public int getDoUzytkownika()
+{
+	return doUzytkownika;
+}
+
 }
 
 @Override
@@ -426,6 +507,6 @@ public void message(String s)
 {
 	currentDate = new Date();
 	sdf = new SimpleDateFormat("HH:mm:ss");
-	info.append(sdf.format(currentDate) +" " +userName +" (" +number +") " +": " +s +"\n");
+	info.append(sdf.format(currentDate) +" (" +number +") " +": " +s +"\n");
 }
 }

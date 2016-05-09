@@ -10,10 +10,10 @@ private static final long serialVersionUID = 1L;
 private int numer;
 private String nazwa, imie, nazwisko, email;
 private char[] haslo;
-private HashMap<Integer, Boolean> znajomi;
+private HashMap<Integer, Znajomy> znajomi;
 
 
-public Uzytkownik(int numer, String nazwa, String imie, String nazwisko, String email, char[] haslo, HashMap<Integer, Boolean> znajomi)
+public Uzytkownik(int numer, String nazwa, String imie, String nazwisko, String email, char[] haslo, HashMap<Integer, Znajomy> hashMap)
 {
 	this.numer = numer;
 	this.nazwa = nazwa;
@@ -21,7 +21,7 @@ public Uzytkownik(int numer, String nazwa, String imie, String nazwisko, String 
 	this.nazwisko = nazwisko;
 	this.email = email;
 	this.haslo = haslo;
-	this.znajomi = znajomi;
+	this.znajomi = hashMap;
 }
 
 
@@ -85,12 +85,12 @@ public void setHaslo(char[] haslo) {
 }
 
 
-public HashMap<Integer, Boolean> getZnajomi() {
+public HashMap<Integer, Znajomy> getZnajomi() {
 	return znajomi;
 }
 
 
-public void setZnajomi(HashMap<Integer, Boolean> znajomi) {
+public void setZnajomi(HashMap<Integer, Znajomy> znajomi) {
 	this.znajomi = znajomi;
 }
 }
