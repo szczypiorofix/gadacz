@@ -1,6 +1,8 @@
 package communicator;
 
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.net.Socket;
 import java.util.HashMap;
 
 public class Uzytkownik implements Serializable{
@@ -23,7 +25,6 @@ public Uzytkownik(int numer, String nazwa, String imie, String nazwisko, String 
 	this.haslo = haslo;
 	this.znajomi = hashMap;
 }
-
 
 public int getNumer() {
 	return numer;

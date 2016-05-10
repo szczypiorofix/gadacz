@@ -54,7 +54,7 @@ private ObjectInputStream ois;
 private ObjectOutputStream oos;
 private JFrame ramka;
 private JTextArea info;
-private JTextField wpis, poleAdresu, polePortu, poleNazwy, poleImienia, poleNazwiska, poleEmail, numerZnajomego, nazwaZnajomego;
+private JTextField wpis, poleAdresu, polePortu, poleNazwy, poleImienia, poleNazwiska, poleEmail, poleNumeru, numerZnajomego, nazwaZnajomego;
 private JPasswordField poleHasla;
 private JPanel panelWpisu, panelCentralny, panelPoludniowy, panelWschodni, panelPolDial, panelTechDial, panelPrzycDial, panelDanychZnajomego;
 private JScrollPane scroll;
@@ -67,7 +67,7 @@ private DefaultListModel<String> modelList;
 private Runnable r;
 private Thread t;
 private String userName = "", userFirstName, userLastName, userEmail;
-private int number = 0;
+private int userNumber = 0;
 private char[] userPassword = null;
 private boolean connected = false, registered = false;
 private HashMap<Integer, Znajomy> znajomi;
@@ -204,6 +204,8 @@ public ClientMain()
 			registered = !registered;
 			poleImienia.setEnabled(registered);
 			poleNazwiska.setEnabled(registered);
+			poleEmail.setEnabled(registered);
+			poleNazwy.setEnabled(registered);
 		}
 	});
 	
@@ -259,11 +261,12 @@ public ClientMain()
 			dialogPolacz.setSize(350, 400);
 			dialogPolacz.setLayout(new BorderLayout());
 						
-			panelPolDial = new JPanel(new GridLayout(7, 2, 5, 5));
+			panelPolDial = new JPanel(new GridLayout(8, 2, 5, 5));
 			panelPolDial.setBorder(new EmptyBorder(10,10,10,10));
 			
 			poleNazwy = new JTextField("Kowal77");
 			poleEmail = new JTextField("kowal77@o2.pl");
+			poleNumeru = new JTextField("0");
 			poleHasla = new JPasswordField("has³o");
 			poleImienia = new JTextField("Jan");
 			poleNazwiska = new JTextField("Kowalski");
@@ -271,6 +274,8 @@ public ClientMain()
 			polePortu = new JTextField(port +"");
 			poleImienia.setEnabled(registered);
 			poleNazwiska.setEnabled(registered);
+			poleEmail.setEnabled(registered);
+			poleNazwy.setEnabled(registered);
 			
 			panelPolDial.add(new JLabel("Nazwa: "));
 			panelPolDial.add(poleNazwy);
@@ -284,10 +289,12 @@ public ClientMain()
 			panelPolDial.add(new JLabel("Email: "));
 			panelPolDial.add(poleEmail);
 			
+			panelPolDial.add(new JLabel("Numer: "));
+			panelPolDial.add(poleNumeru);
+			
 			panelPolDial.add(new JLabel("Has³o: "));
 			panelPolDial.add(poleHasla);
 			panelPolDial.add(logRej);
-			
 			
 			panelTechDial = new JPanel(new GridLayout(2, 2, 5, 5));
 			panelTechDial.setBorder(new EmptyBorder(10,10,10,10));
@@ -318,11 +325,12 @@ public ClientMain()
 		{
 			dialogPolacz.setVisible(false);
 			
-			userName = poleNazwy.getText().toString();
-			userFirstName = poleImienia.getText().toString();
-			userLastName = poleNazwiska.getText().toString();
-			userEmail = poleEmail.getText().toString();
+			if (registered) userName = poleNazwy.getText().toString(); else userName = "";
+			if (registered) userFirstName = poleImienia.getText().toString(); else userFirstName = "";
+			if (registered) userLastName = poleNazwiska.getText().toString(); else userLastName = "";
+			if (registered) userEmail = poleEmail.getText().toString(); else userEmail = "";
 			userPassword = poleHasla.getPassword();
+			userNumber = Integer.valueOf(poleNumeru.getText());
 			
 			try {
 				socket.connect(new InetSocketAddress(host, port), 3000); // 3 sek. timeout
@@ -406,12 +414,11 @@ public void run()
 			{
 				data = (Dane) ois.readObject();
 				
-				message(data.getNazwa() +": " +data.getWiadomosc());
-				
+				if (data.getDoKogo() > 0) message(data.getNazwa() +" do " +data.getDoKogo() +" : " +data.getWiadomosc());
 				
 				if (data.getTypDanych() == TypDanych.REGISTER) {
 					message("Nadano nowy numer: "+data.getKto() +" !");
-					number = data.getDoKogo();
+					userNumber = data.getDoKogo();
 				}
 			}
 			}
@@ -511,6 +518,6 @@ public void message(String s)
 {
 	currentDate = new Date();
 	sdf = new SimpleDateFormat("HH:mm:ss");
-	info.append(sdf.format(currentDate) +" (" +number +") " +": " +s +"\n");
+	info.append(sdf.format(currentDate) +" (" +userNumber +") " +": " +s +"\n");
 }
 }
