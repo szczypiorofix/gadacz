@@ -109,7 +109,7 @@ public ClientMain()
 	
 	ramka = new JFrame("Aplikacja klienta");
 	ramka.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	ramka.setSize(500, 300);
+	ramka.setSize(520, 300);
 	ramka.setLocationRelativeTo(null);
 	ramka.setLayout(new BorderLayout());
 	
@@ -164,6 +164,8 @@ public ClientMain()
 	
 	info = new JTextArea(1,1);
 	info.setEditable(false);
+	info.setLineWrap(true);
+	info.setWrapStyleWord(true);
 	info.setText(historia);
 	
 	scroll = new JScrollPane(info);
@@ -374,7 +376,7 @@ public void wyslij(TypDanych td, String s, int doKogo)
 		if (oos == null)
 			oos = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 		
-		data = new Dane(td, doKogo, userName, userFirstName, userLastName, userEmail, userPassword, znajomi, s); // 0 - wiadomoœc echo
+		data = new Dane(0, td, doKogo, userName, userFirstName, userLastName, userEmail, userPassword, znajomi, s); // 0 - ka¿dy pocz¹tkowo ma numer 0, dopiero serwer zwraca w³aœciwy numer
 		oos.writeObject(data);
 		oos.flush();
 		message(s);
@@ -408,7 +410,7 @@ public void run()
 				
 				
 				if (data.getTypDanych() == TypDanych.REGISTER) {
-					message("Nadano nowy numer: "+data.getDoKogo() +" !");
+					message("Nadano nowy numer: "+data.getKto() +" !");
 					number = data.getDoKogo();
 				}
 			}
@@ -447,6 +449,8 @@ public Czat(int doKogo)
 	
 	historiaCzat = new JTextArea();
 	historiaCzat.setEditable(false);
+	historiaCzat.setLineWrap(true);
+	historiaCzat.setWrapStyleWord(true);
 	wpisCzat = new JTextField(35);
 	JButton bW = new JButton("Wyœlij");
 	JPanel panelHistorii = new JPanel(new BorderLayout());

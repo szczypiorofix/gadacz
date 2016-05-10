@@ -8,7 +8,7 @@ public class Dane implements Serializable{
 	 
 private static final long serialVersionUID = 100L;
 
-
+private int mKto;
 private TypDanych mTypDanych;  // REGISTER, MESSAGE lub UPDATE
 private int mDoKogo;
 private String mNazwa;
@@ -20,8 +20,9 @@ private HashMap<Integer, Znajomy> mZnajomi;
 private String mWiadomosc;
 
 
-public Dane(TypDanych typDanych, int doKogo, String nazwa, String imie, String nazwisko, String email, char[] haslo, HashMap<Integer, Znajomy> znajomi, String wiadomosc)
+public Dane(int kto, TypDanych typDanych, int doKogo, String nazwa, String imie, String nazwisko, String email, char[] haslo, HashMap<Integer, Znajomy> znajomi, String wiadomosc)
 {
+	mKto = kto;
 	mTypDanych = typDanych;
 	mDoKogo = doKogo;
 	mNazwa = nazwa;
@@ -33,6 +34,15 @@ public Dane(TypDanych typDanych, int doKogo, String nazwa, String imie, String n
 	mWiadomosc = wiadomosc;
 }
 
+public int getKto()
+{
+	return mKto;
+}
+
+public void setKto(int kto)
+{
+	mKto = kto;
+}
 
 public TypDanych getTypDanych() {
 	return mTypDanych;
