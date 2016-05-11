@@ -49,9 +49,9 @@ private final static Logger LOGGER = Logger.getLogger(ServerMain.class.getName()
 private FileHandler fileHandler = null;
 private int port = 1201;
 private String host = "127.0.0.1";
-private Socket socket = new Socket();
-private ObjectInputStream ois;
-private ObjectOutputStream oos;
+private Socket socket = null;
+private ObjectInputStream ois = null;
+private ObjectOutputStream oos = null;
 private JFrame ramka;
 private JTextArea info;
 private JTextField wpis, poleAdresu, polePortu, poleNazwy, poleImienia, poleNazwiska, poleEmail, poleNumeru, numerZnajomego, nazwaZnajomego;
@@ -91,6 +91,9 @@ EventQueue.invokeLater(new Runnable()
 
 public ClientMain()
 {
+	r = new WatekKlienta();
+	t = new Thread(r);
+	
 	try {
 		fileHandler = new FileHandler("client.log", false);
 	} catch (SecurityException e1) {
@@ -333,7 +336,8 @@ public ClientMain()
 			userNumber = Integer.valueOf(poleNumeru.getText());
 			
 			try {
-				socket.connect(new InetSocketAddress(host, port), 3000); // 3 sek. timeout
+				socket = new Socket();
+				socket.connect(new InetSocketAddress(host, port), 3000); // 3 sek. timeout	
 			}
 			catch (IOException ioe)
 			{
@@ -346,15 +350,13 @@ public ClientMain()
 				wyslij(TypDanych.REGISTER, "Chcê siê zajestrowaæ!", 0);
 				registered = false;
 			}
-			else wyslij(TypDanych.LOG, "Chcê siê zalogowaæ!", 0);
+			else wyslij(TypDanych.LOG, "Chcê siê zalogowaæ!", userNumber);
 			
 			connected = true;
 			wpis.setEnabled(connected);
 			bWyslij.setEnabled(connected);
 			bPolacz.setEnabled(!connected);
 			
-			r = new WatekKlienta();
-			t = new Thread(r);
 			t.start();	
 		}
 	});
@@ -384,7 +386,7 @@ public void wyslij(TypDanych td, String s, int doKogo)
 		if (oos == null)
 			oos = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 		
-		data = new Dane(0, td, doKogo, userName, userFirstName, userLastName, userEmail, userPassword, znajomi, s); // 0 - ka¿dy pocz¹tkowo ma numer 0, dopiero serwer zwraca w³aœciwy numer
+		data = new Dane(userNumber, td, doKogo, userName, userFirstName, userLastName, userEmail, userPassword, znajomi, s); // 0 - ka¿dy pocz¹tkowo ma numer 0, dopiero serwer zwraca w³aœciwy numer
 		oos.writeObject(data);
 		oos.flush();
 		message(s);
@@ -406,7 +408,7 @@ public void run()
 {
 		try {		
 			
-			try {
+			
 			if (ois == null)
 				ois = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
 			 
@@ -414,20 +416,29 @@ public void run()
 			{
 				data = (Dane) ois.readObject();
 				
-				if (data.getDoKogo() > 0) message(data.getNazwa() +" do " +data.getDoKogo() +" : " +data.getWiadomosc());
+				message(data.getNazwa() +" do " +data.getDoKogo() +" : " +data.getWiadomosc());
 				
 				if (data.getTypDanych() == TypDanych.REGISTER) {
 					message("Nadano nowy numer: "+data.getKto() +" !");
-					userNumber = data.getDoKogo();
+					userNumber = data.getKto();
 				}
+				if (data.getTypDanych() == TypDanych.WRONG) {
+					message("Odrzucono po³¹czenie !");
+					
+					// TODO Reconnect w przypadku wprowadzenia z³ego numeru / has³a u¿ytkownika
+					//socket.close();
+					
+					break;
+				}
+
 			}
-			}
-			finally
-			{
-				ois.close();
-				oos.close();
-				socket.close();
-			}
+			
+			connected = false;
+			wpis.setEnabled(connected);
+			bWyslij.setEnabled(connected);
+			bPolacz.setEnabled(!connected);
+			
+			
 		}
 		catch (Exception e)
 		{

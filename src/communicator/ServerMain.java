@@ -46,6 +46,8 @@ private FileHandler fileHandler = null;
 private int port = 1201;
 private ServerSocket serverSocket;
 private Socket tempSocket;
+private ObjectInputStream tempStreamIn;
+private ObjectOutputStream tempStreamOut;
 private HashMap<Integer, Socket> sockets;
 private HashMap <Integer, ObjectOutputStream> outStreams;
 private HashMap <Integer, ObjectInputStream> inStreams;
@@ -54,7 +56,7 @@ private JTextArea info;
 private JPanel panelCentralny, panelWschodni;
 private JScrollPane scrollCenter, scrollEast;
 private String h = "Serwer 1.0\n";
-private int count = 0;
+private int count = 1;
 private URL whatismyip;
 private BufferedReader buffreader;
 private String externalIP;
@@ -62,6 +64,7 @@ private Dane dane;
 private Thread t;
 private ServerThread serverThread;
 private HashMap<Integer, Uzytkownik> bazaUzytkownikow;
+private HashMap<Integer, Boolean> whoIsOnline;
 private Date currentDate;
 private SimpleDateFormat sdf;
 private FileOutputStream fos;
@@ -192,6 +195,7 @@ public ServerMain()
 	message("Serwer", "Otwieranie gniazdka serwera. Port: " +port);
 	
 	bazaUzytkownikow = new HashMap<Integer, Uzytkownik>();
+	whoIsOnline = new HashMap<Integer, Boolean>();
 	sockets = new HashMap<Integer, Socket>();
 	outStreams = new HashMap<Integer, ObjectOutputStream>();
 	inStreams = new HashMap<Integer, ObjectInputStream>();
@@ -209,11 +213,10 @@ public ServerMain()
 		while (true)
 		{
 			tempSocket = serverSocket.accept();
-			sockets.put(count, tempSocket);
+			tempStreamIn = new ObjectInputStream(tempSocket.getInputStream());
+			tempStreamOut = new ObjectOutputStream(tempSocket.getOutputStream());
 			
-			inStreams.put(count, new ObjectInputStream(sockets.get(count).getInputStream()));
-			
-			dane = (Dane) inStreams.get(count).readObject();
+			dane = (Dane) tempStreamIn.readObject();
 			
 			if (dane.getTypDanych() == TypDanych.REGISTER)
 				{
@@ -222,13 +225,27 @@ public ServerMain()
 					
 					message("Serwer", " Zarejestrowano u¿ytkownika: " +dane.getKto() +", " +dane.getNazwa() +" " +dane.getImie()
 					 +" " +dane.getNazwisko() +" " +dane.getEmail() +" " +new String(dane.getHaslo()));
-
-					outStreams.put(count, new ObjectOutputStream(tempSocket.getOutputStream()));
+					
+					
+					// DODAWANIE DO BAZY TYLKO ZAREJESTROWANYCH U¯YTKOWNIKÓW
+					sockets.put(count, tempSocket);
+					outStreams.put(count, tempStreamOut);
+					inStreams.put(count, tempStreamIn);
+					
 					dane.setWiadomosc("Rejestracja pomyœlna!");
 					dane.setKto(count);
 					outStreams.get(count).writeObject(dane);
 					outStreams.get(count).flush();
 					logOK = true;
+					
+					usersString = "Users:";
+					for (int i = 1; i < bazaUzytkownikow.size()+1; i++)
+					{
+						usersString = usersString + "\n" +bazaUzytkownikow.get(i).getNumer()+"."+bazaUzytkownikow.get(i).getNazwa();
+					}
+					users.setText(usersString);
+					count++;
+					
 					// ITERATING ...
 					//Iterator<Integer> keys = bazaUzytkownikow.keySet().iterator();
 					//while (keys.hasNext())
@@ -241,21 +258,34 @@ public ServerMain()
 			if (dane.getTypDanych() == TypDanych.LOG)
 			{
 				if (bazaUzytkownikow.containsKey(dane.getKto())) {
-					message("Szukanie u¿ytkownika numer " +dane.getKto(), " ... udane!");
+					message("U¿ytkownik o numerze " +dane.getKto(), " zalogowa³ siê.");
+					dane.setWiadomosc("Logowanie pomyœlne!");
+					outStreams.put(dane.getKto(), tempStreamOut);
+					inStreams.put(dane.getKto(), tempStreamIn);
+					
+					outStreams.get(dane.getKto()).writeObject(dane);
+					outStreams.get(dane.getKto()).flush();
 					logOK = true;
 				}
 				else {
 					message("Nie znaleziono u¿ytkownika nr. ", dane.getKto()+"");
+					dane.setWiadomosc("Niepoprawne dane logowania!");
+					dane.setTypDanych(TypDanych.WRONG);
+					tempStreamOut.writeObject(dane);
+					tempStreamOut.flush();
 					logOK = false;
 				}
 			}
-			if (logOK) {
-			message("Serwer", "Po³¹czenie z klientem: " +bazaUzytkownikow.get(count).getNumer() +" " +sockets.get(count).getInetAddress());
-			serverThread = new ServerThread(sockets, inStreams, outStreams, count);
-			t = new Thread(serverThread);
-			t.start();
-			count++;
-			logOK = false;
+			if (logOK)
+			{
+				//message("Serwer", "Po³¹czenie z klientem: " 
+				//		+bazaUzytkownikow.get(count).getNumer() 
+				//		+" " +sockets.get(count).getInetAddress());
+				
+				serverThread = new ServerThread(sockets, inStreams, outStreams, dane.getKto());
+				t = new Thread(serverThread);
+				t.start();
+				logOK = false;
 			}
 		}
 		}
@@ -271,7 +301,6 @@ public class ServerThread implements Runnable
 private HashMap<Integer, Socket> threadSockets;
 private HashMap<Integer, ObjectOutputStream> streamsOut;
 private HashMap<Integer, ObjectInputStream> streamsIn;
-
 private int numer = 0;
 
 
@@ -297,64 +326,27 @@ public void run()
 			{
 			case MESSAGE: {
 				
-				message(dane.getNazwa()+" pisze: ", dane.getWiadomosc() + " do: " +dane.getDoKogo());
-				streamsOut.get(dane.getDoKogo()).writeObject(dane);
-				streamsOut.get(dane.getDoKogo()).flush();
+				message(dane.getKto() + " " +dane.getNazwa()+" pisze: ", dane.getWiadomosc() + " do: " +dane.getDoKogo());
+				
+				if (dane.getDoKogo() == 0)
+				{
+					dane.setWiadomosc("ECHO SERWER: kto " +dane.getKto() +" do kogo " +dane.getDoKogo() +" " +dane.getWiadomosc());
+					streamsOut.get(dane.getKto()).writeObject(dane);
+					streamsOut.get(dane.getKto()).flush();
+				}
+				else {
+					streamsOut.get(dane.getDoKogo()).writeObject(dane);
+					streamsOut.get(dane.getDoKogo()).flush();
+				}
 				break;
 			}
 			case REGISTER: {
-				//message("Zarejestrowano nowego u¿ytkownika: ",dane.getKto() +" " +dane.getNazwa() +" " +dane.getImie() +" " +dane.getNazwisko() +" " +dane.getEmail() +" " +(new String(dane.getHaslo())) +" '" +dane.getWiadomosc() +"'");
-				
-				//bazaUzytkownikow.add(new Uzytkownik(bazaUzytkownikow.size(), dane.getNazwa(), dane.getImie(), dane.getNazwisko(), dane.getEmail(), dane.getHaslo(), dane.getZnajomi()));
-				//liczbaUzytkownikow=bazaUzytkownikow.size()-1;
-				
-				//usersString = "Users:";
-				//for (int i = 0; i < bazaUzytkownikow.size(); i++)
-				//	{
-				//		usersString = usersString + "\n" +bazaUzytkownikow.get(i).getNumer()+"."+bazaUzytkownikow.get(i).getNazwa();
-				//	}
-				//users.setText(usersString);
-				//dane.setKto(bazaUzytkownikow.get(liczbaUzytkownikow).getNumer()); // NADAWANIE NASTÊPNEGO NUMERU
-				//dane.setDoKogo(bazaUzytkownikow.get(liczbaUzytkownikow).getNumer()); // WYSY£ANIE WIADOMOŒCI ZWROTNEJ DO TEGO SAMEGO U¯YTKOWNIKA
-				//dane.setWiadomosc("Serwer: Zarejestrowano pomyœlnie!");
-
-				//streamsOut.get(dane.getDoKogo()).writeObject(dane);
-				//streamsOut.get(dane.getDoKogo()).flush();
 				break;
 			}
-			case LOG: {
-				
-					//if ((dane.getEmail().equals(bazaUzytkownikow.get(dane.getKto()).getEmail())) && (new String(dane.getHaslo()).equals(new String(bazaUzytkownikow.get(dane.getKto()).getHaslo()))))
-					//{
-					//	message(dane.getNazwa(), " Udane zalogowanie! " +dane.getWiadomosc());
-					//	dane.setWiadomosc("Zalogowano pomyœlnie!");
-					//	streamsOut.get(numer).writeObject(dane);
-					//	streamsOut.get(numer).flush();
-					//}
-					//else {
-					//	message(dane.getNazwa(), " Logowanie nieudane!");
-					//	dane.setWiadomosc("B³êdny adres email lub has³o!");
-					//	streamsOut.get(numer).writeObject(dane);
-					//	streamsOut.get(numer).flush();
-						
-						//???
-					//	streamsOut.get(numer).close();
-					//	socketsThread.get(numer).close();
-						//streamsOut.remove(numer);
-						//socketsThread.remove(numer);
-						
-						
-						//users.setText(usersString);
-						//dane.setDoKogo(bazaUzytkownikow.get(bazaUzytkownikow.size()-1).getNumer());
-					//}
-				
-				
+			case LOG: {				
 				break;
 			}
-			case UPDATE: {
-				break;
-			}
-			case PING: {
+			case WRONG: {				
 				break;
 			}
 			}

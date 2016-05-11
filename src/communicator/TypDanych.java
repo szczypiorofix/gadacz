@@ -2,6 +2,6 @@ package communicator;
 
 public enum TypDanych {
 
-	REGISTER, MESSAGE, UPDATE, PING, LOG
+	REGISTER, MESSAGE, LOG, WRONG
 	
 }
