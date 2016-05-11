@@ -1,32 +1,24 @@
 package communicator;
 
 import java.awt.BorderLayout;
+import java.awt.EventQueue;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -67,27 +59,21 @@ private HashMap<Integer, Uzytkownik> bazaUzytkownikow;
 private HashMap<Integer, Boolean> whoIsOnline;
 private Date currentDate;
 private SimpleDateFormat sdf;
-private FileOutputStream fos;
-private ObjectOutputStream oos;
-private ObjectInputStream ois;
-private BufferedOutputStream bos;
-private FileInputStream fis;
-private BufferedInputStream bis;
 private JTextArea users;
 private JSplitPane split1;
 private String usersString;
-private final File file = new File("dane.txt");
 private boolean logOK = false;
 
 
 
 public static void main(String[] args)
 {
-	new ServerMain();
+	new ServerMain();			
 }
 
 public ServerMain()
 {
+	// LOGGER
 	try {
 		fileHandler = new FileHandler("server.log", false);
 	} catch (SecurityException e1) {
@@ -102,61 +88,6 @@ public ServerMain()
 	fileHandler.setLevel(Level.WARNING);
 	LOGGER.addHandler(fileHandler);
 	
-	/**
-	if ((file.exists()) && (!file.isDirectory()))
-	{
-	try {
-			fis = new FileInputStream(file);
-			bis = new BufferedInputStream(fis);
-			ois = new ObjectInputStream(bis);
-			
-			bazaUzytkownikow = (ArrayList<Uzytkownik>) ois.readObject(); 
-			
-			/**
-			Object odczyt = ois.readObject();
-			if (odczyt instanceof ArrayList<?>)
-			{
-				ArrayList<?> a1 = (ArrayList<?>) odczyt;
-				if (a1.size() > 0)
-				{
-					for (int i = 0; i < a1.size(); i++)
-					{
-						Object o = a1.get(i);
-						if (o instanceof Uzytkownik)
-						{
-							bazaUzytkownikow.add((Uzytkownik) o);
-						}
-					}
-				}
-			}
-			
-			
-			usersString = "Users:";
-			for (int i = 0; i < bazaUzytkownikow.size(); i++)
-			{
-				usersString = usersString + "\n" +bazaUzytkownikow.get(i).getNumer()+"."+bazaUzytkownikow.get(i).getNazwa();
-			}
-			
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		
-		try {
-			ois.close();
-			bis.close();
-			fis.close();
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
-	else {
-		usersString = "Users:";
-	}
-	**/
 	usersString = "Users:";
 	
 	ramka = new JFrame("Serwer komunikatora");
@@ -185,26 +116,24 @@ public ServerMain()
 	split1.setDividerLocation(450);
 	split1.setDividerSize(4);
 	ramka.add(split1, BorderLayout.CENTER);
-	
 	ramka.setVisible(true);
 	
-	
 	// START SERWERA
-	
 	message("Serwer", "Start serwera.");
 	message("Serwer", "Otwieranie gniazdka serwera. Port: " +port);
-	
+			
 	bazaUzytkownikow = new HashMap<Integer, Uzytkownik>();
 	whoIsOnline = new HashMap<Integer, Boolean>();
 	sockets = new HashMap<Integer, Socket>();
 	outStreams = new HashMap<Integer, ObjectOutputStream>();
 	inStreams = new HashMap<Integer, ObjectInputStream>();
-	
+			
 	try {
 		
 		serverSocket = new ServerSocket(port);
 		message("Serwer", "Lokalny adres serwera: " +InetAddress.getLocalHost().toString());
 		
+		// POBIERANIE ZEWNÊTRZNEGO ADRESU IP SERWERA
 		whatismyip = new URL("http://checkip.amazonaws.com");
 		buffreader = new BufferedReader(new InputStreamReader(whatismyip.openStream()));
 		externalIP = buffreader.readLine();
@@ -213,8 +142,8 @@ public ServerMain()
 		while (true)
 		{
 			tempSocket = serverSocket.accept();
-			tempStreamIn = new ObjectInputStream(tempSocket.getInputStream());
-			tempStreamOut = new ObjectOutputStream(tempSocket.getOutputStream());
+			tempStreamIn = new ObjectInputStream(new BufferedInputStream(tempSocket.getInputStream()));
+			tempStreamOut = new ObjectOutputStream(new BufferedOutputStream(tempSocket.getOutputStream()));
 			
 			dane = (Dane) tempStreamIn.readObject();
 			
@@ -223,6 +152,7 @@ public ServerMain()
 					bazaUzytkownikow.put(count, new Uzytkownik(count, dane.getNazwa(), dane.getImie(), dane.getNazwisko()
 							, dane.getEmail(), dane.getHaslo(), dane.getZnajomi()));
 					
+					whoIsOnline.put(count, true);
 					message("Serwer", " Zarejestrowano u¿ytkownika: " +dane.getKto() +", " +dane.getNazwa() +" " +dane.getImie()
 					 +" " +dane.getNazwisko() +" " +dane.getEmail() +" " +new String(dane.getHaslo()));
 					
@@ -257,7 +187,8 @@ public ServerMain()
 				}
 			if (dane.getTypDanych() == TypDanych.LOG)
 			{
-				if (bazaUzytkownikow.containsKey(dane.getKto())) {
+				if ((bazaUzytkownikow.containsKey(dane.getKto())) && (new String(dane.getHaslo()).equals(new String(bazaUzytkownikow.get(dane.getKto()).getHaslo()))))
+				{
 					message("U¿ytkownik o numerze " +dane.getKto(), " zalogowa³ siê.");
 					dane.setWiadomosc("Logowanie pomyœlne!");
 					outStreams.put(dane.getKto(), tempStreamOut);
@@ -268,7 +199,7 @@ public ServerMain()
 					logOK = true;
 				}
 				else {
-					message("Nie znaleziono u¿ytkownika nr. ", dane.getKto()+"");
+					message(dane.getKto() +"", "B³êdne dane logowania!");
 					dane.setWiadomosc("Niepoprawne dane logowania!");
 					dane.setTypDanych(TypDanych.WRONG);
 					tempStreamOut.writeObject(dane);
@@ -277,11 +208,7 @@ public ServerMain()
 				}
 			}
 			if (logOK)
-			{
-				//message("Serwer", "Po³¹czenie z klientem: " 
-				//		+bazaUzytkownikow.get(count).getNumer() 
-				//		+" " +sockets.get(count).getInetAddress());
-				
+			{				
 				serverThread = new ServerThread(sockets, inStreams, outStreams, dane.getKto());
 				t = new Thread(serverThread);
 				t.start();
@@ -294,6 +221,7 @@ public ServerMain()
 			zrzutLoga(e);
 		}
 }
+
 
 public class ServerThread implements Runnable
 {
@@ -335,8 +263,16 @@ public void run()
 					streamsOut.get(dane.getKto()).flush();
 				}
 				else {
-					streamsOut.get(dane.getDoKogo()).writeObject(dane);
-					streamsOut.get(dane.getDoKogo()).flush();
+					if (dane.getDoKogo() <= bazaUzytkownikow.size())
+					{
+						streamsOut.get(dane.getDoKogo()).writeObject(dane);
+						streamsOut.get(dane.getDoKogo()).flush();
+					}
+					else {
+						dane.setWiadomosc("Brak u¿ytkowika o numerze "+dane.getDoKogo());
+						streamsOut.get(dane.getKto()).writeObject(dane);
+						streamsOut.get(dane.getKto()).flush();
+					}
 				}
 				break;
 			}
@@ -392,27 +328,7 @@ public void windowClosed(WindowEvent arg0) {}
 
 @Override
 public void windowClosing(WindowEvent arg0) {
-	try {
-	fos = new FileOutputStream("dane.txt");
-	bos = new BufferedOutputStream(fos);
-	oos = new ObjectOutputStream(bos);
-	oos.writeObject(bazaUzytkownikow);
-	oos.flush();
-	}
-	catch (Exception e)
-	{
-		e.printStackTrace();
-	}
-	
-	try {
-	oos.close();
-	bos.close();
-	fos.close();
-	}
-	catch (Exception e)
-	{
-		e.printStackTrace();
-	}
+	// ZAMYKANIE GNIAZDEK I ZAPIS DO PLIKU
 }
 
 @Override

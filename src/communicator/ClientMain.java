@@ -7,6 +7,8 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
+import java.util.prefs.Preferences;
+
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -32,8 +34,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -42,7 +47,7 @@ import java.net.Socket;
 import java.text.SimpleDateFormat;
 
 
-public class ClientMain implements KeyListener
+public class ClientMain implements KeyListener, WindowListener
 {
 
 private final static Logger LOGGER = Logger.getLogger(ServerMain.class.getName());
@@ -69,8 +74,9 @@ private Thread t;
 private String userName = "", userFirstName, userLastName, userEmail;
 private int userNumber = 0;
 private char[] userPassword = null;
-private boolean connected = false, registered = false;
+private boolean connected = false, registered = false, doOnce = false;
 private HashMap<Integer, Znajomy> znajomi;
+private HashMap<Integer, Czat> dialogCzat;
 private Znajomy znajomy;
 private Dane data;
 private Date currentDate;
@@ -78,22 +84,20 @@ private SimpleDateFormat sdf;
 
 
 
-public static void main(String[] args) {
+public static void main(String[] args)
+{
+
 EventQueue.invokeLater(new Runnable()
+{
+	public void run()
 	{
-		@Override
-		public void run()
-		{
-			new ClientMain();
-		}
-	});
+		new ClientMain();
+	}
+});
 }
 
 public ClientMain()
-{
-	r = new WatekKlienta();
-	t = new Thread(r);
-	
+{	
 	try {
 		fileHandler = new FileHandler("client.log", false);
 	} catch (SecurityException e1) {
@@ -131,35 +135,35 @@ public ClientMain()
 	poleListyUserow = new JList<String>(modelList);
 	
 	poleListyUserow.addMouseListener(new MouseListener()
+		{
+			@Override
+			public void mouseClicked(MouseEvent m)
 			{
-				@Override
-				public void mouseClicked(MouseEvent m)
+				JList<String> list = (JList)m.getSource();
+				if (m.getClickCount()==2)
 				{
-					JList<String> list = (JList)m.getSource();
-					if (m.getClickCount()==2)
-					{
-						int indeks = list.locationToIndex(m.getPoint());
-						wpis.setText("/"+znajomi.get(indeks).getNumer());
-						new Czat(indeks);
-					}
+					int indeks = list.locationToIndex(m.getPoint());
+					dialogCzat.get(indeks).setVisible(true);
+					dialogCzat.get(indeks).ustawTytul(znajomi.get(indeks).getNazwa() +" ("+znajomi.get(indeks).getNumer() +")");
 				}
+			}
 
-				@Override
-				public void mouseEntered(MouseEvent e) {
-				}
+			@Override
+			public void mouseEntered(MouseEvent e) {
+			}
 
-				@Override
-				public void mouseExited(MouseEvent e) {
-				}
+			@Override
+			public void mouseExited(MouseEvent e) {
+			}
 
-				@Override
-				public void mousePressed(MouseEvent e) {
-				}
+			@Override
+			public void mousePressed(MouseEvent e) {
+			}
 
-				@Override
-				public void mouseReleased(MouseEvent e) {
-				}
-			});
+			@Override
+			public void mouseReleased(MouseEvent e) {
+			}
+		});
 
 	
 	panelWschodni.add(poleListyUserow, BorderLayout.CENTER);
@@ -196,8 +200,11 @@ public ClientMain()
 	ramka.add(panelWschodni, BorderLayout.EAST);
 	
 	ramka.setResizable(true);
+	ramka.addWindowListener(this);
 	ramka.setVisible(true);
 
+	dialogCzat = new HashMap<Integer, Czat>();
+	
 	logRej = new JCheckBox("Rejestracja?", registered);
 	logRej.addItemListener(new ItemListener()
 	{
@@ -209,6 +216,7 @@ public ClientMain()
 			poleNazwiska.setEnabled(registered);
 			poleEmail.setEnabled(registered);
 			poleNazwy.setEnabled(registered);
+			poleNumeru.setEnabled(!registered);
 		}
 	});
 	
@@ -242,9 +250,13 @@ public ClientMain()
 				{
 					if ((nazwaZnajomego.getText().length() > 0) && (numerZnajomego.getText().length() > 0)) {
 						znajomy = new Znajomy(Integer.valueOf(numerZnajomego.getText().toString()), nazwaZnajomego.getText().toString(), false);
+						
+						dialogCzat.put(znajomi.size(), new Czat(Integer.valueOf(numerZnajomego.getText().toString())));
 						znajomi.put(znajomi.size(), znajomy);
+						
 						modelList.addElement(nazwaZnajomego.getText()+"("+znajomy.getNumer()+")");
 					}
+					
 					dialogDodajZnajomego.setVisible(false);
 					poleListyUserow.revalidate();
 					poleListyUserow.repaint();
@@ -337,14 +349,14 @@ public ClientMain()
 			
 			try {
 				socket = new Socket();
-				socket.connect(new InetSocketAddress(host, port), 3000); // 3 sek. timeout	
+				socket.connect(new InetSocketAddress(host, port), 3000); // 3 sek. timeout
 			}
 			catch (IOException ioe)
 			{
 				zrzutLoga(ioe);
 			}
 			ramka.setTitle("Aplikacja klienta: " +userName);
-			message("Po³¹czono z serwerem!" +host +" : " +port);
+			message(info, "Po³¹czono z serwerem!" +host +" : " +port);
 			
 			if (registered) {
 				wyslij(TypDanych.REGISTER, "Chcê siê zajestrowaæ!", 0);
@@ -356,8 +368,14 @@ public ClientMain()
 			wpis.setEnabled(connected);
 			bWyslij.setEnabled(connected);
 			bPolacz.setEnabled(!connected);
-			
-			t.start();	
+
+			if (!doOnce)
+			{
+				doOnce = true;
+				r = new WatekKlienta();
+				t = new Thread(r);
+				t.start();
+			}
 		}
 	});
 	
@@ -389,7 +407,7 @@ public void wyslij(TypDanych td, String s, int doKogo)
 		data = new Dane(userNumber, td, doKogo, userName, userFirstName, userLastName, userEmail, userPassword, znajomi, s); // 0 - ka¿dy pocz¹tkowo ma numer 0, dopiero serwer zwraca w³aœciwy numer
 		oos.writeObject(data);
 		oos.flush();
-		message(s);
+		message(info, s);
 	}
 	catch (Exception e)
 	{
@@ -399,52 +417,40 @@ public void wyslij(TypDanych td, String s, int doKogo)
 	//wpis.requestFocus();
 }
 
-
 public class WatekKlienta implements Runnable
 {
 	
 @Override
 public void run()
 {
-		try {		
-			
-			
-			if (ois == null)
-				ois = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
+	try {		
+		if (ois == null)
+			ois = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
 			 
-			while (true)
-			{
-				data = (Dane) ois.readObject();
-				
-				message(data.getNazwa() +" do " +data.getDoKogo() +" : " +data.getWiadomosc());
-				
-				if (data.getTypDanych() == TypDanych.REGISTER) {
-					message("Nadano nowy numer: "+data.getKto() +" !");
-					userNumber = data.getKto();
-				}
-				if (data.getTypDanych() == TypDanych.WRONG) {
-					message("Odrzucono po³¹czenie !");
-					
-					// TODO Reconnect w przypadku wprowadzenia z³ego numeru / has³a u¿ytkownika
-					//socket.close();
-					
-					break;
-				}
-
-			}
-			
-			connected = false;
-			wpis.setEnabled(connected);
-			bWyslij.setEnabled(connected);
-			bPolacz.setEnabled(!connected);
-			
-			
-		}
-		catch (Exception e)
+		while (true)
 		{
-			zrzutLoga(e);
+			data = (Dane) ois.readObject();
+
+			message(info, data.getNazwa() +" do " +data.getDoKogo() +" : " +data.getWiadomosc());
+				
+			if (data.getTypDanych() == TypDanych.REGISTER) {
+				message(info, "Nadano nowy numer: "+data.getKto() +" !");
+				userNumber = data.getKto();
+			}
+			if (data.getTypDanych() == TypDanych.WRONG) {
+				message(info, "Odrzucono po³¹czenie !");
+				data.setTypDanych(TypDanych.MESSAGE);
+					
+				// TODO Reconnect w przypadku wprowadzenia z³ego numeru / has³a u¿ytkownika
+				//socket.close();	
+			}
 		}		
 	}
+	catch (Exception e)
+	{
+		zrzutLoga(e);
+	}		
+}
 }
 
 public class Czat extends JDialog
@@ -455,10 +461,14 @@ private int doUzytkownika;
 private JTextArea historiaCzat;
 private JTextField wpisCzat;
 
+public void ustawTytul(String s)
+{
+	setTitle(s);
+}
+
 public Czat(int doKogo)
 {
-	super(ramka, znajomi.get(doKogo).getNazwa()+" ("+znajomi.get(doKogo).getNumer() +")", false);
-	doUzytkownika = znajomi.get(doKogo).getNumer();
+	super();
 	setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 	setSize(500,350);
 	//setResizable(false);
@@ -483,7 +493,7 @@ public Czat(int doKogo)
 	add(panelHistorii, BorderLayout.CENTER);
 	add(panelWpis, BorderLayout.SOUTH);
 	wpisCzat.requestFocus();
-	setVisible(true);
+	//setVisible(true);
 	
 	bW.addActionListener(new ActionListener()
 	{
@@ -491,7 +501,8 @@ public Czat(int doKogo)
 		public void actionPerformed(ActionEvent e)
 		{
 			wyslij(TypDanych.MESSAGE, wpisCzat.getText().toString() , getDoUzytkownika());
-			historiaCzat.append("Do: " +getDoUzytkownika()+" "+wpisCzat.getText().toString()+"\n");
+			message(historiaCzat, "Do: " +getDoUzytkownika()+" "+wpisCzat.getText().toString()+"\n");
+			//historiaCzat.append("Do: " +getDoUzytkownika()+" "+wpisCzat.getText().toString()+"\n");
 			wpisCzat.setText("");
 			wpisCzat.requestFocus();
 		}
@@ -525,10 +536,59 @@ public void zrzutLoga(Exception e)
 	//System.exit(-1);
 }
 
-public void message(String s)
+public void message(JTextArea a, String s)
 {
 	currentDate = new Date();
 	sdf = new SimpleDateFormat("HH:mm:ss");
-	info.append(sdf.format(currentDate) +" (" +userNumber +") " +": " +s +"\n");
+	a.append(sdf.format(currentDate) +" (" +userNumber +") " +": " +s +"\n");
 }
+
+
+/// WINDOWLISTENER INFEFACE METHODS
+@Override
+public void windowActivated(WindowEvent arg0) {}
+
+@Override
+public void windowClosed(WindowEvent arg0) {}
+
+@Override
+public void windowClosing(WindowEvent arg0) {
+	
+	if (znajomi.size() > 0)
+	{
+		Preferences prefsRoot = Preferences.userRoot();
+	    Preferences myPrefs = prefsRoot.node("ClientMain");
+	    Preferences myPrefs1 = myPrefs.node("ListaZnajomych");
+	    
+	    for (int i=0; i < znajomi.size(); i++)
+	    {
+	    	myPrefs1.put(znajomi.get(i).getNumer()+"", znajomi.get(i).getNazwa());	
+	    }
+	   
+	    try {
+	    FileOutputStream fos = new FileOutputStream("prefs.xml");
+
+	    myPrefs1.exportSubtree(fos);
+	    fos.close();
+	    
+	    }
+	    catch (Exception e)
+	    {
+	    	e.printStackTrace();
+	    	System.exit(-1);
+	    }
+	}
+}
+
+@Override
+public void windowDeactivated(WindowEvent arg0) {}
+
+@Override
+public void windowDeiconified(WindowEvent arg0) {}
+
+@Override
+public void windowIconified(WindowEvent arg0) {}
+
+@Override
+public void windowOpened(WindowEvent arg0) {}
 }
