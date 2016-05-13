@@ -2,13 +2,17 @@ package communicator;
 
 
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Properties;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
-import java.util.prefs.Preferences;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -16,6 +20,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
@@ -38,12 +43,16 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 
 
@@ -81,6 +90,12 @@ private Znajomy znajomy;
 private Dane data;
 private Date currentDate;
 private SimpleDateFormat sdf;
+private AudioInputStream audioInputStream;
+private Clip clip;
+private final URL audioFile = getClass().getResource("/res/bing.wav");
+private Properties prop;
+private FileOutputStream propFileOut;
+private FileInputStream propFileIn;
 
 
 
@@ -97,7 +112,9 @@ EventQueue.invokeLater(new Runnable()
 }
 
 public ClientMain()
-{	
+{
+
+	// PRZYGOTOWANIE LOGGERA
 	try {
 		fileHandler = new FileHandler("client.log", false);
 	} catch (SecurityException e1) {
@@ -140,9 +157,10 @@ public ClientMain()
 			public void mouseClicked(MouseEvent m)
 			{
 				JList<String> list = (JList)m.getSource();
-				if (m.getClickCount()==2)
+				if (m.getClickCount() == 2)
 				{
 					int indeks = list.locationToIndex(m.getPoint());
+					System.out.println("Indeks: "+indeks);
 					dialogCzat.get(indeks).setVisible(true);
 					dialogCzat.get(indeks).ustawTytul(znajomi.get(indeks).getNazwa() +" ("+znajomi.get(indeks).getNumer() +")");
 				}
@@ -350,6 +368,7 @@ public ClientMain()
 			try {
 				socket = new Socket();
 				socket.connect(new InetSocketAddress(host, port), 3000); // 3 sek. timeout
+				// TODO Obs³uga wyj¹tko - co jeœli nie mo¿na po³¹czyæ siê z serwerem ?
 			}
 			catch (IOException ioe)
 			{
@@ -432,7 +451,15 @@ public void run()
 			data = (Dane) ois.readObject();
 
 			message(info, data.getNazwa() +" do " +data.getDoKogo() +" : " +data.getWiadomosc());
+			
+			bing();
+			
+			if (data.getTypDanych() == TypDanych.LOG) {
+				message(info, "Udane logowanie!");
+				friendsLoad();
 				
+			}
+			
 			if (data.getTypDanych() == TypDanych.REGISTER) {
 				message(info, "Nadano nowy numer: "+data.getKto() +" !");
 				userNumber = data.getKto();
@@ -451,6 +478,46 @@ public void run()
 		zrzutLoga(e);
 	}		
 }
+
+public void friendsLoad()
+{
+	try {
+	prop = new Properties();
+	propFileIn = new FileInputStream("friends"+userNumber+".txt");
+	prop.load(propFileIn);
+	
+    Enumeration<?> e = prop.propertyNames();
+
+    while (e.hasMoreElements()) {
+      String key = (String) e.nextElement();
+      znajomy = new Znajomy(Integer.valueOf(key), prop.getProperty(key), false);
+      znajomi.put(znajomi.size(), znajomy);
+      modelList.addElement(prop.getProperty(key)+"("+znajomy.getNumer()+")");
+      dialogCzat.put(znajomi.size(), new Czat(Integer.valueOf(key)));
+    }
+	
+	poleListyUserow.revalidate();
+	poleListyUserow.repaint();
+    
+	}
+	catch (IOException ioe)
+	{
+		ioe.printStackTrace();
+		System.exit(-1);
+	}
+	finally
+	{
+		try {
+		propFileIn.close();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			System.exit(-1);
+		}
+	}
+}
+
 }
 
 public class Czat extends JDialog
@@ -532,6 +599,7 @@ public void keyTyped(KeyEvent arg0) {}
 
 public void zrzutLoga(Exception e)
 {
+	LOGGER.log(Level.WARNING, "User number:" +userNumber);
 	LOGGER.log(Level.WARNING, e.getMessage(), e);
 	//System.exit(-1);
 }
@@ -543,6 +611,19 @@ public void message(JTextArea a, String s)
 	a.append(sdf.format(currentDate) +" (" +userNumber +") " +": " +s +"\n");
 }
 
+public void bing()
+{
+	 try {
+		 	audioInputStream = AudioSystem.getAudioInputStream((audioFile));
+	        clip = AudioSystem.getClip();
+	        clip.open(audioInputStream);
+	        clip.start();
+	    } catch(Exception ex) {
+	        JOptionPane.showMessageDialog(ramka, "B³¹d odtwarzania pliku dŸwiêkowego!");
+	        ex.printStackTrace();
+	        System.exit(-1);
+	    }
+}
 
 /// WINDOWLISTENER INFEFACE METHODS
 @Override
@@ -554,29 +635,34 @@ public void windowClosed(WindowEvent arg0) {}
 @Override
 public void windowClosing(WindowEvent arg0) {
 	
+	try {
+	prop = new Properties();
+	propFileOut = new FileOutputStream("friends"+userNumber+".txt");
+		
 	if (znajomi.size() > 0)
 	{
-		Preferences prefsRoot = Preferences.userRoot();
-	    Preferences myPrefs = prefsRoot.node("ClientMain");
-	    Preferences myPrefs1 = myPrefs.node("ListaZnajomych");
-	    
-	    for (int i=0; i < znajomi.size(); i++)
-	    {
-	    	myPrefs1.put(znajomi.get(i).getNumer()+"", znajomi.get(i).getNazwa());	
-	    }
-	   
-	    try {
-	    FileOutputStream fos = new FileOutputStream("prefs.xml");
-
-	    myPrefs1.exportSubtree(fos);
-	    fos.close();
-	    
-	    }
-	    catch (Exception e)
-	    {
-	    	e.printStackTrace();
-	    	System.exit(-1);
-	    }
+		for (int i = 0; i < znajomi.size(); i++) prop.setProperty(znajomi.get(i).getNumer()+"", znajomi.get(i).getNazwa());
+	}
+	
+	prop.store(propFileOut, "Lista znajomych klienta o numerze: "+userNumber);
+	
+	}
+	catch (IOException e)
+	{
+		e.printStackTrace();
+		System.exit(-1);
+	}
+	finally
+	{
+		if (propFileOut != null)
+		{
+			try {
+				propFileOut.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.exit(-1);
+			}
+		}
 	}
 }
 
