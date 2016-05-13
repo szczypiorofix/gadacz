@@ -123,7 +123,7 @@ public ClientMain()
 	}
 	
 	fileHandler.setFormatter(new SimpleFormatter());
-	fileHandler.setLevel(Level.WARNING);
+	fileHandler.setLevel(Level.ALL);
 	LOGGER.addHandler(fileHandler);
 	
 	znajomi = new HashMap<Integer, Znajomy>();
@@ -453,8 +453,10 @@ public void run()
 			
 			if (data.getTypDanych() == TypDanych.LOG) {
 				message(info, "Udane logowanie!");
-				friendsLoad();
-				
+				userNumber = data.getKto();
+				userName = data.getNazwa();
+				ramka.setTitle("Aplikacja klienta: " +userName);
+				friendsLoad();				
 			}
 			
 			if (data.getTypDanych() == TypDanych.REGISTER) {
@@ -596,7 +598,7 @@ public void keyTyped(KeyEvent arg0) {}
 
 public void zrzutLoga(Exception e)
 {
-	LOGGER.log(Level.WARNING, "User number:" +userNumber);
+	LOGGER.log(Level.INFO, "User number:" +userNumber);
 	LOGGER.log(Level.WARNING, e.getMessage(), e);
 	//System.exit(-1);
 }
