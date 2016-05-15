@@ -157,7 +157,6 @@ public ClientMain()
 				if (m.getClickCount() == 2)
 				{
 					int indeks = list.locationToIndex(m.getPoint());
-					System.out.println("Indeks: "+indeks);
 					dialogCzat.get(indeks).setVisible(true);
 					dialogCzat.get(indeks).ustawTytul(znajomi.get(indeks).getNazwa() +" ("+znajomi.get(indeks).getNumer() +")");
 				}
@@ -259,25 +258,24 @@ public ClientMain()
 	});
 	
 	bDodaj.addActionListener(new ActionListener()
-			{
-				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					if ((nazwaZnajomego.getText().length() > 0) && (numerZnajomego.getText().length() > 0)) {
-						znajomy = new Znajomy(Integer.valueOf(numerZnajomego.getText().toString()), nazwaZnajomego.getText().toString(), false);
+	{
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			if ((nazwaZnajomego.getText().length() > 0) && (numerZnajomego.getText().length() > 0)) {
+				znajomy = new Znajomy(Integer.valueOf(numerZnajomego.getText().toString()), nazwaZnajomego.getText().toString(), false);
 						
-						dialogCzat.put(znajomi.size(), new Czat(Integer.valueOf(numerZnajomego.getText().toString())));
-						znajomi.put(znajomi.size(), znajomy);
+				dialogCzat.put(znajomi.size(), new Czat(Integer.valueOf(numerZnajomego.getText().toString())));
+				znajomi.put(znajomi.size(), znajomy);
 						
-						modelList.addElement(nazwaZnajomego.getText()+"("+znajomy.getNumer()+")");
-					}
-					
-					dialogDodajZnajomego.setVisible(false);
-					poleListyUserow.revalidate();
-					poleListyUserow.repaint();
-				}
+				modelList.addElement(nazwaZnajomego.getText()+"("+znajomy.getNumer()+")");
 			}
-			);
+					
+			dialogDodajZnajomego.setVisible(false);
+			poleListyUserow.revalidate();
+			poleListyUserow.repaint();
+		}
+	});
 	
 	bPolacz.addActionListener(new ActionListener()
 	{
@@ -297,7 +295,7 @@ public ClientMain()
 			poleNazwy = new JTextField("Kowal77");
 			poleEmail = new JTextField("kowal77@o2.pl");
 			poleNumeru = new JTextField("0");
-			poleHasla = new JPasswordField("has³o");
+			poleHasla = new JPasswordField("password");
 			poleImienia = new JTextField("Jan");
 			poleNazwiska = new JTextField("Kowalski");
 			poleAdresu = new JTextField(host);
@@ -535,6 +533,7 @@ public void ustawTytul(String s)
 public Czat(int doKogo)
 {
 	super();
+	doUzytkownika = doKogo;
 	setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 	setSize(500,350);
 	//setResizable(false);
@@ -559,16 +558,14 @@ public Czat(int doKogo)
 	add(panelHistorii, BorderLayout.CENTER);
 	add(panelWpis, BorderLayout.SOUTH);
 	wpisCzat.requestFocus();
-	//setVisible(true);
 	
 	bW.addActionListener(new ActionListener()
 	{
 		@Override
 		public void actionPerformed(ActionEvent e)
-		{
+		{	
 			wyslij(TypDanych.MESSAGE, wpisCzat.getText().toString() , getDoUzytkownika());
-			message(historiaCzat, "Do: " +getDoUzytkownika()+" "+wpisCzat.getText().toString()+"\n");
-			//historiaCzat.append("Do: " +getDoUzytkownika()+" "+wpisCzat.getText().toString()+"\n");
+			message(historiaCzat, "Do: " +getDoUzytkownika()+" "+wpisCzat.getText().toString()+"\n");			
 			wpisCzat.setText("");
 			wpisCzat.requestFocus();
 		}

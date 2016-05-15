@@ -1,2 +1,0 @@
-#Lista znajomych klienta o numerze: 3
-#Fri May 13 12:48:58 CEST 2016

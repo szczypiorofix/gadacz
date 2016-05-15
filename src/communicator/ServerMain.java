@@ -1,12 +1,7 @@
 package communicator;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.GraphicsEnvironment;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -14,9 +9,7 @@ import java.awt.event.WindowListener;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -32,8 +25,6 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
-
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -62,15 +53,11 @@ private HashMap<Integer, Socket> sockets;
 private HashMap <Integer, ObjectOutputStream> outStreams;
 private HashMap <Integer, ObjectInputStream> inStreams;
 private JFrame ramka;
-private JTextArea info;
+private JTextArea users, info;
 private JPanel panelLewy, panelPrawy, panelPolnocny, panelPoludniowy;
 private JButton bPolaczZBaza, bWyswietlRekordy, bCheckIP;
 private JScrollPane scrollCenter, scrollEast;
-private String h = "               ROBCO INDUSTRIES UNIFIED OPERATING SYSTEM\n                  "
-		+ "COPYRIGHT 2075-2077 ROBCO INDUSTRIES\n                               "
-		+ "- Server 1 -\n\n"
-		+ " - RobCo Communicator Management System -\n"
-		+ " ==========================================\n\n";
+private String h = "";
 private int count = 1;
 private URL whatismyip;
 private BufferedReader readerIP;
@@ -82,14 +69,11 @@ private HashMap<Integer, Uzytkownik> bazaUzytkownikow;
 private HashMap<Integer, Boolean> whoIsOnline;
 private Date currentDate;
 private SimpleDateFormat sdf;
-private JTextArea users;
 private JSplitPane split1;
 private String usersString;
 private boolean logOK = false;
 private MySQLBase bazaMySQL;
-private final InputStream FALLOUT_FONT = getClass().getResourceAsStream("/res/FalloutFont.ttf");
-private final ImageIcon TERMINALBACKGROUND = new ImageIcon(getClass().getResource("/res/terminal_background.jpg"));
-private Font falloutFont;
+
 
 
 public static void main(String[] args)
@@ -114,40 +98,18 @@ public ServerMain()
 	fileHandler.setLevel(Level.WARNING);
 	LOGGER.addHandler(fileHandler);
 	
-	// CUSTOM FALLOUT FONT
-	Boolean fontIsLoaded = false;
-	try {
-		 falloutFont = Font.createFont(Font.TRUETYPE_FONT, new File("FalloutFont.ttf")).deriveFont(16f); 
-		 GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-	     ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("FalloutFont.ttf")));
-	     //falloutFont = Font.createFont(Font.TRUETYPE_FONT, FALLOUT_FONT);
-	     //falloutFont = new Font("d", Font.PLAIN, 18);
-	     fontIsLoaded = true;
-	} catch (Exception e) {
-	     e.printStackTrace();
-	     fontIsLoaded = false;
-	     System.exit(-1);
-	}
-	
-
-	usersString = "Users:";
+	usersString = "U¿ytkownicy:";
 	
 	bazaMySQL = new MySQLBase(MYSQL_JDBC_DRIVER, MYSQL_DB_URL, MYSQL_USER, MYSQL_PASS);
 	
-	
-	ramka = new JFrame("RobCo Industries UOS");
+	ramka = new JFrame("Aplikacja serwera");
 	ramka.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	ramka.setSize(850, 600);
+	ramka.setSize(580, 450);
 	ramka.setLocationRelativeTo(null);
 	ramka.setLayout(new BorderLayout());
 	ramka.addWindowListener(this);
 
 	info = new JTextArea(h);
-	
-	info.setBackground(new Color(1,25,1));
-	info.setForeground(new Color(150,240,150));
-	
-	if (fontIsLoaded) info.setFont(falloutFont);
 	info.setEditable(false);
 	info.setLineWrap(true);
 	info.setWrapStyleWord(true);
@@ -163,13 +125,13 @@ public ServerMain()
 	panelPrawy.add(scrollEast, BorderLayout.CENTER);
 	
 	split1 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panelLewy, panelPrawy);
-	split1.setDividerLocation(710);
+	split1.setDividerLocation(460);
 	split1.setDividerSize(4);
 	split1.setBorder(new EmptyBorder(5,5,5,5));
 	
 	panelPolnocny = new JPanel(new FlowLayout());
-	bPolaczZBaza = new JButton("Connect to RobCo MySQL Database");
-	bWyswietlRekordy = new JButton("Show RobCo MySQL Database");
+	bPolaczZBaza = new JButton("Po³¹cz z baz¹ MySQL");
+	bWyswietlRekordy = new JButton("Poka¿ rekordy bazy");
 	
 	panelPolnocny.add(bPolaczZBaza);
 	panelPolnocny.add(bWyswietlRekordy);
@@ -185,7 +147,7 @@ public ServerMain()
 	});
 	
 	panelPoludniowy = new JPanel(new FlowLayout());
-	bCheckIP = new JButton("Check my IP");
+	bCheckIP = new JButton("SprawdŸ mój IP");
 	
 	bCheckIP.addActionListener(new ActionListener()
 	{
@@ -204,7 +166,7 @@ public ServerMain()
 			catch (Exception uhe)
 			{
 				checkIP = false;
-				bCheckIP.setText("Connection Error!");
+				bCheckIP.setText("B³¹d po³¹czenia!");
 			}
 			finally
 			{
@@ -220,7 +182,7 @@ public ServerMain()
 						}
 					}
 			}
-			if (checkIP) bCheckIP.setText("My IP: " +externalIP);
+			if (checkIP) bCheckIP.setText("Moje IP: " +externalIP);
 		}
 	});
 	
@@ -233,8 +195,8 @@ public ServerMain()
 	ramka.setVisible(true);
 	
 	// START SERWERA
-	message("Server", "Server is starting...");
-	message("Server", "Opening socket: " +port);
+	message("Serwer", "Start serwera");
+	message("Serwer", "Otwieranie gniazdka: " +port);
 			
 	bazaUzytkownikow = new HashMap<Integer, Uzytkownik>();
 	whoIsOnline = new HashMap<Integer, Boolean>();
@@ -245,8 +207,8 @@ public ServerMain()
 	try {
 		
 		serverSocket = new ServerSocket(port);
-		message("Server", "Local server address: " +InetAddress.getLocalHost().toString());
-		message("Server", "Awaiting for users...");
+		message("Serwer", "Adres lokalny serwera " +InetAddress.getLocalHost().toString());
+		message("Serwer", "Oczekiwanie na u¿ytkowników ...");
 		while (true)
 		{
 			tempSocket = serverSocket.accept();
@@ -261,7 +223,7 @@ public ServerMain()
 							, dane.getEmail(), dane.getHaslo(), dane.getZnajomi()));
 					
 					whoIsOnline.put(count, true);
-					message("Server", "Registering user: " +dane.getKto() +", " +dane.getNazwa() +" " +dane.getImie()
+					message("Serwer", "Zarejestrowano u¿ytkownika: " +dane.getKto() +", " +dane.getNazwa() +" " +dane.getImie()
 					 +" " +dane.getNazwisko() +" " +dane.getEmail() +" " +new String(dane.getHaslo()));
 					
 					
@@ -270,13 +232,13 @@ public ServerMain()
 					outStreams.put(count, tempStreamOut);
 					inStreams.put(count, tempStreamIn);
 					
-					dane.setWiadomosc("Register successful!");
+					dane.setWiadomosc("Rejestracja udana!");
 					dane.setKto(count);
 					outStreams.get(count).writeObject(dane);
 					outStreams.get(count).flush();
 					logOK = true;
 					
-					usersString = "Users:";
+					usersString = "U¿ytkownicy:";
 					for (int i = 1; i < bazaUzytkownikow.size()+1; i++)
 					{
 						usersString = usersString + "\n" +bazaUzytkownikow.get(i).getNumer()+"."+bazaUzytkownikow.get(i).getNazwa();
@@ -297,8 +259,8 @@ public ServerMain()
 			{
 				if ((bazaUzytkownikow.containsKey(dane.getKto())) && (new String(dane.getHaslo()).equals(new String(bazaUzytkownikow.get(dane.getKto()).getHaslo()))))
 				{
-					message(bazaUzytkownikow.get(dane.getKto()).getNazwa(), " has logged in.");
-					dane.setWiadomosc("Login successfull!");
+					message(bazaUzytkownikow.get(dane.getKto()).getNazwa(), " zalogowa³(a) siê.");
+					dane.setWiadomosc("Logowanie udane!");
 					dane.setNazwa(bazaUzytkownikow.get(dane.getKto()).getNazwa());
 					outStreams.put(dane.getKto(), tempStreamOut);
 					inStreams.put(dane.getKto(), tempStreamIn);
@@ -308,8 +270,8 @@ public ServerMain()
 					logOK = true;
 				}
 				else {
-					message(dane.getKto() +"", "Wrong number/password!");
-					dane.setWiadomosc("Wrong password!");
+					message(dane.getKto() +"", "Nieprawid³owy numer/has³o!");
+					dane.setWiadomosc("Nieprawid³owy numer/has³o!");
 					dane.setTypDanych(TypDanych.WRONG);
 					tempStreamOut.writeObject(dane);
 					tempStreamOut.flush();
@@ -330,7 +292,6 @@ public ServerMain()
 			zrzutLoga(e);
 		}
 }
-
 
 public class ServerThread implements Runnable
 {
@@ -363,11 +324,11 @@ public void run()
 			{
 			case MESSAGE: {
 				
-				message(dane.getKto() + " " +dane.getNazwa()+" is writing", dane.getWiadomosc() + " to: " +dane.getDoKogo());
+				message(dane.getKto() + " " +dane.getNazwa()+" pisze", dane.getWiadomosc() + " do: " +dane.getDoKogo());
 				
 				if (dane.getDoKogo() == 0)
 				{
-					dane.setWiadomosc("ECHO SERVER: who " +dane.getKto() +" to " +dane.getDoKogo() +" " +dane.getWiadomosc());
+					dane.setWiadomosc("ECHO SERWER: kto " +dane.getKto() +" do " +dane.getDoKogo() +" " +dane.getWiadomosc());
 					streamsOut.get(dane.getKto()).writeObject(dane);
 					streamsOut.get(dane.getKto()).flush();
 				}
@@ -378,7 +339,7 @@ public void run()
 						streamsOut.get(dane.getDoKogo()).flush();
 					}
 					else {
-						dane.setWiadomosc("There is no user with the number "+dane.getDoKogo());
+						dane.setWiadomosc("Brak u¿ytkownika o numerze "+dane.getDoKogo());
 						streamsOut.get(dane.getKto()).writeObject(dane);
 						streamsOut.get(dane.getKto()).flush();
 					}
@@ -400,7 +361,7 @@ public void run()
 	catch (SocketException e)
 	{
 		//zrzutLoga(e);
-		message(bazaUzytkownikow.get(numer).getNazwa(), "has disconnected. " +e.getMessage());
+		message(bazaUzytkownikow.get(numer).getNazwa(), "roz³¹czy³(a) siê. " +e.getMessage());
 		//e.printStackTrace();
 	}
 	catch (Exception e)

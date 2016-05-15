@@ -1,5 +1,7 @@
 package communicator;
 
+import java.awt.Component;
+
 import javax.swing.JFrame;
 
 public class MySQLBase extends JFrame{
@@ -12,8 +14,8 @@ private String userPass;
 
 public MySQLBase(String jDBC_Driver, String dB_Url, String userName, String userPass)
 {
-	super();
-	setSize(200,200);
+	super("Baza MySQL");
+	setSize(500,350);
 	setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	setLocationRelativeTo(null);
 	JDBC_Driver = jDBC_Driver;
