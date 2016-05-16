@@ -53,7 +53,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 
 
-public class ClientMain implements KeyListener, WindowListener
+public class ClientMain implements WindowListener
 {
 
 private final static Logger LOGGER = Logger.getLogger(ServerMain.class.getName());
@@ -65,11 +65,11 @@ private ObjectInputStream ois = null;
 private ObjectOutputStream oos = null;
 private JFrame ramka;
 private JTextArea info;
-private JTextField wpis, poleAdresu, polePortu, poleNazwy, poleImienia, poleNazwiska, poleEmail, poleNumeru, numerZnajomego, nazwaZnajomego;
+private JTextField poleAdresu, polePortu, poleNazwy, poleImienia, poleNazwiska, poleEmail, poleNumeru, numerZnajomego, nazwaZnajomego;
 private JPasswordField poleHasla;
-private JPanel panelWpisu, panelCentralny, panelPoludniowy, panelWschodni, panelPolDial, panelTechDial, panelPrzycDial, panelDanychZnajomego;
+private JPanel panelCentralny, panelPoludniowy, panelWschodni, panelPolDial, panelTechDial, panelPrzycDial, panelDanychZnajomego;
 private JScrollPane scroll;
-private JButton bPolacz, bWyslij, bOK, bAnuluj, bDodajZnajomego, bDodaj;
+private JButton bPolacz, bOK, bAnuluj, bDodajZnajomego, bDodaj;
 private JDialog dialogPolacz, dialogDodajZnajomego;
 private JCheckBox logRej;
 private String historia = "";
@@ -191,24 +191,12 @@ public ClientMain()
 	
 	scroll = new JScrollPane(info);
 	panelCentralny.add(scroll, BorderLayout.CENTER);
-	panelWpisu = new JPanel(new FlowLayout());
 
 	bPolacz = new JButton("Po³¹cz z serwerem");
 	bPolacz.setEnabled(!connected);
 	
 	panelPoludniowy.add(bPolacz);
-	
-	bWyslij = new JButton("Wyœlij");
-	bWyslij.setEnabled(connected);
-	wpis = new JTextField("", 22);
-	wpis.setEnabled(connected);
-	wpis.addKeyListener(this);
-	
-	panelWpisu.add(wpis);
-	panelWpisu.add(bWyslij);
-	
-	panelCentralny.add(panelWpisu, BorderLayout.SOUTH);
-	
+		
 	ramka.add(panelCentralny, BorderLayout.CENTER);
 	ramka.add(panelPoludniowy, BorderLayout.SOUTH);
 	ramka.add(panelWschodni, BorderLayout.EAST);
@@ -379,8 +367,6 @@ public ClientMain()
 			else wyslij(TypDanych.LOG, "Chcê siê zalogowaæ!", userNumber);
 			
 			connected = true;
-			wpis.setEnabled(connected);
-			bWyslij.setEnabled(connected);
 			bPolacz.setEnabled(!connected);
 
 			if (!doOnce)
@@ -400,15 +386,6 @@ public ClientMain()
 			dialogPolacz.setVisible(false);	
 		}
 	});
-	
-	bWyslij.addActionListener(new ActionListener()
-	{
-		@Override
-		public void actionPerformed(ActionEvent e)
-		{					
-			wyslij(TypDanych.MESSAGE, wpis.getText().toString(), 0);				
-		}
-	});	
 }
 
 public void wyslij(TypDanych td, String s, int doKogo)
@@ -427,8 +404,6 @@ public void wyslij(TypDanych td, String s, int doKogo)
 	{
 		zrzutLoga(e);
 	}
-	wpis.setText("");
-	//wpis.requestFocus();
 }
 
 public class WatekKlienta implements Runnable
@@ -517,13 +492,16 @@ public void friendsLoad()
 
 }
 
-public class Czat extends JDialog
+public class Czat extends JDialog implements KeyListener
 {
 
 private static final long serialVersionUID = 3L;
 private int doUzytkownika;
 private JTextArea historiaCzat;
 private JTextField wpisCzat;
+private JPanel panelWpis, panelHistorii;
+private JButton bW;
+private JScrollPane sp;
 
 public void ustawTytul(String s)
 {
@@ -545,11 +523,11 @@ public Czat(int doKogo)
 	historiaCzat.setLineWrap(true);
 	historiaCzat.setWrapStyleWord(true);
 	wpisCzat = new JTextField(35);
-	JButton bW = new JButton("Wyœlij");
-	JPanel panelHistorii = new JPanel(new BorderLayout());
-	JScrollPane sp = new JScrollPane(historiaCzat);
+	bW = new JButton("Wyœlij");
+	panelHistorii = new JPanel(new BorderLayout());
+	sp = new JScrollPane(historiaCzat);
 	panelHistorii.setBorder(new EmptyBorder(5,5,5,5));
-	JPanel panelWpis = new JPanel(new FlowLayout());
+	panelWpis = new JPanel(new FlowLayout());
 	
 	panelHistorii.add(sp, BorderLayout.CENTER);
 	panelWpis.add(wpisCzat);
@@ -558,6 +536,7 @@ public Czat(int doKogo)
 	add(panelHistorii, BorderLayout.CENTER);
 	add(panelWpis, BorderLayout.SOUTH);
 	wpisCzat.requestFocus();
+	wpisCzat.addKeyListener(this);
 	
 	bW.addActionListener(new ActionListener()
 	{
@@ -567,7 +546,7 @@ public Czat(int doKogo)
 			wyslij(TypDanych.MESSAGE, wpisCzat.getText().toString() , getDoUzytkownika());
 			message(historiaCzat, "Do: " +getDoUzytkownika()+" "+wpisCzat.getText().toString()+"\n");			
 			wpisCzat.setText("");
-			wpisCzat.requestFocus();
+			wpisCzat.requestFocus();	
 		}
 	});
 }
@@ -577,21 +556,24 @@ public int getDoUzytkownika()
 	return doUzytkownika;
 }
 
-}
-
 @Override
-public void keyPressed(KeyEvent arg0) {
-	if ((arg0.getKeyCode() == KeyEvent.VK_ENTER) && (bWyslij.isEnabled()))
+public void keyPressed(KeyEvent keyE) {
+	if (keyE.getKeyCode() == KeyEvent.VK_ENTER)
 	{
-		wyslij(TypDanych.MESSAGE, wpis.getText().toString(), 0);
-	}
+		message(historiaCzat, userName +" do: " +getDoUzytkownika()+" "+wpisCzat.getText().toString()+"\n");
+		wyslij(TypDanych.MESSAGE, wpisCzat.getText().toString() , getDoUzytkownika());			
+		wpisCzat.setText("");
+		wpisCzat.requestFocus();	
+	}	
 }
 
 @Override
-public void keyReleased(KeyEvent arg0) {}
+public void keyReleased(KeyEvent e) {}
 
 @Override
-public void keyTyped(KeyEvent arg0) {}
+public void keyTyped(KeyEvent e) {}
+
+}
 
 public void zrzutLoga(Exception e)
 {
