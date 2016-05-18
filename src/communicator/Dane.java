@@ -4,6 +4,10 @@ package communicator;
 import java.io.Serializable;
 import java.util.HashMap;
 
+/**Klasa reprezentuj¹ca zestaw danych przesy³anych od klienta do serwera i odwrotnie.
+ * @author Piotrek
+ *
+ */
 public class Dane implements Serializable{
 	 
 private static final long serialVersionUID = 100L;
@@ -20,6 +24,18 @@ private HashMap<Integer, Znajomy> mZnajomi;
 private String mWiadomosc;
 
 
+/** Konstruktor klasy Dane.
+ * @param kto Numer u¿ytkownika, od którego pochodzi wiadmoœæ.
+ * @param typDanych Typ wiadmoœci.
+ * @param doKogo Numer u¿ytkownika, do którego wiadomoœæ jest wysy³ana.
+ * @param nazwa Nazwa u¿ytkownika.
+ * @param imie Imiê u¿ytkownika.
+ * @param nazwisko Nazwisko u¿ytkownika.
+ * @param email E-mail u¿ytkownika.
+ * @param haslo Has³o u¿ytkownika.
+ * @param znajomi HashMapa znajomych u¿ytkownika.
+ * @param wiadomosc Treœæ wiadpmoœci.
+ */
 public Dane(int kto, TypDanych typDanych, int doKogo, String nazwa, String imie, String nazwisko, String email, char[] haslo, HashMap<Integer, Znajomy> znajomi, String wiadomosc)
 {
 	mKto = kto;
@@ -34,21 +50,39 @@ public Dane(int kto, TypDanych typDanych, int doKogo, String nazwa, String imie,
 	mWiadomosc = wiadomosc;
 }
 
+
+/** Metoda zwracaj¹ca numer u¿ytkownika, który wysy³a wiadomoœæ.
+ * 
+ * @return Numer u¿ytkownika
+ */
 public int getKto()
 {
 	return mKto;
 }
 
+
+/**Metoda ustawiaj¹ca wartoœæ u¿ytkownika, któy wysy³a wiadomoœæ.
+ * 
+ * @param kto Numer u¿ytkownika
+ */
 public void setKto(int kto)
 {
 	mKto = kto;
 }
 
+
+/** Metoda zwracaj¹ca Typ Danych
+ * @see TypDanych
+ * @return Typ danych.
+ */
 public TypDanych getTypDanych() {
 	return mTypDanych;
 }
 
 
+/** Metoda ustawiaj¹ca wartoœæ typu danych.
+ * @param typDanych Typ danych.
+ */
 public void setTypDanych(TypDanych typDanych) {
 	mTypDanych = typDanych;
 }

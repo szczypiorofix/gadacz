@@ -1,3 +1,0 @@
-#Lista znajomych klienta o numerze: 2
-#Mon May 16 22:31:59 CEST 2016
-1=Kowal

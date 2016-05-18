@@ -25,6 +25,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
@@ -52,6 +53,16 @@ import java.net.Socket;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 
+
+/**G³ówny program klienta komunikatora internetowego.
+ * @author Piotrek
+ * @see ServerMain
+ * @see MySQLBase
+ * @see Dane
+ * @see TypDanych
+ * @see Uzytkownik
+ * @see Znajomy
+ */
 
 public class ClientMain implements WindowListener
 {
@@ -101,12 +112,14 @@ public static void main(String[] args)
 
 EventQueue.invokeLater(new Runnable()
 {
+	@Override
 	public void run()
 	{
 		new ClientMain();
 	}
 });
 }
+
 
 public ClientMain()
 {
@@ -127,6 +140,7 @@ public ClientMain()
 	LOGGER.addHandler(fileHandler);
 	
 	znajomi = new HashMap<Integer, Znajomy>();
+	dialogCzat = new HashMap<Integer, Czat>();
 	
 	ramka = new JFrame("Aplikacja klienta");
 	ramka.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -204,8 +218,6 @@ public ClientMain()
 	ramka.setResizable(true);
 	ramka.addWindowListener(this);
 	ramka.setVisible(true);
-
-	dialogCzat = new HashMap<Integer, Czat>();
 	
 	logRej = new JCheckBox("Rejestracja?", registered);
 	logRej.addItemListener(new ItemListener()
@@ -224,11 +236,12 @@ public ClientMain()
 	
 	bDodajZnajomego.addActionListener(new ActionListener()
 	{
+		@Override
 		public void actionPerformed(ActionEvent e)
 		{
 			dialogDodajZnajomego = new JDialog(ramka, "Dodaj znajomego", true);
 			dialogDodajZnajomego.setResizable(false);
-			dialogDodajZnajomego.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+			dialogDodajZnajomego.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 			dialogDodajZnajomego.setSize(220,110);
 			dialogDodajZnajomego.setLayout(new BorderLayout());
 			dialogDodajZnajomego.setLocationRelativeTo(ramka);
@@ -272,7 +285,7 @@ public ClientMain()
 		{
 			
 			dialogPolacz = new JDialog(ramka, "Logowanie/Rejestracja", true);
-			dialogPolacz.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+			dialogPolacz.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 			dialogPolacz.setResizable(false);
 			dialogPolacz.setSize(350, 400);
 			dialogPolacz.setLayout(new BorderLayout());
@@ -337,6 +350,7 @@ public ClientMain()
 	
 	bOK.addActionListener(new ActionListener()
 	{
+		@Override
 		public void actionPerformed(ActionEvent e)
 		{
 			dialogPolacz.setVisible(false);
@@ -356,7 +370,8 @@ public ClientMain()
 			catch (IOException ioe)
 			{
 				zrzutLoga(ioe);
-			}
+			}			
+			
 			ramka.setTitle("Aplikacja klienta: " +userName);
 			message(info, "Po³¹czono z serwerem!" +host +" : " +port);
 			
@@ -381,6 +396,7 @@ public ClientMain()
 	
 	bAnuluj.addActionListener(new ActionListener()
 	{
+		@Override
 		public void actionPerformed(ActionEvent e)
 		{
 			dialogPolacz.setVisible(false);	
@@ -388,6 +404,11 @@ public ClientMain()
 	});
 }
 
+/**
+ * @param td Zdefiniowany Typ Danych : MESSAGE, LOG, REGISTER ...
+ * @param s Wiadomoœæ do u¿ytkownika "doKogo".
+ * @param doKogo Numer u¿ytkownika, do którego wysy³ana jest wiadmoœæ.
+ */
 public void wyslij(TypDanych td, String s, int doKogo)
 {
 	try {
@@ -406,6 +427,9 @@ public void wyslij(TypDanych td, String s, int doKogo)
 	}
 }
 
+/**
+ * Klasa w¹tku klienta.
+ */
 public class WatekKlienta implements Runnable
 {
 	
@@ -418,11 +442,24 @@ public void run()
 			 
 		while (true)
 		{
+
 			data = (Dane) ois.readObject();
 
 			message(info, data.getNazwa() +" do " +data.getDoKogo() +" : " +data.getWiadomosc());
-			
-			bing();
+	
+			if (data.getTypDanych() == TypDanych.MESSAGE)
+			{
+				messageSound();
+				dialogCzat.get(0).ustawTytul("NOWY "+data.getDoKogo());
+				currentDate = new Date();
+				sdf = new SimpleDateFormat("HH:mm:ss");
+				
+				dialogCzat.get(0).wyswietlTekst(sdf.format(currentDate) +" (" +userNumber +") " +data.getWiadomosc() +"\n");
+				
+				//dialogCzat.get(0).wyswietlTekst(data.getWiadomosc());
+				dialogCzat.get(0).setVisible(true);
+				
+			}
 			
 			if (data.getTypDanych() == TypDanych.LOG) {
 				message(info, "Udane logowanie!");
@@ -447,10 +484,14 @@ public void run()
 	}
 	catch (Exception e)
 	{
+		JOptionPane.showMessageDialog(ramka, "Po³¹czenie z serwerem zosta³o przerwane!", "B³¹d po³¹czenia!", JOptionPane.ERROR_MESSAGE);
 		zrzutLoga(e);
 	}		
 }
 
+/**
+ * Metoda ³aduj¹ca z pliku informacje o znajomych u¿ytkownika.
+ */
 public void friendsLoad()
 {
 	try {
@@ -492,6 +533,9 @@ public void friendsLoad()
 
 }
 
+/**
+ * Klasa okna Czatu.
+ */
 public class Czat extends JDialog implements KeyListener
 {
 
@@ -503,16 +547,32 @@ private JPanel panelWpis, panelHistorii;
 private JButton bW;
 private JScrollPane sp;
 
+/**
+ * Metoda ustanawiaj¹ca tytu³ okna Czatu.
+ * @param s Ci¹g znaków okreœlaj¹cy tytu³ okna Czatu.
+ */
 public void ustawTytul(String s)
 {
 	setTitle(s);
 }
 
+/** metoda wyœwietlaj¹ca tekst w oknie Czatu.
+ * @param tekst Ci¹g znaków wiadmoœci wyœwietlanej w oknie Czatu.
+ */
+public void wyswietlTekst(String tekst)
+{
+	historiaCzat.append(tekst);
+}
+
+/**
+ * Konstruktor okna Czatu.
+ * @param doKogo Numer u¿ytkownika, do kótego zostanie wys³ana wiadomoœæ.
+ */
 public Czat(int doKogo)
 {
 	super();
 	doUzytkownika = doKogo;
-	setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+	setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 	setSize(500,350);
 	//setResizable(false);
 	setLocationRelativeTo(ramka);
@@ -551,6 +611,9 @@ public Czat(int doKogo)
 	});
 }
 
+/**
+ * @return Zwraca numer u¿ytkownika, do którego zostanie wys³ana wiadomoœæ.
+ */
 public int getDoUzytkownika()
 {
 	return doUzytkownika;
@@ -575,6 +638,9 @@ public void keyTyped(KeyEvent e) {}
 
 }
 
+/** Metoda zrzutu b³êdu do pliku Loggera.
+ * @param e Wyj¹tek.
+ */
 public void zrzutLoga(Exception e)
 {
 	LOGGER.log(Level.INFO, "User number:" +userNumber);
@@ -582,6 +648,10 @@ public void zrzutLoga(Exception e)
 	//System.exit(-1);
 }
 
+/** Metoda formatuj¹ca i wyœwietlaj¹ca w odpowiednim oknie text wiadomoœci.
+ * @param a Komponent w którym wyœwietlana zostanie wiadmoœæ (JTextArea)
+ * @param s Treœæ wiadomoœci, z zawart¹ w niej na pocz¹tku godzin¹ otrzymania/wys³ania.
+ */
 public void message(JTextArea a, String s)
 {
 	currentDate = new Date();
@@ -589,7 +659,7 @@ public void message(JTextArea a, String s)
 	a.append(sdf.format(currentDate) +" (" +userNumber +") " +": " +s +"\n");
 }
 
-public void bing()
+public void messageSound()
 {
 	 try {
 		 	audioInputStream = AudioSystem.getAudioInputStream((audioFile));

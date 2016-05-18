@@ -34,6 +34,16 @@ import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
 
+/**G³ówny program serwera komunikatora internetowego.
+ * @author Piotrek
+ * @see ClientMain
+ * @see MySQLBase
+ * @see Dane
+ * @see TypDanych
+ * @see Uzytkownik
+ * @see Znajomy
+ *
+ */
 public class ServerMain implements WindowListener
 {
 
@@ -44,14 +54,50 @@ private static final String MYSQL_USER = "root";
 private static final String MYSQL_PASS = "";
 private final static Logger LOGGER = Logger.getLogger(ServerMain.class.getName());
 private FileHandler fileHandler = null;
-private int port = 1201;
+/**
+ * Port po³¹czenia pomiêdzy serwerem a klientami.
+ * Wartoœæ sta³a: 1201.
+ */
+private final int SERVER_PORT = 1201;
+/**
+ * 
+ */
 private ServerSocket serverSocket;
+/**
+ * Tymczasowe gniazdko serwera s³u¿¹ce do wpisywania gniazdka jako kolejnego elementu HashMapy
+ * @see sockets 
+ */
 private Socket tempSocket;
+/**
+ * Tymczasowy strumieñ wejœciowy s³u¿¹cy do wpisywania go jako kolejnego elementu HashMapy outStreams.
+ * @see outStreams
+ */
 private ObjectInputStream tempStreamIn;
+/**
+ * Tymczasowy strumieñ wyjœciowy s³u¿¹cy do wpisywania go jako kolejnego elementu HashMapy inStreams.
+ * @see inStreams
+ */
 private ObjectOutputStream tempStreamOut;
+/**
+ * HashMapa gniazdek kolejnych klientów.
+ * @see tempSocket
+ */
 private HashMap<Integer, Socket> sockets;
+/**
+ * HashMapa strumieni wyjœciowych kolejnych klientów.
+ * @see tempStreamOut
+ * @see inStreams
+ */
 private HashMap <Integer, ObjectOutputStream> outStreams;
+/**
+ * HashMapa strumieni wejœciowych kolejnych klientów.
+ * @see temoStreamIn
+ * @see outStreams
+ */
 private HashMap <Integer, ObjectInputStream> inStreams;
+/**
+ * G³ówne okno aplikacji serwera.
+ */
 private JFrame ramka;
 private JTextArea users, info;
 private JPanel panelLewy, panelPrawy, panelPolnocny, panelPoludniowy;
@@ -81,6 +127,9 @@ public static void main(String[] args)
 	new ServerMain();			
 }
 
+/**
+ * Konstruktor g³ównego programu serwera.
+ */
 public ServerMain()
 {
 	// LOGGER
@@ -196,7 +245,7 @@ public ServerMain()
 	
 	// START SERWERA
 	message("Serwer", "Start serwera");
-	message("Serwer", "Otwieranie gniazdka: " +port);
+	message("Serwer", "Otwieranie gniazdka: " +SERVER_PORT);
 			
 	bazaUzytkownikow = new HashMap<Integer, Uzytkownik>();
 	whoIsOnline = new HashMap<Integer, Boolean>();
@@ -206,7 +255,7 @@ public ServerMain()
 			
 	try {
 		
-		serverSocket = new ServerSocket(port);
+		serverSocket = new ServerSocket(SERVER_PORT);
 		message("Serwer", "Adres lokalny serwera " +InetAddress.getLocalHost().toString());
 		message("Serwer", "Oczekiwanie na u¿ytkowników ...");
 		while (true)
@@ -293,6 +342,10 @@ public ServerMain()
 		}
 }
 
+/** Klasa w¹tku klienta po stronie serwera.
+ * @author Piotrek
+ *
+ */
 public class ServerThread implements Runnable
 {
 
@@ -302,6 +355,13 @@ private HashMap<Integer, ObjectInputStream> streamsIn;
 private int numer = 0;
 
 
+/** Konstruktor w¹tku klienta po stronie serwera.
+ * Tworzy w¹tek kolejnego klienta z przypisanego mu gniazdna oraz zestawu dwóch strumieni: wejœciowego i wyjœciowego.
+ * @param s HashMapa (Integer, Socket) bazy gniazdek kolejnych klientów.
+ * @param inMap HashMapa strumieni wejœciowych klientów.
+ * @param outMap HashMapa strumieni wyjœciowych klientów.
+ * @param c Okreœlony numer konkretnego klienta.
+ */
 public ServerThread(HashMap<Integer, Socket> s, HashMap<Integer, ObjectInputStream> inMap, HashMap<Integer, ObjectOutputStream> outMap, int c)
 {
 	threadSockets = s;
@@ -371,17 +431,27 @@ public void run()
 	}
 
 
+/** Metoda zwracaj¹ca HashMapê w¹tków klientów.
+ * @return HashMapa w¹tków klientów.
+ */
 public HashMap<Integer, Socket> getSocketsThread() {
 	return threadSockets;
 }
 }
 
+/** Metoda zrzucaj¹ca treœæ wyj¹tku do pliku Loggera.
+ * @param e Wyj¹tek.
+ */
 public void zrzutLoga(Exception e)
 {
 	LOGGER.log(Level.WARNING, e.getMessage(), e);
 	//System.exit(-1);
 }
 
+/** Metoda formatuj¹ca i wyœwietlaj¹ca treœæ wiadomoœci od klienta w oknie serwera.
+ * @param name Nazwa u¿ytkownika.
+ * @param msg Treœæ wiadomoœci.
+ */
 public void message(String name, String msg)
 {
 	currentDate = new Date();

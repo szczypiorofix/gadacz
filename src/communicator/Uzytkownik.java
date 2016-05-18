@@ -3,6 +3,10 @@ package communicator;
 import java.io.Serializable;
 import java.util.HashMap;
 
+/** Podstawowa klasa u¿ytkownika, wpisywanego w bazê u¿ytkowników.
+ * @author Piotrek
+ *
+ */
 public class Uzytkownik implements Serializable{
 
 private static final long serialVersionUID = 1L;
@@ -14,6 +18,15 @@ private HashMap<Integer, Znajomy> znajomi;
 
 
 
+/** Podstawowy konstruktor klasy U¿ytkownik.
+ * @param numer Numer u¿ytkownika.
+ * @param nazwa Nazwa.
+ * @param imie Imiê.
+ * @param nazwisko Nazwisko.
+ * @param email E-mail.
+ * @param haslo Has³o u¿ytkownika.
+ * @param hashMap HashMapa zawieraj¹ca wykaz znajomych u¿ytkownika.
+ */
 public Uzytkownik(int numer, String nazwa, String imie, String nazwisko, String email, char[] haslo, HashMap<Integer, Znajomy> hashMap)
 {
 	this.numer = numer;

@@ -1,3 +1,0 @@
-#Lista znajomych klienta o numerze: 1
-#Mon May 16 22:32:00 CEST 2016
-2=Ada
