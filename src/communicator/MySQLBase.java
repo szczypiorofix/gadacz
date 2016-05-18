@@ -1,6 +1,5 @@
 package communicator;
 
-import java.awt.Component;
 
 import javax.swing.JFrame;
 
