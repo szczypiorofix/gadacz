@@ -2,6 +2,7 @@ package communicator;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -118,13 +119,15 @@ private SimpleDateFormat sdf;
 private JSplitPane split1;
 private String usersString;
 private boolean logOK = false;
+private boolean doOnce = false;
 private MySQLBase bazaMySQL;
+private ServerSysTray serverSysTray;
 
 
 
 public static void main(String[] args)
 {
-	new ServerMain();			
+	new ServerMain();	
 }
 
 /**
@@ -152,12 +155,18 @@ public ServerMain()
 	bazaMySQL = new MySQLBase(MYSQL_JDBC_DRIVER, MYSQL_DB_URL, MYSQL_USER, MYSQL_PASS);
 	
 	ramka = new JFrame("Aplikacja serwera");
-	ramka.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	ramka.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 	ramka.setSize(580, 450);
 	ramka.setLocationRelativeTo(null);
 	ramka.setLayout(new BorderLayout());
 	ramka.addWindowListener(this);
-
+	
+	// SYSTRAY
+	serverSysTray = new ServerSysTray(ramka);
+	serverSysTray.initialize();
+	serverSysTray.trayMessage("Serwer", "Serwer zosta³ uruchomiony!", TrayIcon.MessageType.INFO);
+	
+	
 	info = new JTextArea(h);
 	info.setEditable(false);
 	info.setLineWrap(true);
@@ -274,7 +283,7 @@ public ServerMain()
 					whoIsOnline.put(count, true);
 					message("Serwer", "Zarejestrowano u¿ytkownika: " +dane.getKto() +", " +dane.getNazwa() +" " +dane.getImie()
 					 +" " +dane.getNazwisko() +" " +dane.getEmail() +" " +new String(dane.getHaslo()));
-					
+					if (serverSysTray.windowIsHidden()) serverSysTray.trayMessage("Serwer komunikatora", "Zarejestrowano nowego u¿ytkownika!", TrayIcon.MessageType.INFO);
 					
 					// DODAWANIE DO BAZY TYLKO ZAREJESTROWANYCH U¯YTKOWNIKÓW
 					sockets.put(count, tempSocket);
@@ -341,6 +350,8 @@ public ServerMain()
 			zrzutLoga(e);
 		}
 }
+
+
 
 /** Klasa w¹tku klienta po stronie serwera.
  * @author Piotrek
@@ -422,6 +433,7 @@ public void run()
 	{
 		//zrzutLoga(e);
 		message(bazaUzytkownikow.get(numer).getNazwa(), "roz³¹czy³(a) siê. " +e.getMessage());
+		if (serverSysTray.windowIsHidden()) serverSysTray.trayMessage("Serwer komunikatora", "U¿ytkownik "+bazaUzytkownikow.get(numer).getNazwa() +" roz³¹czy³ siê.", TrayIcon.MessageType.INFO);
 		//e.printStackTrace();
 	}
 	catch (Exception e)
@@ -468,6 +480,11 @@ public void windowClosed(WindowEvent arg0) {}
 
 @Override
 public void windowClosing(WindowEvent arg0) {
+	if (!doOnce) {
+	serverSysTray.trayMessage("Serwer dzia³a w tle!", "¯eby zamkn¹æ kliknij prawym klawiszem myszy i wybierz opcjê 'Zamknij'", TrayIcon.MessageType.INFO);
+	doOnce = true;
+	}
+	serverSysTray.setWindowIsHidden(true);
 	// ZAMYKANIE GNIAZDEK I ZAPIS DO PLIKU
 }
 

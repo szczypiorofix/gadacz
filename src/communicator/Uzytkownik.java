@@ -5,7 +5,12 @@ import java.util.HashMap;
 
 /** Podstawowa klasa u¿ytkownika, wpisywanego w bazê u¿ytkowników.
  * @author Piotrek
- *
+ * @see ClientMain
+ * @see ServerMain
+ * @see Dane
+ * @see MySQLBase
+ * @see Znajomy
+ * @see TypDanych
  */
 public class Uzytkownik implements Serializable{
 
