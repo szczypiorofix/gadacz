@@ -32,6 +32,7 @@ import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
+import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -105,6 +106,7 @@ private final URL audioFile = getClass().getResource("/res/bing.wav");
 private Properties prop;
 private FileOutputStream propFileOut;
 private FileInputStream propFileIn;
+private ClientSysTray clientSysTray;
 
 
 
@@ -144,12 +146,16 @@ public ClientMain()
 	dialogCzat = new HashMap<Integer, Czat>();
 	
 	ramka = new JFrame("Aplikacja klienta");
-	ramka.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	ramka.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 	ramka.setSize(520, 300);
 	ramka.setLocationRelativeTo(null);
 	ramka.setLayout(new BorderLayout());
 	ramka.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/res/client_program_icon.png")));
-
+	
+	// SYSTRAY
+	clientSysTray = new ClientSysTray(ramka);
+	clientSysTray.initialize();
+	clientSysTray.trayMessage("Gadacz", "Aplikacja zosta³a uruchomiona!", TrayIcon.MessageType.INFO);
 	
 	bOK = new JButton("OK");
 	bAnuluj = new JButton("Anuluj");

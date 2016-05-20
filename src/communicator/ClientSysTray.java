@@ -13,23 +13,16 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-/** Klasa systemowego zasobnika programu serwera.
- * @author Piotrek
- *
- */
-public class ServerSysTray {
+public class ClientSysTray {
 
-private Image trayIconImage = new ImageIcon(getClass().getResource("/res/server_program_icon.png")).getImage();
+private Image trayIconImage = new ImageIcon(getClass().getResource("/res/client_program_icon.png")).getImage();
 private TrayIcon trayIcon;
 private SystemTray systray;
 private PopupMenu popup;
 private MenuItem exitItem, showItem, infoItem;
-private boolean windowIsHidden; 
+private boolean windowIsHidden; 	
 
-/** Podstawowy konstruktor systemowego zasobnika programu serwera.
- * @param frame (JFrame frame) Ramka g³ówna programu.
- */
-public ServerSysTray(final JFrame frame)
+public ClientSysTray(final JFrame frame)
 {
 	windowIsHidden = false;
 	systray = SystemTray.getSystemTray();
@@ -66,10 +59,9 @@ public ServerSysTray(final JFrame frame)
 		public void actionPerformed(ActionEvent e)
 		{
 			String infoString = "<html><h3>Gadacz ... czyli kolejny program do internetowych pogaduszek"
-					+ "<br><h3>Aplikacja serwera."
 					+ "<br><h4> Wersja 0.8a (build 777)"
 					+ "<br><h5>Copyright (c) 2016, PoopingDog Studio. All rights reserved \u00AE";
-			JOptionPane.showMessageDialog(frame, infoString, "Serwer Gadacz - informacje", JOptionPane.INFORMATION_MESSAGE, new ImageIcon(trayIconImage));
+			JOptionPane.showMessageDialog(frame, infoString, "Gadacz - informacje", JOptionPane.INFORMATION_MESSAGE, new ImageIcon(trayIconImage));
 		}
 	});
 	
@@ -79,7 +71,7 @@ public ServerSysTray(final JFrame frame)
 	popup.addSeparator();
 	popup.add(exitItem);
 	
-	trayIcon = new TrayIcon(trayIconImage, "Serwer komunikatora", popup);
+	trayIcon = new TrayIcon(trayIconImage, "Aplikacja klienta komunikatora", popup);
 	trayIcon.setImageAutoSize(true);
 	
 	trayIcon.addActionListener(new ActionListener()
@@ -92,7 +84,6 @@ public ServerSysTray(final JFrame frame)
 		}
 	});
 }
-
 /** Metoda wyœwietlaj¹ca okreœlony komunikat w zasobniku systemowym.
  * @param msgBold Treœæ g³ówna komunikatu.
  * @param msgPlain Treœæ komunikatu.
@@ -109,7 +100,7 @@ public void trayMessage(String msgBold, String msgPlain, TrayIcon.MessageType ms
 public void initialize()
 {
 	if (!SystemTray.isSupported()) {
-		JOptionPane.showMessageDialog(null, "Zasobnik systemowy nie jest dostêpny!", "B³¹d zasobnika systemowego!", JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(null, "Zasobnik systemowy nie jest dostêpny!", "B³¹d zasobnika systemowego.", JOptionPane.ERROR_MESSAGE);
 		return;
 	}
 	
