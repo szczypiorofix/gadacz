@@ -1,0 +1,2 @@
+#Lista znajomych klienta o numerze: 0
+#Fri May 20 08:30:51 CEST 2016

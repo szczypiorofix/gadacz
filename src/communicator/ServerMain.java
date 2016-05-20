@@ -2,6 +2,7 @@ package communicator;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -124,7 +125,6 @@ private MySQLBase bazaMySQL;
 private ServerSysTray serverSysTray;
 
 
-
 public static void main(String[] args)
 {
 	new ServerMain();	
@@ -160,6 +160,7 @@ public ServerMain()
 	ramka.setLocationRelativeTo(null);
 	ramka.setLayout(new BorderLayout());
 	ramka.addWindowListener(this);
+	ramka.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/res/server_program_icon.png")));
 	
 	// SYSTRAY
 	serverSysTray = new ServerSysTray(ramka);

@@ -31,6 +31,7 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -147,6 +148,8 @@ public ClientMain()
 	ramka.setSize(520, 300);
 	ramka.setLocationRelativeTo(null);
 	ramka.setLayout(new BorderLayout());
+	ramka.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/res/client_program_icon.png")));
+
 	
 	bOK = new JButton("OK");
 	bAnuluj = new JButton("Anuluj");
