@@ -154,7 +154,7 @@ public ServerMain()
 	
 	bazaMySQL = new MySQLBase(MYSQL_JDBC_DRIVER, MYSQL_DB_URL, MYSQL_USER, MYSQL_PASS);
 	
-	ramka = new JFrame("Aplikacja serwera");
+	ramka = new JFrame("Gadacz - serwer");
 	ramka.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 	ramka.setSize(580, 450);
 	ramka.setLocationRelativeTo(null);
@@ -174,6 +174,9 @@ public ServerMain()
 	info.setWrapStyleWord(true);
 	
 	scrollCenter = new JScrollPane(info);
+	
+	//TODO Przewijanie JTextArea info do ostatniej linii.
+	
 	panelLewy = new JPanel(new BorderLayout());
 	panelLewy.add(scrollCenter, BorderLayout.CENTER);
 	panelPrawy = new JPanel(new BorderLayout());

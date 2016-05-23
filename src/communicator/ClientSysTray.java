@@ -28,7 +28,7 @@ public ClientSysTray(final JFrame frame)
 	systray = SystemTray.getSystemTray();
 	popup = new PopupMenu();
 	
-	exitItem = new MenuItem("Wyjœcie");
+	exitItem = new MenuItem("Zakoñcz");
 	exitItem.setFont(new Font("Verdana", Font.PLAIN, 12));
 	exitItem.addActionListener(new ActionListener()
 	{

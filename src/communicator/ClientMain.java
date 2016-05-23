@@ -72,7 +72,7 @@ public class ClientMain implements WindowListener
 private final static Logger LOGGER = Logger.getLogger(ServerMain.class.getName());
 private FileHandler fileHandler = null;
 private int port = 1201;
-private String host = "127.0.0.1";
+private String host = "89.70.80.201";
 private Socket socket = null;
 private ObjectInputStream ois = null;
 private ObjectOutputStream oos = null;
@@ -145,7 +145,7 @@ public ClientMain()
 	znajomi = new HashMap<Integer, Znajomy>();
 	dialogCzat = new HashMap<Integer, Czat>();
 	
-	ramka = new JFrame("Aplikacja klienta");
+	ramka = new JFrame("Gadacz");
 	ramka.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 	ramka.setSize(520, 300);
 	ramka.setLocationRelativeTo(null);
@@ -208,7 +208,12 @@ public ClientMain()
 	info.setWrapStyleWord(true);
 	info.setText(historia);
 	
-	scroll = new JScrollPane(info);
+	scroll = new JScrollPane();
+	
+	scroll.setViewportView(info);
+	// TODO Coœ z tym trzeba zrobiæ
+	// TODO Poprawiæ zapis znajomych do pliku
+	
 	panelCentralny.add(scroll, BorderLayout.CENTER);
 
 	bPolacz = new JButton("Po³¹cz z serwerem");
@@ -388,14 +393,10 @@ public ClientMain()
 			
 			connected = true;
 			bPolacz.setEnabled(!connected);
-
-			if (!doOnce)
-			{
-				doOnce = true;
-				r = new WatekKlienta();
-				t = new Thread(r);
-				t.start();
-			}
+			
+			r = new WatekKlienta();
+			t = new Thread(r);
+			t.start();
 		}
 	});
 	
@@ -662,6 +663,7 @@ public void message(JTextArea a, String s)
 	currentDate = new Date();
 	sdf = new SimpleDateFormat("HH:mm:ss");
 	a.append(sdf.format(currentDate) +" (" +userNumber +") " +": " +s +"\n");
+	// TODO Zrobiæ tak ¿eby pojawiajacy siê tekst przewija³ JTextArea w dó³ przy kolejnej linijce tekstu.
 }
 
 public void messageSound()
@@ -687,6 +689,12 @@ public void windowClosed(WindowEvent arg0) {}
 
 @Override
 public void windowClosing(WindowEvent arg0) {
+
+	if (!doOnce) {
+		clientSysTray.trayMessage("Gadacz dzia³a w tle!", "¯eby zamkn¹æ kliknij prawym klawiszem myszy i wybierz opcjê 'Zamknij'", TrayIcon.MessageType.INFO);
+		doOnce = true;
+		}
+		clientSysTray.setWindowIsHidden(true);
 	
 	try {
 	prop = new Properties();
