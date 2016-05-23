@@ -1,3 +1,0 @@
-#Lista znajomych klienta o numerze: 1
-#Mon May 23 08:00:56 CEST 2016
-1=asd

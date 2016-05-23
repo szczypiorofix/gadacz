@@ -1,3 +1,0 @@
-#Lista znajomych klienta o numerze: 2
-#Mon May 23 08:00:58 CEST 2016
-2=sad

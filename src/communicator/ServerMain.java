@@ -34,6 +34,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.DefaultCaret;
 
 
 /**G³ówny program serwera komunikatora internetowego.
@@ -173,10 +174,11 @@ public ServerMain()
 	info.setLineWrap(true);
 	info.setWrapStyleWord(true);
 	
-	scrollCenter = new JScrollPane(info);
+	scrollCenter = new JScrollPane(info, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 	
-	//TODO Przewijanie JTextArea info do ostatniej linii.
-	
+	DefaultCaret caret = (DefaultCaret)info.getCaret();
+	caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+		
 	panelLewy = new JPanel(new BorderLayout());
 	panelLewy.add(scrollCenter, BorderLayout.CENTER);
 	panelPrawy = new JPanel(new BorderLayout());

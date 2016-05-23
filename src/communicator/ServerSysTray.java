@@ -34,9 +34,7 @@ public ServerSysTray(final JFrame frame)
 	windowIsHidden = false;
 	systray = SystemTray.getSystemTray();
 	popup = new PopupMenu();
-	
-	// TODO Zrobiæ jedn¹, wspoln¹ klasê dodaj¹c¹ ikonkê w systrayu
-	
+		
 	exitItem = new MenuItem("Zakoñcz");
 	exitItem.setFont(new Font("Verdana", Font.PLAIN, 12));
 	exitItem.addActionListener(new ActionListener()

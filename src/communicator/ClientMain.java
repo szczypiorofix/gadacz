@@ -27,6 +27,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.DefaultCaret;
+
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
@@ -72,7 +74,7 @@ public class ClientMain implements WindowListener
 private final static Logger LOGGER = Logger.getLogger(ServerMain.class.getName());
 private FileHandler fileHandler = null;
 private int port = 1201;
-private String host = "89.70.80.201";
+private String host = "127.0.0.1";
 private Socket socket = null;
 private ObjectInputStream ois = null;
 private ObjectOutputStream oos = null;
@@ -208,10 +210,11 @@ public ClientMain()
 	info.setWrapStyleWord(true);
 	info.setText(historia);
 	
-	scroll = new JScrollPane();
+	scroll = new JScrollPane(info, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 	
-	scroll.setViewportView(info);
-	// TODO Coœ z tym trzeba zrobiæ
+	DefaultCaret caret = (DefaultCaret)info.getCaret();
+	caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+	
 	// TODO Poprawiæ zapis znajomych do pliku
 	
 	panelCentralny.add(scroll, BorderLayout.CENTER);
@@ -281,7 +284,7 @@ public ClientMain()
 						
 				modelList.addElement(nazwaZnajomego.getText()+"("+znajomy.getNumer()+")");
 			}
-					
+			zapisZnajomych();	
 			dialogDodajZnajomego.setVisible(false);
 			poleListyUserow.revalidate();
 			poleListyUserow.repaint();
@@ -445,10 +448,9 @@ public void run()
 	try {		
 		if (ois == null)
 			ois = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
-			 
+		
 		while (true)
-		{
-
+		{			
 			data = (Dane) ois.readObject();
 
 			message(info, data.getNazwa() +" do " +data.getDoKogo() +" : " +data.getWiadomosc());
@@ -592,6 +594,8 @@ public Czat(int doKogo)
 	bW = new JButton("Wyœlij");
 	panelHistorii = new JPanel(new BorderLayout());
 	sp = new JScrollPane(historiaCzat);
+	DefaultCaret caret = (DefaultCaret)wpisCzat.getCaret();
+	caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 	panelHistorii.setBorder(new EmptyBorder(5,5,5,5));
 	panelWpis = new JPanel(new FlowLayout());
 	
@@ -663,7 +667,6 @@ public void message(JTextArea a, String s)
 	currentDate = new Date();
 	sdf = new SimpleDateFormat("HH:mm:ss");
 	a.append(sdf.format(currentDate) +" (" +userNumber +") " +": " +s +"\n");
-	// TODO Zrobiæ tak ¿eby pojawiajacy siê tekst przewija³ JTextArea w dó³ przy kolejnej linijce tekstu.
 }
 
 public void messageSound()
@@ -678,6 +681,39 @@ public void messageSound()
 	        ex.printStackTrace();
 	        System.exit(-1);
 	    }
+}
+
+public void zapisZnajomych()
+{
+	try {
+		prop = new Properties();
+		propFileOut = new FileOutputStream("friends"+userNumber+".txt");
+			
+		if (znajomi.size() > 0)
+		{
+			for (int i = 0; i < znajomi.size(); i++) prop.setProperty(znajomi.get(i).getNumer()+"", znajomi.get(i).getNazwa());
+		}
+		
+		prop.store(propFileOut, "Lista znajomych klienta o numerze: "+userNumber);
+		
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		finally
+		{
+			if (propFileOut != null)
+			{
+				try {
+					propFileOut.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+					System.exit(-1);
+				}
+			}
+		}
 }
 
 /// WINDOWLISTENER INFEFACE METHODS
@@ -695,36 +731,6 @@ public void windowClosing(WindowEvent arg0) {
 		doOnce = true;
 		}
 		clientSysTray.setWindowIsHidden(true);
-	
-	try {
-	prop = new Properties();
-	propFileOut = new FileOutputStream("friends"+userNumber+".txt");
-		
-	if (znajomi.size() > 0)
-	{
-		for (int i = 0; i < znajomi.size(); i++) prop.setProperty(znajomi.get(i).getNumer()+"", znajomi.get(i).getNazwa());
-	}
-	
-	prop.store(propFileOut, "Lista znajomych klienta o numerze: "+userNumber);
-	
-	}
-	catch (IOException e)
-	{
-		e.printStackTrace();
-		System.exit(-1);
-	}
-	finally
-	{
-		if (propFileOut != null)
-		{
-			try {
-				propFileOut.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-				System.exit(-1);
-			}
-		}
-	}
 }
 
 @Override

@@ -20,7 +20,7 @@ private TrayIcon trayIcon;
 private SystemTray systray;
 private PopupMenu popup;
 private MenuItem exitItem, showItem, infoItem;
-private boolean windowIsHidden; 	
+private boolean windowIsHidden;
 
 public ClientSysTray(final JFrame frame)
 {
