@@ -285,7 +285,8 @@ public ClientMain()
 				modelList.addElement(nazwaZnajomego.getText()+"("+znajomy.getNumer()+")");
 			}
 			
-			zapisZnajomych();	
+			zapisZnajomych();
+			
 			dialogDodajZnajomego.setVisible(false);
 			poleListyUserow.revalidate();
 			poleListyUserow.repaint();
@@ -731,7 +732,9 @@ public void windowClosing(WindowEvent arg0) {
 		clientSysTray.trayMessage("Gadacz dzia³a w tle!", "¯eby zamkn¹æ kliknij prawym klawiszem myszy i wybierz opcjê 'Zamknij'", TrayIcon.MessageType.INFO);
 		doOnce = true;
 		}
-		clientSysTray.setWindowIsHidden(true);
+	if (clientSysTray.isHideOnX())
+	clientSysTray.setWindowIsHidden(true);
+	else System.exit(0);
 }
 
 @Override

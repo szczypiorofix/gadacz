@@ -19,15 +19,49 @@ import javax.swing.JOptionPane;
  */
 public class ServerSysTray {
 
+/**
+ * Obraz ikony zasobnika systemowego aplikacji serwera. 
+ */
 private Image trayIconImage = new ImageIcon(getClass().getResource("/res/server_program_icon.png")).getImage();
+/**
+ * Ikona zasobnika systemowego aplikacji serwera.
+ */
 private TrayIcon trayIcon;
+/**
+ * Zasobnik systemowy aplikacji serwera.
+ */
 private SystemTray systray;
+/**
+ * Popup Menu zasobnika systemowego.
+ */
 private PopupMenu popup;
-private MenuItem exitItem, showItem, infoItem;
+/**
+ * MenuItem wyjœcie.
+ */
+private MenuItem exitItem;
+/**
+ * MenuItem poka¿.
+ */
+private MenuItem showItem;
+/**
+ * MenuItem informacje.
+ */
+private MenuItem infoItem;
+/**
+ * True jeœli okno aplikacji serwera jest ukryte.
+ */
 private boolean windowIsHidden; 
 
+/**
+ * Informacje "O aplikacji"
+ */
+private final String infoString = "<html><h3>Gadacz ... czyli kolejny program do internetowych pogaduszek"
+		+ "<br><h3>Aplikacja serwera."
+		+ "<br><h4> Wersja 0.8a (build 777)"
+		+ "<br><h5>Copyright (c) 2016, PoopingDog Studio. All rights reserved \u00AE";
+
 /** Podstawowy konstruktor systemowego zasobnika programu serwera.
- * @param frame (JFrame frame) Ramka g³ówna programu.
+ * @param frame (final JFrame frame) Ramka g³ówna programu.
  */
 public ServerSysTray(final JFrame frame)
 {
@@ -65,10 +99,6 @@ public ServerSysTray(final JFrame frame)
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
-			String infoString = "<html><h3>Gadacz ... czyli kolejny program do internetowych pogaduszek"
-					+ "<br><h3>Aplikacja serwera."
-					+ "<br><h4> Wersja 0.8a (build 777)"
-					+ "<br><h5>Copyright (c) 2016, PoopingDog Studio. All rights reserved \u00AE";
 			JOptionPane.showMessageDialog(frame, infoString, "Serwer Gadacz - informacje", JOptionPane.INFORMATION_MESSAGE, new ImageIcon(trayIconImage));
 		}
 	});
@@ -123,11 +153,17 @@ public void initialize()
 	}
 }
 
+/** Metoda zwracaj¹ca wartoœæ true lub false odnoœnie ukrytego okna g³ównego aplikacji.
+ * @return windowIsHidden.
+ */
 public boolean windowIsHidden()
 {
 	return windowIsHidden;
 }
 
+/** Metoda ustaiwaj¹ca wartoœæ true lub false odnoœnie ukrytego okna g³ównego aplikacji.
+ * @param b (Boolean) true / false
+ */
 public void setWindowIsHidden(Boolean b)
 {
 	windowIsHidden = b;
