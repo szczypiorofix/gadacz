@@ -284,6 +284,7 @@ public ClientMain()
 						
 				modelList.addElement(nazwaZnajomego.getText()+"("+znajomy.getNumer()+")");
 			}
+			
 			zapisZnajomych();	
 			dialogDodajZnajomego.setVisible(false);
 			poleListyUserow.revalidate();
