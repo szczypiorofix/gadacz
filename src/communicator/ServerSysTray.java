@@ -60,6 +60,9 @@ private final String infoString = "<html><h3>Gadacz ... czyli kolejny program do
 		+ "<br><h4> Wersja 0.8a (build 777)"
 		+ "<br><h5>Copyright (c) 2016, PoopingDog Studio. All rights reserved \u00AE";
 
+
+
+
 /** Podstawowy konstruktor systemowego zasobnika programu serwera.
  * @param frame (final JFrame frame) Ramka g³ówna programu.
  */

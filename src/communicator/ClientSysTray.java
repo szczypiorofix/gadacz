@@ -90,6 +90,8 @@ private boolean hideOnX = true;
 
 
 
+
+
 /** Podstawowy konstruktor systemowego zasobnika programu klienta.
  * @param frame (final JFrame frame) Ramka g³ówna programu.
  */
