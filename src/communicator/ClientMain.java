@@ -129,7 +129,6 @@ EventQueue.invokeLater(new Runnable()
 public ClientMain()
 {
 
-	// PRZYGOTOWANIE LOGGERA
 	try {
 		fileHandler = new FileHandler("client.log", false);
 	} catch (SecurityException e1) {
