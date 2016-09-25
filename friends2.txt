@@ -1,0 +1,3 @@
+#Lista znajomych klienta o numerze: 2
+#Fri Sep 23 18:13:07 CEST 2016
+1=Stefan1
