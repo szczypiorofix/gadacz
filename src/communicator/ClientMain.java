@@ -215,8 +215,6 @@ public ClientMain()
 	DefaultCaret caret = (DefaultCaret)info.getCaret();
 	caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 	
-	// TODO Poprawiæ zapis znajomych do pliku
-	
 	panelCentralny.add(scroll, BorderLayout.CENTER);
 
 	bPolacz = new JButton("Po³¹cz z serwerem");
@@ -380,7 +378,6 @@ public ClientMain()
 			try {
 				socket = new Socket();
 				socket.connect(new InetSocketAddress(host, port), 3000); // 3 sek. timeout
-				// TODO Obs³uga wyj¹tko - co jeœli nie mo¿na po³¹czyæ siê z serwerem ?
 			}
 			catch (IOException ioe)
 			{
@@ -486,9 +483,6 @@ public void run()
 			if (data.getTypDanych() == TypDanych.WRONG) {
 				message(info, "Odrzucono po³¹czenie !");
 				data.setTypDanych(TypDanych.MESSAGE);
-					
-				// TODO Reconnect w przypadku wprowadzenia z³ego numeru / has³a u¿ytkownika
-				//socket.close();	
 			}
 		}		
 	}
