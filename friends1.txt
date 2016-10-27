@@ -1,3 +1,0 @@
-#Lista znajomych klienta o numerze: 1
-#Fri Sep 23 18:13:16 CEST 2016
-2=W\u0142adek

@@ -104,7 +104,7 @@ private HashMap <Integer, ObjectInputStream> inStreams;
 private JFrame ramka;
 private JTextArea users, info;
 private JPanel panelLewy, panelPrawy, panelPolnocny, panelPoludniowy;
-private JButton bPolaczZBaza, bWyswietlRekordy, bCheckIP;
+private JButton bCheckIP;
 private JScrollPane scrollCenter, scrollEast;
 private String h = "";
 private int count = 1;
@@ -122,7 +122,6 @@ private JSplitPane split1;
 private String usersString;
 private boolean logOK = false;
 private boolean doOnce = false;
-private MySQLBase bazaMySQL;
 private ServerSysTray serverSysTray;
 
 
@@ -152,9 +151,7 @@ public ServerMain()
 	LOGGER.addHandler(fileHandler);
 	
 	usersString = "U¿ytkownicy:";
-	
-	bazaMySQL = new MySQLBase(MYSQL_JDBC_DRIVER, MYSQL_DB_URL, MYSQL_USER, MYSQL_PASS);
-	
+		
 	ramka = new JFrame("Gadacz - serwer");
 	ramka.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 	ramka.setSize(580, 450);
@@ -194,21 +191,6 @@ public ServerMain()
 	split1.setBorder(new EmptyBorder(5,5,5,5));
 	
 	panelPolnocny = new JPanel(new FlowLayout());
-	bPolaczZBaza = new JButton("Po³¹cz z baz¹ MySQL");
-	bWyswietlRekordy = new JButton("Poka¿ rekordy bazy");
-	
-	panelPolnocny.add(bPolaczZBaza);
-	panelPolnocny.add(bWyswietlRekordy);
-	
-	bPolaczZBaza.addActionListener(new ActionListener()
-	{
-		@Override
-		public void actionPerformed(ActionEvent e)
-		{
-			bazaMySQL.setVisible(true);
-			bazaMySQL.connectToBase();
-		}
-	});
 	
 	panelPoludniowy = new JPanel(new FlowLayout());
 	bCheckIP = new JButton("SprawdŸ mój IP");
