@@ -1,10 +1,9 @@
 package communicator;
 
-/** Oznaczenia typÛw danych przesy≥anych przez uøytkownikÛw i serwer.
+/** Oznaczenia typ√≥w danych przesy≈Çanych przez u≈ºytkownik√≥w i serwer.
  * @author Piotrek
  * @see ClientMain
  * @see ServerMain
- * @see MySQLBase
  * @see Uzytkownik
  * @see Znajomy
  * @see Dane
@@ -12,19 +11,19 @@ package communicator;
 public enum TypDanych {
 
 	/**
-	 *  Typ danych jako zg≥oszenie nowego uøytkownika do rejestracji.
+	 *  Typ danych jako zg≈Çoszenie nowego u≈ºytkownika do rejestracji.
 	 */
 	REGISTER,
 	/**
-	 * Typ danych jako wiadomoúÊ od klienta do klienta.
+	 * Typ danych jako wiadomo≈õƒá od klienta do klienta.
 	 */
 	MESSAGE,
 	/**
-	 *  Typ danych jako zg≥oszenie zalogowania uøytkownika, ktÛry juø jest zarejestrowany w systemie.
+	 *  Typ danych jako zg≈Çoszenie zalogowania u≈ºytkownika, kt√≥ry ju≈º jest zarejestrowany w systemie.
 	 */
 	LOG,
 	/**
-	 * Typ danych wskazujπcych na wprowadzenie b≥Ídnych danych podczas logowania uøytkownika.
+	 * Typ danych wskazujƒÖcych na wprowadzenie b≈Çƒôdnych danych podczas logowania u≈ºytkownika.
 	 */
 	WRONG
 }

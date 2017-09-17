@@ -36,11 +36,11 @@ private SystemTray systray;
  */
 private PopupMenu popup;
 /**
- * MenuItem wyjœcie.
+ * MenuItem wyjÅ›cie.
  */
 private MenuItem exitItem;
 /**
- * MenuItem poka¿.
+ * MenuItem pokaÅ¼.
  */
 private MenuItem showItem;
 /**
@@ -48,7 +48,7 @@ private MenuItem showItem;
  */
 private MenuItem infoItem;
 /**
- * True jeœli okno aplikacji serwera jest ukryte.
+ * True jeÅ›li okno aplikacji serwera jest ukryte.
  */
 private boolean windowIsHidden; 
 
@@ -64,7 +64,7 @@ private final String infoString = "<html><h3>Gadacz ... czyli kolejny program do
 
 
 /** Podstawowy konstruktor systemowego zasobnika programu serwera.
- * @param frame (final JFrame frame) Ramka g³ówna programu.
+ * @param frame (final JFrame frame) Ramka gÅ‚Ã³wna programu.
  */
 public ServerSysTray(final JFrame frame)
 {
@@ -72,7 +72,7 @@ public ServerSysTray(final JFrame frame)
 	systray = SystemTray.getSystemTray();
 	popup = new PopupMenu();
 		
-	exitItem = new MenuItem("Zakoñcz");
+	exitItem = new MenuItem("ZakoÅ„cz");
 	exitItem.setFont(new Font("Verdana", Font.PLAIN, 12));
 	exitItem.addActionListener(new ActionListener()
 	{
@@ -83,7 +83,7 @@ public ServerSysTray(final JFrame frame)
 		}
 	});
 	
-	showItem = new MenuItem("Powróæ do programu");
+	showItem = new MenuItem("PowrÃ³t do programu");
 	showItem.setFont(new Font("Verdana", Font.BOLD, 12));
 	showItem.addActionListener(new ActionListener()
 	{
@@ -126,9 +126,9 @@ public ServerSysTray(final JFrame frame)
 	});
 }
 
-/** Metoda wyœwietlaj¹ca okreœlony komunikat w zasobniku systemowym.
- * @param msgBold Treœæ g³ówna komunikatu.
- * @param msgPlain Treœæ komunikatu.
+/** Metoda wyÅ›wietlajÄ…ca okreÅ›lony komunikat w zasobniku systemowym.
+ * @param msgBold TreÅ›Ä‡ gÅ‚Ã³wna komunikatu.
+ * @param msgPlain TreÅ›Ä‡ komunikatu.
  * @param msgType Typ komunikatu.
  */
 public void trayMessage(String msgBold, String msgPlain, TrayIcon.MessageType msgType)
@@ -137,12 +137,12 @@ public void trayMessage(String msgBold, String msgPlain, TrayIcon.MessageType ms
 }
 
 /**
- * Metoda inicjuj¹ca zasobnik systemowy.
+ * Metoda inicjujÄ…ca zasobnik systemowy.
  */
 public void initialize()
 {
 	if (!SystemTray.isSupported()) {
-		JOptionPane.showMessageDialog(null, "Zasobnik systemowy nie jest dostêpny!", "B³¹d zasobnika systemowego!", JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(null, "Zasobnik systemowy nie jest dostÄ™pny!", "BÅ‚Ä…d zasobnika systemowego!", JOptionPane.ERROR_MESSAGE);
 		return;
 	}
 	
@@ -156,7 +156,7 @@ public void initialize()
 	}
 }
 
-/** Metoda zwracaj¹ca wartoœæ true lub false odnoœnie ukrytego okna g³ównego aplikacji.
+/** Metoda zwracajÄ…ca wartoÅ›Ä‡ true lub false odnoÅ›nie ukrytego okna gÅ‚Ã³wnego aplikacji.
  * @return windowIsHidden.
  */
 public boolean windowIsHidden()
@@ -164,7 +164,7 @@ public boolean windowIsHidden()
 	return windowIsHidden;
 }
 
-/** Metoda ustaiwaj¹ca wartoœæ true lub false odnoœnie ukrytego okna g³ównego aplikacji.
+/** Metoda ustawiajÄ…ca wartoÅ›Ä‡ 'true' lub 'false' odnoÅ›nie ukrytego okna gÅ‚Ã³wnego aplikacji.
  * @param b (Boolean) true / false
  */
 public void setWindowIsHidden(Boolean b)

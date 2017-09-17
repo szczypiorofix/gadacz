@@ -2,7 +2,7 @@ package communicator;
 
 import java.io.Serializable;
 
-/** Podstawowa klasa znajomego u¿ytkownika.
+/** Podstawowa klasa znajomego uÅ¼ytkownika.
  * @author Piotrek
  * @see ClientMain
  * @see ServerMain
@@ -42,7 +42,7 @@ public Znajomy(int numer, String nazwa, boolean online) {
 }
 
 
-/** Metoda zwracaj¹ca numer znajomego.
+/** Metoda zwracajÄ…ca numer znajomego.
  * @return Numer znajomego.
  */
 public int getNumer() {
@@ -50,7 +50,7 @@ public int getNumer() {
 }
 
 
-/** Metoda ustawiaj¹ca numer znajomego.
+/** Metoda ustawiajÄ…ca numer znajomego.
  * @param numer Numer znajomego.
  */
 public void setNumer(int numer) {
@@ -58,7 +58,7 @@ public void setNumer(int numer) {
 }
 
 
-/** Metoda zwracaj¹ca nazwê znajomego.
+/** Metoda zwracajÄ…ca nazwÄ™ znajomego.
  * @return Nazwa znajomego.
  */
 public String getNazwa() {
@@ -66,7 +66,7 @@ public String getNazwa() {
 }
 
 
-/** Metoda ustawiaj¹ca nazwê znajomego.
+/** Metoda ustawiajÄ…ca nazwÄ™ znajomego.
  * @param nazwa Nazwa znajomego.
  */
 public void setNazwa(String nazwa) {
@@ -74,16 +74,16 @@ public void setNazwa(String nazwa) {
 }
 
 
-/** Metoda zwracaj¹ca wartoœæ true lub false: czy znajomy jest online?
- * @return Prawda lub Fa³sz.
+/** Metoda zwracajÄ…ca wartoÅ›Ä‡ true lub false: czy znajomy jest online?
+ * @return 'true' lub 'false'.
  */
 public boolean isOnline() {
 	return online;
 }
 
 
-/** Metoda ustawiaj¹ca czy znajomy jest online.
- * @param online Prawda lub Fa³sz.
+/** Metoda ustawiajÄ…ca czy znajomy jest online.
+ * @param online 'true' lub 'false'.
  */
 public void setOnline(boolean online) {
 	this.online = online;

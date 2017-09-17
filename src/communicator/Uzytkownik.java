@@ -3,113 +3,112 @@ package communicator;
 import java.io.Serializable;
 import java.util.HashMap;
 
-/** Podstawowa klasa uøytkownika, wpisywanego w bazÍ uøytkownikÛw.
+/** Podstawowa klasa u≈ºytkownika, wpisywanego w bazƒô u≈ºytkownik√≥w.
  * @author Piotrek
  * @see ClientMain
  * @see ServerMain
  * @see Dane
- * @see MySQLBase
  * @see Znajomy
  * @see TypDanych
  */
 public class Uzytkownik implements Serializable{
 
-private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-private int numer;
-private String nazwa, imie, nazwisko, email;
-private char[] haslo;
-private HashMap<Integer, Znajomy> znajomi;
-
-
-
-/** Podstawowy konstruktor klasy Uøytkownik.
- * @param numer Numer uøytkownika.
- * @param nazwa Nazwa.
- * @param imie ImiÍ.
- * @param nazwisko Nazwisko.
- * @param email E-mail.
- * @param haslo Has≥o uøytkownika.
- * @param hashMap HashMapa zawierajπca wykaz znajomych uøytkownika.
- */
-public Uzytkownik(int numer, String nazwa, String imie, String nazwisko, String email, char[] haslo, HashMap<Integer, Znajomy> hashMap)
-{
-	this.numer = numer;
-	this.nazwa = nazwa;
-	this.imie = imie;
-	this.nazwisko = nazwisko;
-	this.email = email;
-	this.haslo = haslo;
-	this.znajomi = hashMap;
-}
-
-public int getNumer() {
-	return numer;
-}
+	private int numer;
+	private String nazwa, imie, nazwisko, email;
+	private char[] haslo;
+	private HashMap<Integer, Znajomy> znajomi;
 
 
-public void setNumer(int numer) {
-	this.numer = numer;
-}
+
+	/** Podstawowy konstruktor klasy U≈ºytkownik.
+	 * @param numer Numer u≈ºytkownika.
+	 * @param nazwa Nazwa.
+	 * @param imie Imiƒô.
+	 * @param nazwisko Nazwisko.
+	 * @param email E-mail.
+	 * @param haslo Has≈Ço u≈ºytkownika.
+	 * @param hashMap HashMapa zawierajƒÖca wykaz znajomych u≈ºytkownika.
+	 */
+	public Uzytkownik(int numer, String nazwa, String imie, String nazwisko, String email, char[] haslo, HashMap<Integer, Znajomy> hashMap)
+	{
+		this.numer = numer;
+		this.nazwa = nazwa;
+		this.imie = imie;
+		this.nazwisko = nazwisko;
+		this.email = email;
+		this.haslo = haslo;
+		this.znajomi = hashMap;
+	}
+
+	public int getNumer() {
+		return numer;
+	}
 
 
-public String getNazwa() {
-	return nazwa;
-}
+	public void setNumer(int numer) {
+		this.numer = numer;
+	}
 
 
-public void setNazwa(String nazwa) {
-	this.nazwa = nazwa;
-}
+	public String getNazwa() {
+		return nazwa;
+	}
 
 
-public String getImie() {
-	return imie;
-}
+	public void setNazwa(String nazwa) {
+		this.nazwa = nazwa;
+	}
 
 
-public void setImie(String imie) {
-	this.imie = imie;
-}
+	public String getImie() {
+		return imie;
+	}
 
 
-public String getNazwisko() {
-	return nazwisko;
-}
+	public void setImie(String imie) {
+		this.imie = imie;
+	}
 
 
-public void setNazwisko(String nazwisko) {
-	this.nazwisko = nazwisko;
-}
+	public String getNazwisko() {
+		return nazwisko;
+	}
 
 
-public String getEmail() {
-	return email;
-}
+	public void setNazwisko(String nazwisko) {
+		this.nazwisko = nazwisko;
+	}
 
 
-public void setEmail(String email) {
-	this.email = email;
-}
+	public String getEmail() {
+		return email;
+	}
 
 
-public char[] getHaslo() {
-	return haslo;
-}
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
 
-public void setHaslo(char[] haslo) {
-	this.haslo = haslo;
-}
+	public char[] getHaslo() {
+		return haslo;
+	}
 
 
-public HashMap<Integer, Znajomy> getZnajomi() {
-	return znajomi;
-}
+	public void setHaslo(char[] haslo) {
+		this.haslo = haslo;
+	}
 
 
-public void setZnajomi(HashMap<Integer, Znajomy> znajomi) {
-	this.znajomi = znajomi;
-}
+	public HashMap<Integer, Znajomy> getZnajomi() {
+		return znajomi;
+	}
+
+
+	public void setZnajomi(HashMap<Integer, Znajomy> znajomi) {
+		this.znajomi = znajomi;
+	}
 
 }

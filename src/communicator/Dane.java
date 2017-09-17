@@ -4,7 +4,7 @@ package communicator;
 import java.io.Serializable;
 import java.util.HashMap;
 
-/**Klasa reprezentuj¹ca zestaw danych przesy³anych od klienta do serwera i odwrotnie.
+/**Klasa reprezentujÄ…ca zestaw danych przesyÅ‚anych od klienta do serwera i odwrotnie.
  * @author Piotrek
  *
  */
@@ -13,59 +13,63 @@ public class Dane implements Serializable{
 private static final long serialVersionUID = 100L;
 
 /**
- * Numer u¿ytkownika, który wysy³a wiadomoœæ.
+ * Numer uÅ¼ytkownika, ktÃ³ry wysyÅ‚a wiadomoÅ›Ä‡.
  */
 private int mKto;
+
 /**
- * Typ danych wysy³anych przez u¿ytkownika.
+ * Typ danych wysyÅ‚anych przez uÅ¼ytkownika.
  * @see TypDanych
  */
 private TypDanych mTypDanych;  // REGISTER, MESSAGE lub UPDATE
+
 /**
- * Numer u¿ytkownika, do którego wysy³ana jest wiadomoœæ.
+ * Numer uÅ¼ytkownika, do ktÃ³rego wysyÅ‚ana jest wiadomoÅ›Ä‡.
  */
 private int mDoKogo;
+
 /**
- * Nazwa u¿ytkownika wysy³aj¹cego wiadomoœæ.
+ * Nazwa uÅ¼ytkownika wysyÅ‚ajÄ…cego wiadomoÅ›Ä‡.
  */
 private String mNazwa;
+
 /**
- * Imiê u¿ytkownika wysy³aj¹cego wiadomoœæ.
+ * ImiÄ™ uÅ¼ytkownika wysyÅ‚ajÄ…cego wiadomoÅ›Ä‡.
  */
 private String mImie;
 /**
- * Nazwisko u¿ytkownika wysy³aj¹cego wiadomoœæ.
+ * Nazwisko uÅ¼ytkownika wysyÅ‚ajÄ…cego wiadomoÅ›Ä‡.
  */
 private String mNazwisko;
 /**
- * E-mail u¿ytkownika wysy³aj¹cego wiadomoœæ.
+ * E-mail uï¿½ytkownika wysyï¿½ajï¿½cego wiadomoÅ›Ä‡.
  */
 private String mEmail;
 /**
- * Has³o u¿ytkownika wysy³aj¹cego wiadomoœæ.
+ * Hasï¿½o uï¿½ytkownika wysyï¿½ajï¿½cego wiadomoÅ›Ä‡.
  */
 private char[] mHaslo;
 /**
- * HashMapa znajomych u¿ytkownika wysy³aj¹cego wiadomoœæ.
+ * HashMapa znajomych uï¿½ytkownika wysyï¿½ajï¿½cego wiadomoÅ›Ä‡.
  */
 private HashMap<Integer, Znajomy> mZnajomi;
 /**
- * Treœæ wiadomoœci.
+ * Treï¿½ï¿½ wiadomoï¿½ci.
  */
 private String mWiadomosc;
 
 
 /** Konstruktor klasy Dane.
- * @param kto Numer u¿ytkownika, od którego pochodzi wiadmoœæ.
- * @param typDanych Typ wiadmoœci.
- * @param doKogo Numer u¿ytkownika, do którego wiadomoœæ jest wysy³ana.
- * @param nazwa Nazwa u¿ytkownika.
- * @param imie Imiê u¿ytkownika.
- * @param nazwisko Nazwisko u¿ytkownika.
- * @param email E-mail u¿ytkownika.
- * @param haslo Has³o u¿ytkownika.
- * @param znajomi HashMapa znajomych u¿ytkownika.
- * @param wiadomosc Treœæ wiadpmoœci.
+ * @param kto Numer uï¿½ytkownika, od ktï¿½rego pochodzi wiadomoÅ›Ä‡.
+ * @param typDanych Typ wiadmoï¿½ci.
+ * @param doKogo Numer uï¿½ytkownika, do ktï¿½rego wiadomoÅ›Ä‡ jest wysyï¿½ana.
+ * @param nazwa Nazwa uï¿½ytkownika.
+ * @param imie Imiï¿½ uï¿½ytkownika.
+ * @param nazwisko Nazwisko uï¿½ytkownika.
+ * @param email E-mail uï¿½ytkownika.
+ * @param haslo Hasï¿½o uï¿½ytkownika.
+ * @param znajomi HashMapa znajomych uï¿½ytkownika.
+ * @param wiadomosc Treï¿½ï¿½ wiadpmoï¿½ci.
  */
 public Dane(int kto, TypDanych typDanych, int doKogo, String nazwa, String imie, String nazwisko, String email, char[] haslo, HashMap<Integer, Znajomy> znajomi, String wiadomosc)
 {
@@ -82,9 +86,9 @@ public Dane(int kto, TypDanych typDanych, int doKogo, String nazwa, String imie,
 }
 
 
-/** Metoda zwracaj¹ca numer u¿ytkownika, który wysy³a wiadomoœæ.
+/** Metoda zwracajï¿½ca numer uï¿½ytkownika, ktï¿½ry wysyï¿½a wiadomoÅ›Ä‡.
  * 
- * @return Numer u¿ytkownika
+ * @return Numer uï¿½ytkownika
  */
 public int getKto()
 {
@@ -92,9 +96,9 @@ public int getKto()
 }
 
 
-/**Metoda ustawiaj¹ca wartoœæ u¿ytkownika, któy wysy³a wiadomoœæ.
+/**Metoda ustawiajï¿½ca wartoï¿½ï¿½ uï¿½ytkownika, ktï¿½y wysyï¿½a wiadomoÅ›Ä‡.
  * 
- * @param kto Numer u¿ytkownika
+ * @param kto Numer uï¿½ytkownika
  */
 public void setKto(int kto)
 {
@@ -102,7 +106,7 @@ public void setKto(int kto)
 }
 
 
-/** Metoda zwracaj¹ca Typ Danych
+/** Metoda zwracajï¿½ca Typ Danych
  * @see TypDanych
  * @return Typ danych.
  */
@@ -111,7 +115,7 @@ public TypDanych getTypDanych() {
 }
 
 
-/** Metoda ustawiaj¹ca wartoœæ typu danych.
+/** Metoda ustawiajï¿½ca wartoï¿½ï¿½ typu danych.
  * @param typDanych Typ danych.
  */
 public void setTypDanych(TypDanych typDanych) {
@@ -119,103 +123,103 @@ public void setTypDanych(TypDanych typDanych) {
 }
 
 
-/** Metoda zwracaj¹ca numer u¿ytkownika, do którego przekazywana jest wiadomoœæ.
- * @return numer u¿ytkownika.
+/** Metoda zwracajï¿½ca numer uï¿½ytkownika, do ktï¿½rego przekazywana jest wiadomoÅ›Ä‡.
+ * @return numer uï¿½ytkownika.
  */
 public int getDoKogo() {
 	return mDoKogo;
 }
 
 
-/** Metoda ustawiaj¹ca numer u¿ytkownika, do którego przekazywana jest wiadomoœæ.
- * @param doKogo Numer u¿ytkownika.
+/** Metoda ustawiajï¿½ca numer uï¿½ytkownika, do ktï¿½rego przekazywana jest wiadomoÅ›Ä‡.
+ * @param doKogo Numer uï¿½ytkownika.
  */
 public void setDoKogo(int doKogo) {
 	mDoKogo = doKogo;
 }
 
 
-/** Metoda zwracaj¹ca nazwê u¿ytkownika, który wysy³a wiadomoœæ.
- * @return nazwa u¿ytkownika.
+/** Metoda zwracajï¿½ca nazwï¿½ uï¿½ytkownika, ktï¿½ry wysyï¿½a wiadomoÅ›Ä‡.
+ * @return nazwa uï¿½ytkownika.
  */
 public String getNazwa() {
 	return mNazwa;
 }
 
 
-/** Metoda ustawiaj¹ca nazwê u¿ytkownika, do którego przekazywana jest wiadomoœæ.
- * @param  nazwa nazwa u¿ytkownika.
+/** Metoda ustawiajï¿½ca nazwï¿½ uï¿½ytkownika, do ktï¿½rego przekazywana jest wiadomoÅ›Ä‡.
+ * @param  nazwa nazwa uï¿½ytkownika.
  */
 public void setNazwa(String nazwa) {
 	mNazwa = nazwa;
 }
 
 
-/** Metoda zwracaj¹ca imiê u¿ytkownika, który wysy³a wiadomoœæ.
- * @return imiê u¿ytkownika.
+/** Metoda zwracajï¿½ca imiï¿½ uï¿½ytkownika, ktï¿½ry wysyï¿½a wiadomoÅ›Ä‡.
+ * @return imiï¿½ uï¿½ytkownika.
  */
 public String getImie() {
 	return mImie;
 }
 
 
-/** Metoda ustawiaj¹ca imiê u¿ytkownika, do którego przekazywana jest wiadomoœæ.
- * @param imie Nazwa u¿ytkownika.
+/** Metoda ustawiajï¿½ca imiï¿½ uï¿½ytkownika, do ktï¿½rego przekazywana jest wiadomoÅ›Ä‡.
+ * @param imie Nazwa uï¿½ytkownika.
  */
 public void setImie(String imie) {
 	mImie = imie;
 }
 
 
-/** Metoda zwracaj¹ca nazwisko u¿ytkownika, który wysy³a wiadomoœæ.
- * @return Nazwisko u¿ytkownika.
+/** Metoda zwracajï¿½ca nazwisko uï¿½ytkownika, ktï¿½ry wysyï¿½a wiadomoÅ›Ä‡.
+ * @return Nazwisko uï¿½ytkownika.
  */
 public String getNazwisko() {
 	return mNazwisko;
 }
 
 
-/** Metoda ustawiaj¹ca nazwisko u¿ytkownika, do którego przekazywana jest wiadomoœæ.
- * @param nazwisko Nazwisko u¿ytkownika.
+/** Metoda ustawiajï¿½ca nazwisko uï¿½ytkownika, do ktï¿½rego przekazywana jest wiadomoÅ›Ä‡.
+ * @param nazwisko Nazwisko uï¿½ytkownika.
  */
 public void setNazwisko(String nazwisko) {
 	mNazwisko = nazwisko;
 }
 
 
-/** Metoda zwracaj¹ca e-mail u¿ytkownika, który wysy³a wiadomoœæ.
- * @return E-mail u¿ytkownika.
+/** Metoda zwracajï¿½ca e-mail uï¿½ytkownika, ktï¿½ry wysyï¿½a wiadomoÅ›Ä‡.
+ * @return E-mail uï¿½ytkownika.
  */
 public String getEmail() {
 	return mEmail;
 }
 
 
-/** Metoda ustawiaj¹ca e-mail u¿ytkownika, do którego przekazywana jest wiadomoœæ.
- * @param email E-mail u¿ytkownika.
+/** Metoda ustawiajï¿½ca e-mail uï¿½ytkownika, do ktï¿½rego przekazywana jest wiadomoÅ›Ä‡.
+ * @param email E-mail uï¿½ytkownika.
  */
 public void setEmail(String email) {
 	mEmail = email;
 }
 
 
-/** Metoda zwracaj¹ca has³o u¿ytkownika, który wysy³a wiadomoœæ.
- * @return Has³o u¿ytkownika.
+/** Metoda zwracajï¿½ca hasï¿½o uï¿½ytkownika, ktï¿½ry wysyï¿½a wiadomoï¿½ï¿½.
+ * @return Hasï¿½o uï¿½ytkownika.
  */
 public char[] getHaslo() {
 	return mHaslo;
 }
 
 
-/** Metoda ustawiaj¹ca has³o u¿ytkownika, do którego przekazywana jest wiadomoœæ.
- * @param haslo Has³o u¿ytkownika.
+/** Metoda ustawiajï¿½ca hasï¿½o uï¿½ytkownika, do ktï¿½rego przekazywana jest wiadomoï¿½ï¿½.
+ * @param haslo Hasï¿½o uï¿½ytkownika.
  */
 public void setHaslo(char[] haslo) {
 	mHaslo = haslo;
 }
 
 
-/** Metoda zwracaj¹ca HashMapê znajomych u¿ytkownika, który wysy³a wiadomoœæ.
+/** Metoda zwracajï¿½ca HashMapï¿½ znajomych uï¿½ytkownika, ktï¿½ry wysyï¿½a wiadomoï¿½ï¿½.
  * @return HashMapa znajomych.
  */
 public HashMap<Integer, Znajomy> getZnajomi() {
@@ -223,24 +227,24 @@ public HashMap<Integer, Znajomy> getZnajomi() {
 }
 
 
-/** Metoda ustawiaj¹ca HashMapê znajomych u¿ytkownika, do którego przekazywana jest wiadomoœæ.
- * @param znajomi HashMapa znajomych u¿ytkownika.
+/** Metoda ustawiajï¿½ca HashMapï¿½ znajomych uï¿½ytkownika, do ktï¿½rego przekazywana jest wiadomoï¿½ï¿½.
+ * @param znajomi HashMapa znajomych uï¿½ytkownika.
  */
 public void setZnajomi(HashMap<Integer, Znajomy> znajomi) {
 	mZnajomi = znajomi;
 }
 
 
-/** Metoda zwracaj¹ca treœæ wiadomoœci u¿ytkownika.
- * @return Wiadomoœæ od u¿ytkownika.
+/** Metoda zwracajï¿½ca treï¿½ï¿½ wiadomoÅ›ci uï¿½ytkownika.
+ * @return Wiadomoï¿½ï¿½ od uï¿½ytkownika.
  */
 public String getWiadomosc() {
 	return mWiadomosc;
 }
 
 
-/** Metoda ustawiaj¹ca treœæ wiadomoœci wysy³anej przez u¿ytkownika.
- * @param wiadomosc Wiadomoœæ u¿ytkownika.
+/** Metoda ustawiajï¿½ca treï¿½ï¿½ wiadomoÅ›ci wysyï¿½anej przez uï¿½ytkownika.
+ * @param wiadomosc Wiadomoï¿½ï¿½ uï¿½ytkownika.
  */
 public void setWiadomosc(String wiadomosc) {
 	mWiadomosc = wiadomosc;

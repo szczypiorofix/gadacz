@@ -37,10 +37,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.text.DefaultCaret;
 
 
-/**G³ówny program serwera komunikatora internetowego.
+/**Gï¿½ï¿½wny program serwera komunikatora internetowego.
  * @author Piotrek
  * @see ClientMain
- * @see MySQLBase
  * @see Dane
  * @see TypDanych
  * @see Uzytkownik
@@ -58,8 +57,8 @@ private static final String MYSQL_PASS = "";
 private final static Logger LOGGER = Logger.getLogger(ServerMain.class.getName());
 private FileHandler fileHandler = null;
 /**
- * Port po³¹czenia pomiêdzy serwerem a klientami.
- * Wartoœæ sta³a: 1201.
+ * Port poï¿½ï¿½czenia pomiï¿½dzy serwerem a klientami.
+ * Wartoï¿½ï¿½ staï¿½a: 1201.
  */
 private final int SERVER_PORT = 1201;
 /**
@@ -67,39 +66,39 @@ private final int SERVER_PORT = 1201;
  */
 private ServerSocket serverSocket;
 /**
- * Tymczasowe gniazdko serwera s³u¿¹ce do wpisywania gniazdka jako kolejnego elementu HashMapy
+ * Tymczasowe gniazdko serwera sï¿½uï¿½ï¿½ce do wpisywania gniazdka jako kolejnego elementu HashMapy
  * @see sockets 
  */
 private Socket tempSocket;
 /**
- * Tymczasowy strumieñ wejœciowy s³u¿¹cy do wpisywania go jako kolejnego elementu HashMapy outStreams.
+ * Tymczasowy strumieï¿½ wejï¿½ciowy sï¿½uï¿½ï¿½cy do wpisywania go jako kolejnego elementu HashMapy outStreams.
  * @see outStreams
  */
 private ObjectInputStream tempStreamIn;
 /**
- * Tymczasowy strumieñ wyjœciowy s³u¿¹cy do wpisywania go jako kolejnego elementu HashMapy inStreams.
+ * Tymczasowy strumieï¿½ wyjï¿½ciowy sï¿½uï¿½ï¿½cy do wpisywania go jako kolejnego elementu HashMapy inStreams.
  * @see inStreams
  */
 private ObjectOutputStream tempStreamOut;
 /**
- * HashMapa gniazdek kolejnych klientów.
+ * HashMapa gniazdek kolejnych klientï¿½w.
  * @see tempSocket
  */
 private HashMap<Integer, Socket> sockets;
 /**
- * HashMapa strumieni wyjœciowych kolejnych klientów.
+ * HashMapa strumieni wyjï¿½ciowych kolejnych klientï¿½w.
  * @see tempStreamOut
  * @see inStreams
  */
 private HashMap <Integer, ObjectOutputStream> outStreams;
 /**
- * HashMapa strumieni wejœciowych kolejnych klientów.
+ * HashMapa strumieni wejï¿½ciowych kolejnych klientï¿½w.
  * @see temoStreamIn
  * @see outStreams
  */
 private HashMap <Integer, ObjectInputStream> inStreams;
 /**
- * G³ówne okno aplikacji serwera.
+ * Gï¿½ï¿½wne okno aplikacji serwera.
  */
 private JFrame ramka;
 private JTextArea users, info;
@@ -131,7 +130,7 @@ public static void main(String[] args)
 }
 
 /**
- * Konstruktor g³ównego programu serwera.
+ * Konstruktor gï¿½ï¿½wnego programu serwera.
  */
 public ServerMain()
 {
@@ -150,7 +149,7 @@ public ServerMain()
 	fileHandler.setLevel(Level.WARNING);
 	LOGGER.addHandler(fileHandler);
 	
-	usersString = "U¿ytkownicy:";
+	usersString = "UÅ¼ytkownicy:";
 		
 	ramka = new JFrame("Gadacz - serwer");
 	ramka.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -163,7 +162,7 @@ public ServerMain()
 	// SYSTRAY
 	serverSysTray = new ServerSysTray(ramka);
 	serverSysTray.initialize();
-	serverSysTray.trayMessage("Serwer", "Serwer zosta³ uruchomiony!", TrayIcon.MessageType.INFO);
+	serverSysTray.trayMessage("Serwer", "Serwer zostaÅ‚ uruchomiony!", TrayIcon.MessageType.INFO);
 	
 	
 	info = new JTextArea(h);
@@ -193,7 +192,7 @@ public ServerMain()
 	panelPolnocny = new JPanel(new FlowLayout());
 	
 	panelPoludniowy = new JPanel(new FlowLayout());
-	bCheckIP = new JButton("SprawdŸ mój IP");
+	bCheckIP = new JButton("SprawdÅº mÃ³j IP");
 	
 	bCheckIP.addActionListener(new ActionListener()
 	{
@@ -201,7 +200,7 @@ public ServerMain()
 		public void actionPerformed(ActionEvent e)
 		{
 			
-			// POBIERANIE ZEWNÊTRZNEGO ADRESU IP SERWERA
+			// POBIERANIE ZEWNï¿½TRZNEGO ADRESU IP SERWERA
 			Boolean checkIP = true;
 			
 			try {
@@ -212,7 +211,7 @@ public ServerMain()
 			catch (Exception uhe)
 			{
 				checkIP = false;
-				bCheckIP.setText("B³¹d po³¹czenia!");
+				bCheckIP.setText("BÅ‚Ä…d poÅ‚Ä…czenia!");
 			}
 			finally
 			{
@@ -254,7 +253,7 @@ public ServerMain()
 		
 		serverSocket = new ServerSocket(SERVER_PORT);
 		message("Serwer", "Adres lokalny serwera " +InetAddress.getLocalHost().toString());
-		message("Serwer", "Oczekiwanie na u¿ytkowników ...");
+		message("Serwer", "Oczekiwanie na uÅ¼ytkownikÃ³w ...");
 		while (true)
 		{
 			tempSocket = serverSocket.accept();
@@ -269,11 +268,11 @@ public ServerMain()
 							, dane.getEmail(), dane.getHaslo(), dane.getZnajomi()));
 					
 					whoIsOnline.put(count, true);
-					message("Serwer", "Zarejestrowano u¿ytkownika: " +dane.getKto() +", " +dane.getNazwa() +" " +dane.getImie()
+					message("Serwer", "Zarejestrowano uÅ¼ytkownika: " +dane.getKto() +", " +dane.getNazwa() +" " +dane.getImie()
 					 +" " +dane.getNazwisko() +" " +dane.getEmail() +" " +new String(dane.getHaslo()));
-					if (serverSysTray.windowIsHidden()) serverSysTray.trayMessage("Serwer komunikatora", "Zarejestrowano nowego u¿ytkownika!", TrayIcon.MessageType.INFO);
+					if (serverSysTray.windowIsHidden()) serverSysTray.trayMessage("Serwer komunikatora", "Zarejestrowano nowego uÅ¼ytkownika!", TrayIcon.MessageType.INFO);
 					
-					// DODAWANIE DO BAZY TYLKO ZAREJESTROWANYCH U¯YTKOWNIKÓW
+					// DODAWANIE DO BAZY TYLKO ZAREJESTROWANYCH Uï¿½YTKOWNIKï¿½W
 					sockets.put(count, tempSocket);
 					outStreams.put(count, tempStreamOut);
 					inStreams.put(count, tempStreamIn);
@@ -284,7 +283,7 @@ public ServerMain()
 					outStreams.get(count).flush();
 					logOK = true;
 					
-					usersString = "U¿ytkownicy:";
+					usersString = "UÅ¼ytkownicy:";
 					for (int i = 1; i < bazaUzytkownikow.size()+1; i++)
 					{
 						usersString = usersString + "\n" +bazaUzytkownikow.get(i).getNumer()+"."+bazaUzytkownikow.get(i).getNazwa();
@@ -297,7 +296,7 @@ public ServerMain()
 					//while (keys.hasNext())
 					//{
 					//	Integer x = keys.next();
-					//	System.out.println("Keys: " +x +" wartoœæ: " +bazaUzytkownikow.get(x).getNumer());
+					//	System.out.println("Keys: " +x +" wartoï¿½ï¿½: " +bazaUzytkownikow.get(x).getNumer());
 					//}
 					
 				}
@@ -305,7 +304,7 @@ public ServerMain()
 			{
 				if ((bazaUzytkownikow.containsKey(dane.getKto())) && (new String(dane.getHaslo()).equals(new String(bazaUzytkownikow.get(dane.getKto()).getHaslo()))))
 				{
-					message(bazaUzytkownikow.get(dane.getKto()).getNazwa(), " zalogowa³(a) siê.");
+					message(bazaUzytkownikow.get(dane.getKto()).getNazwa(), " zalogowaÅ‚(a) siÄ™.");
 					dane.setWiadomosc("Logowanie udane!");
 					dane.setNazwa(bazaUzytkownikow.get(dane.getKto()).getNazwa());
 					outStreams.put(dane.getKto(), tempStreamOut);
@@ -316,8 +315,8 @@ public ServerMain()
 					logOK = true;
 				}
 				else {
-					message(dane.getKto() +"", "Nieprawid³owy numer/has³o!");
-					dane.setWiadomosc("Nieprawid³owy numer/has³o!");
+					message(dane.getKto() +"", "NieprawidÅ‚owy numer/hasÅ‚o!");
+					dane.setWiadomosc("NieprawidÅ‚owy numer/hasÅ‚o!");
 					dane.setTypDanych(TypDanych.WRONG);
 					tempStreamOut.writeObject(dane);
 					tempStreamOut.flush();
@@ -341,7 +340,7 @@ public ServerMain()
 
 
 
-/** Klasa w¹tku klienta po stronie serwera.
+/** Klasa wï¿½tku klienta po stronie serwera.
  * @author Piotrek
  *
  */
@@ -354,12 +353,12 @@ private HashMap<Integer, ObjectInputStream> streamsIn;
 private int numer = 0;
 
 
-/** Konstruktor w¹tku klienta po stronie serwera.
- * Tworzy w¹tek kolejnego klienta z przypisanego mu gniazdna oraz zestawu dwóch strumieni: wejœciowego i wyjœciowego.
- * @param s HashMapa (Integer, Socket) bazy gniazdek kolejnych klientów.
- * @param inMap HashMapa strumieni wejœciowych klientów.
- * @param outMap HashMapa strumieni wyjœciowych klientów.
- * @param c Okreœlony numer konkretnego klienta.
+/** Konstruktor wï¿½tku klienta po stronie serwera.
+ * Tworzy wï¿½tek kolejnego klienta z przypisanego mu gniazdna oraz zestawu dwï¿½ch strumieni: wejï¿½ciowego i wyjï¿½ciowego.
+ * @param s HashMapa (Integer, Socket) bazy gniazdek kolejnych klientï¿½w.
+ * @param inMap HashMapa strumieni wejï¿½ciowych klientï¿½w.
+ * @param outMap HashMapa strumieni wyjï¿½ciowych klientï¿½w.
+ * @param c Okreï¿½lony numer konkretnego klienta.
  */
 public ServerThread(HashMap<Integer, Socket> s, HashMap<Integer, ObjectInputStream> inMap, HashMap<Integer, ObjectOutputStream> outMap, int c)
 {
@@ -398,7 +397,7 @@ public void run()
 						streamsOut.get(dane.getDoKogo()).flush();
 					}
 					else {
-						dane.setWiadomosc("Brak u¿ytkownika o numerze "+dane.getDoKogo());
+						dane.setWiadomosc("Brak uÅ¼ytkownika o numerze "+dane.getDoKogo());
 						streamsOut.get(dane.getKto()).writeObject(dane);
 						streamsOut.get(dane.getKto()).flush();
 					}
@@ -420,8 +419,8 @@ public void run()
 	catch (SocketException e)
 	{
 		//zrzutLoga(e);
-		message(bazaUzytkownikow.get(numer).getNazwa(), "roz³¹czy³(a) siê. " +e.getMessage());
-		if (serverSysTray.windowIsHidden()) serverSysTray.trayMessage("Serwer komunikatora", "U¿ytkownik "+bazaUzytkownikow.get(numer).getNazwa() +" roz³¹czy³ siê.", TrayIcon.MessageType.INFO);
+		message(bazaUzytkownikow.get(numer).getNazwa(), "rozÅ‚Ä…czyÅ‚(a) siÄ™. " +e.getMessage());
+		if (serverSysTray.windowIsHidden()) serverSysTray.trayMessage("Serwer komunikatora", "UÅ¼ytkownik "+bazaUzytkownikow.get(numer).getNazwa() +" rozï¿½ï¿½czyï¿½ siï¿½.", TrayIcon.MessageType.INFO);
 		//e.printStackTrace();
 	}
 	catch (Exception e)
@@ -431,16 +430,16 @@ public void run()
 	}
 
 
-/** Metoda zwracaj¹ca HashMapê w¹tków klientów.
- * @return HashMapa w¹tków klientów.
+/** Metoda zwracajï¿½ca HashMapï¿½ wï¿½tkï¿½w klientï¿½w.
+ * @return HashMapa wï¿½tkï¿½w klientï¿½w.
  */
 public HashMap<Integer, Socket> getSocketsThread() {
 	return threadSockets;
 }
 }
 
-/** Metoda zrzucaj¹ca treœæ wyj¹tku do pliku Loggera.
- * @param e Wyj¹tek.
+/** Metoda zrzucajï¿½ca treï¿½ï¿½ wyjï¿½tku do pliku Loggera.
+ * @param e Wyjï¿½tek.
  */
 public void zrzutLoga(Exception e)
 {
@@ -448,9 +447,9 @@ public void zrzutLoga(Exception e)
 	//System.exit(-1);
 }
 
-/** Metoda formatuj¹ca i wyœwietlaj¹ca treœæ wiadomoœci od klienta w oknie serwera.
- * @param name Nazwa u¿ytkownika.
- * @param msg Treœæ wiadomoœci.
+/** Metoda formatujï¿½ca i wyï¿½wietlajï¿½ca treï¿½ï¿½ wiadomoï¿½ci od klienta w oknie serwera.
+ * @param name Nazwa uï¿½ytkownika.
+ * @param msg Treï¿½ï¿½ wiadomoï¿½ci.
  */
 public void message(String name, String msg)
 {
@@ -469,7 +468,7 @@ public void windowClosed(WindowEvent arg0) {}
 @Override
 public void windowClosing(WindowEvent arg0) {
 	if (!doOnce) {
-	serverSysTray.trayMessage("Serwer dzia³a w tle!", "¯eby zamkn¹æ kliknij prawym klawiszem myszy i wybierz opcjê 'Zamknij'", TrayIcon.MessageType.INFO);
+	serverSysTray.trayMessage("Serwer dziaÅ‚a w tle!", "Å»eby zamknÄ…Ä‡ kliknij prawym klawiszem myszy i wybierz opcjÄ™ 'Zamknij'", TrayIcon.MessageType.INFO);
 	doOnce = true;
 	}
 	serverSysTray.setWindowIsHidden(true);

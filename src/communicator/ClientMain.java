@@ -58,10 +58,9 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 
 
-/**G³ówny program klienta komunikatora internetowego.
+/**GÅ‚Ã³wny program klienta komunikatora internetowego.
  * @author Piotrek
  * @see ServerMain
- * @see MySQLBase
  * @see Dane
  * @see TypDanych
  * @see Uzytkownik
@@ -157,7 +156,7 @@ public ClientMain()
 	// SYSTRAY
 	clientSysTray = new ClientSysTray(ramka);
 	clientSysTray.initialize();
-	clientSysTray.trayMessage("Gadacz", "Aplikacja zosta³a uruchomiona!", TrayIcon.MessageType.INFO);
+	clientSysTray.trayMessage("Gadacz", "Aplikacja zostaÅ‚a uruchomiona!", TrayIcon.MessageType.INFO);
 	
 	bOK = new JButton("OK");
 	bAnuluj = new JButton("Anuluj");
@@ -169,7 +168,7 @@ public ClientMain()
 	panelPoludniowy = new JPanel(new FlowLayout());
 	panelWschodni = new JPanel(new BorderLayout());
 	
-	panelWschodni.add(new JLabel("U¿ytkownicy:     "), BorderLayout.NORTH);
+	panelWschodni.add(new JLabel("UÅ¼ytkownicy:     "), BorderLayout.NORTH);
 	modelList = new DefaultListModel<>();
 	poleListyUserow = new JList<String>(modelList);
 	
@@ -217,7 +216,7 @@ public ClientMain()
 	
 	panelCentralny.add(scroll, BorderLayout.CENTER);
 
-	bPolacz = new JButton("Po³¹cz z serwerem");
+	bPolacz = new JButton("PoÅ‚Ä…cz z serwerem");
 	bPolacz.setEnabled(!connected);
 	
 	panelPoludniowy.add(bPolacz);
@@ -321,7 +320,7 @@ public ClientMain()
 			panelPolDial.add(new JLabel("Nazwa: "));
 			panelPolDial.add(poleNazwy);
 			
-			panelPolDial.add(new JLabel("Imiê: "));
+			panelPolDial.add(new JLabel("ImiÄ™: "));
 			panelPolDial.add(poleImienia);
 			
 			panelPolDial.add(new JLabel("Nazwisko: "));
@@ -333,7 +332,7 @@ public ClientMain()
 			panelPolDial.add(new JLabel("Numer: "));
 			panelPolDial.add(poleNumeru);
 			
-			panelPolDial.add(new JLabel("Has³o: "));
+			panelPolDial.add(new JLabel("HasÅ‚o: "));
 			panelPolDial.add(poleHasla);
 			panelPolDial.add(logRej);
 			
@@ -384,13 +383,13 @@ public ClientMain()
 			}			
 			
 			ramka.setTitle("Aplikacja klienta: " +userName);
-			message(info, "Po³¹czono z serwerem!" +host +" : " +port);
+			message(info, "PoÅ‚Ä…czono z serwerem!" +host +" : " +port);
 			
 			if (registered) {
-				wyslij(TypDanych.REGISTER, "Chcê siê zajestrowaæ!", 0);
+				wyslij(TypDanych.REGISTER, "ChcÄ™ siÄ™ zajestrowaÄ‡!", 0);
 				registered = false;
 			}
-			else wyslij(TypDanych.LOG, "Chcê siê zalogowaæ!", userNumber);
+			else wyslij(TypDanych.LOG, "ChcÄ™ siÄ™ zalogowaÄ‡!", userNumber);
 			
 			connected = true;
 			bPolacz.setEnabled(!connected);
@@ -413,8 +412,8 @@ public ClientMain()
 
 /**
  * @param td Zdefiniowany Typ Danych : MESSAGE, LOG, REGISTER ...
- * @param s Wiadomoœæ do u¿ytkownika "doKogo".
- * @param doKogo Numer u¿ytkownika, do którego wysy³ana jest wiadmoœæ.
+ * @param s WiadomoÅ›Ä‡ do uÅ¼ytkownika "doKogo".
+ * @param doKogo Numer uÅ¼ytkownika, do ktÃ³rego wysyÅ‚ana jest wiadmoÅ›Ä‡.
  */
 public void wyslij(TypDanych td, String s, int doKogo)
 {
@@ -423,7 +422,7 @@ public void wyslij(TypDanych td, String s, int doKogo)
 		if (oos == null)
 			oos = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 		
-		data = new Dane(userNumber, td, doKogo, userName, userFirstName, userLastName, userEmail, userPassword, znajomi, s); // 0 - ka¿dy pocz¹tkowo ma numer 0, dopiero serwer zwraca w³aœciwy numer
+		data = new Dane(userNumber, td, doKogo, userName, userFirstName, userLastName, userEmail, userPassword, znajomi, s); // 0 - kaÅ¼dy poczÄ…tkowo ma numer 0, dopiero serwer zwraca wÅ‚aÅ›ciwy numer
 		oos.writeObject(data);
 		oos.flush();
 		message(info, s);
@@ -435,7 +434,7 @@ public void wyslij(TypDanych td, String s, int doKogo)
 }
 
 /**
- * Klasa w¹tku klienta.
+ * Klasa wÄ…tku klienta.
  */
 public class WatekKlienta implements Runnable
 {
@@ -464,7 +463,6 @@ public void run()
 				
 				//dialogCzat.get(0).wyswietlTekst(data.getWiadomosc());
 				dialogCzat.get(0).setVisible(true);
-				
 			}
 			
 			if (data.getTypDanych() == TypDanych.LOG) {
@@ -480,20 +478,20 @@ public void run()
 				userNumber = data.getKto();
 			}
 			if (data.getTypDanych() == TypDanych.WRONG) {
-				message(info, "Odrzucono po³¹czenie !");
+				message(info, "Odrzucono poÅ‚Ä…czenie !");
 				data.setTypDanych(TypDanych.MESSAGE);
 			}
 		}		
 	}
 	catch (Exception e)
 	{
-		JOptionPane.showMessageDialog(ramka, "Po³¹czenie z serwerem zosta³o przerwane!", "B³¹d po³¹czenia!", JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(ramka, "PoÅ‚Ä…czenie z serwerem zostaÅ‚o przerwane!", "BÅ‚Ä…d poÅ‚Ä…czenia!", JOptionPane.ERROR_MESSAGE);
 		zrzutLoga(e);
 	}		
 }
 
 /**
- * Metoda ³aduj¹ca z pliku informacje o znajomych u¿ytkownika.
+ * Metoda Å‚adujÄ…ca z pliku informacje o znajomych uÅ¼ytkownika.
  */
 public void friendsLoad()
 {
@@ -550,16 +548,16 @@ private JButton bW;
 private JScrollPane sp;
 
 /**
- * Metoda ustanawiaj¹ca tytu³ okna Czatu.
- * @param s Ci¹g znaków okreœlaj¹cy tytu³ okna Czatu.
+ * Metoda ustanawiajÄ…ca tytuÅ‚ okna Czatu.
+ * @param s CiÄ…g znakÃ³w okreÅ›lajÄ…cy tytuÅ‚ okna Czatu.
  */
 public void ustawTytul(String s)
 {
 	setTitle(s);
 }
 
-/** metoda wyœwietlaj¹ca tekst w oknie Czatu.
- * @param tekst Ci¹g znaków wiadmoœci wyœwietlanej w oknie Czatu.
+/** Metoda wyÅ›wietlajÄ…ca tekst w oknie Czatu.
+ * @param tekst CiÄ…g znakÃ³w wiadmoÅ›ci wyÅ›wietlanej w oknie Czatu.
  */
 public void wyswietlTekst(String tekst)
 {
@@ -568,7 +566,7 @@ public void wyswietlTekst(String tekst)
 
 /**
  * Konstruktor okna Czatu.
- * @param doKogo Numer u¿ytkownika, do kótego zostanie wys³ana wiadomoœæ.
+ * @param doKogo Numer uÅ¼ytkownika, do ktÃ³ego zostanie wysÅ‚ana wiadomoÅ›Ä‡.
  */
 public Czat(int doKogo)
 {
@@ -585,7 +583,7 @@ public Czat(int doKogo)
 	historiaCzat.setLineWrap(true);
 	historiaCzat.setWrapStyleWord(true);
 	wpisCzat = new JTextField(35);
-	bW = new JButton("Wyœlij");
+	bW = new JButton("Wyï¿½lij");
 	panelHistorii = new JPanel(new BorderLayout());
 	sp = new JScrollPane(historiaCzat);
 	DefaultCaret caret = (DefaultCaret)wpisCzat.getCaret();
@@ -616,7 +614,7 @@ public Czat(int doKogo)
 }
 
 /**
- * @return Zwraca numer u¿ytkownika, do którego zostanie wys³ana wiadomoœæ.
+ * @return Zwraca numer uÅ¼ytkownika, do ktÃ³rego zostanie wysÅ‚ana wiadomoÅ›Ä‡.
  */
 public int getDoUzytkownika()
 {
@@ -642,8 +640,8 @@ public void keyTyped(KeyEvent e) {}
 
 }
 
-/** Metoda zrzutu b³êdu do pliku Loggera.
- * @param e Wyj¹tek.
+/** Metoda zrzutu bÅ‚Ä™du do pliku Loggera.
+ * @param e WyjÄ…tek.
  */
 public void zrzutLoga(Exception e)
 {
@@ -652,9 +650,9 @@ public void zrzutLoga(Exception e)
 	//System.exit(-1);
 }
 
-/** Metoda formatuj¹ca i wyœwietlaj¹ca w odpowiednim oknie text wiadomoœci.
- * @param a Komponent w którym wyœwietlana zostanie wiadmoœæ (JTextArea)
- * @param s Treœæ wiadomoœci, z zawart¹ w niej na pocz¹tku godzin¹ otrzymania/wys³ania.
+/** Metoda formatujÄ…ca i wyÅ›wietlajÄ…ca w odpowiednim oknie text wiadomoÅ›ci.
+ * @param a Komponent w ktÃ³rym wyÅ›wietlana zostanie wiadmoÅ›Ä‡ (JTextArea)
+ * @param s TreÅ›Ä‡ wiadomoÅ›ci, z zawartÄ… w niej na poczÄ…tku godzinÄ… otrzymania/wysÅ‚ania.
  */
 public void message(JTextArea a, String s)
 {
@@ -671,7 +669,7 @@ public void messageSound()
 	        clip.open(audioInputStream);
 	        clip.start();
 	    } catch(Exception ex) {
-	        JOptionPane.showMessageDialog(ramka, "B³¹d odtwarzania pliku dŸwiêkowego!");
+	        JOptionPane.showMessageDialog(ramka, "BÅ‚Ä…d odtwarzania pliku dÅºwiÄ™kowego!");
 	        ex.printStackTrace();
 	        System.exit(-1);
 	    }
@@ -721,7 +719,7 @@ public void windowClosed(WindowEvent arg0) {}
 public void windowClosing(WindowEvent arg0) {
 
 	if (!doOnce) {
-		clientSysTray.trayMessage("Gadacz dzia³a w tle!", "¯eby zamkn¹æ kliknij prawym klawiszem myszy i wybierz opcjê 'Zamknij'", TrayIcon.MessageType.INFO);
+		clientSysTray.trayMessage("Gadacz dziaÅ‚a w tle!", "Å»eby zamknÄ…Ä‡ kliknij prawym klawiszem myszy i wybierz opcjÄ™ 'Zamknij'", TrayIcon.MessageType.INFO);
 		doOnce = true;
 		}
 	if (clientSysTray.isHideOnX())
