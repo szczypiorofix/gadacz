@@ -37,7 +37,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.text.DefaultCaret;
 
 
-/**G��wny program serwera komunikatora internetowego.
+/**Główny program serwera komunikatora internetowego.
  * @author Piotrek
  * @see ClientMain
  * @see Dane
@@ -66,15 +66,15 @@ public class ServerMain implements WindowListener
 	 */
 	private ServerSocket serverSocket;
 	/**
-	 * Tymczasowe gniazdko serwera s�u��ce do wpisywania gniazdka jako kolejnego elementu HashMapy
+	 * Tymczasowe gniazdko serwera służące do wpisywania gniazdka jako kolejnego elementu HashMapy
 	 */
 	private Socket tempSocket;
 	/**
-	 * Tymczasowy strumień wejściowy s�u��cy do wpisywania go jako kolejnego elementu HashMapy outStreams.
+	 * Tymczasowy strumień wejściowy służący do wpisywania go jako kolejnego elementu HashMapy outStreams.
 	 */
 	private ObjectInputStream tempStreamIn;
 	/**
-	 * Tymczasowy strumień wyjściowy s�u��cy do wpisywania go jako kolejnego elementu HashMapy inStreams.
+	 * Tymczasowy strumień wyjściowy służący do wpisywania go jako kolejnego elementu HashMapy inStreams.
 	 */
 	private ObjectOutputStream tempStreamOut;
 	/**
@@ -129,9 +129,6 @@ public class ServerMain implements WindowListener
 		// LOGGER
 		try {
 			fileHandler = new FileHandler("server.log", false);
-		} catch (SecurityException e1) {
-			e1.printStackTrace();
-			System.exit(-1);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 			System.exit(-1);

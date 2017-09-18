@@ -22,211 +22,183 @@ import javax.swing.JOptionPane;
  */
 public class ClientSysTray {
 
-/**
- *  Obraz ikony zasobnika systemowego aplikacji klienta.
- */
-private Image trayIconImage = new ImageIcon(getClass().getResource("/res/client_program_icon.png")).getImage();
+	/**
+	 *  Obraz ikony zasobnika systemowego aplikacji klienta.
+	 */
+	private Image trayIconImage = new ImageIcon(getClass().getResource("/res/client_program_icon.png")).getImage();
 
-/**
- * Ikona zasobnika systemowego aplikacji klienta.
- */
-private TrayIcon trayIcon;
+	/**
+	 * Ikona zasobnika systemowego aplikacji klienta.
+	 */
+	private TrayIcon trayIcon;
 
-/**
- * Zasobnik systemowy aplikacji klienta.
- */
-private SystemTray systray;
+	/**
+	 * Zasobnik systemowy aplikacji klienta.
+	 */
+	private SystemTray systray;
 
-/**
- * Popup Menu zasobnika systemowego.
- */
-private PopupMenu popup;
+	/**
+	 * Popup Menu zasobnika systemowego.
+	 */
+	private PopupMenu popup;
 
-/**
- * MenuItem wyjœcie.
- */
-private MenuItem exitItem;
+	/**
+	 * MenuItem wyjÅ›cie.
+	 */
+	private MenuItem exitItem;
 
-/**
- * MenuItem poka¿.
- */
-private MenuItem showItem;
+	/**
+	 * MenuItem pokaÅ¼.
+	 */
+	private MenuItem showItem;
 
-/**
- * MenuItem informacje.
- */
-private MenuItem infoItem;
-
-
-private CheckboxMenuItem hideToTray;
-
-/**
- * True jeœli okno aplikacji serwera jest ukryte.
- */
-private boolean windowIsHidden;
-
-/**
- * Informacje "O aplikacji"
- */
-private final String infoString = "<html><h3>Gadacz ... czyli kolejny program do internetowych pogaduszek"
-		+ "<br><h4> Wersja 0.8a (build 777)"
-		+ "<br><h5>Copyright (c) 2016, PoopingDog Studio. All rights reserved \u00AE";
-
-/**
- * Standardowa czcionka.
- */
-private final Font normalFont = new Font("Verdana", Font.PLAIN, 12);
-
-/**
- * Standardowa czcionka, pogrubiona.
- */
-private final Font boldFont = new Font("Verdana", Font.BOLD, 12);
+	/**
+	 * MenuItem informacje.
+	 */
+	private MenuItem infoItem;
 
 
-/**
- * True - klikniêcie w X aplikacji zamyk¹ j¹, False - klikniêcie X ukrywa aplikacjê w systrayu.
- */
-private boolean hideOnX = true;
+	private CheckboxMenuItem hideToTray;
+
+	/**
+	 * True jeÅ¼li okno aplikacji serwera jest ukryte.
+	 */
+	private boolean windowIsHidden;
+
+	/**
+	 * Informacje "O aplikacji"
+	 */
+	private final String infoString = "<html><h3>Gadacz ... czyli kolejny program do internetowych pogaduszek"
+			+ "<br><h4> Wersja 0.8a (build 777)"
+			+ "<br><h5>Copyright (c) 2016, PoopingDog Studio. All rights reserved \u00AE";
+
+	/**
+	 * Standardowa czcionka.
+	 */
+	private final Font normalFont = new Font("Verdana", Font.PLAIN, 12);
+
+	/**
+	 * Standardowa czcionka, pogrubiona.
+	 */
+	private final Font boldFont = new Font("Verdana", Font.BOLD, 12);
 
 
+	/**
+	 * True - klikniÄ™cie w X aplikacji zamyka jÄ…, False - klikniÄ™cie X ukrywa aplikacjÄ™ w systrayu.
+	 */
+	private boolean hideOnX = true;
 
 
 
-/** Podstawowy konstruktor systemowego zasobnika programu klienta.
- * @param frame (final JFrame frame) Ramka g³ówna programu.
- */
-public ClientSysTray(final JFrame frame)
-{
-	windowIsHidden = false;
-	systray = SystemTray.getSystemTray();
-	popup = new PopupMenu();
-	
-	exitItem = new MenuItem("Zakoñcz");
-	exitItem.setFont(normalFont);
-	exitItem.addActionListener(new ActionListener()
+
+
+	/** Podstawowy konstruktor systemowego zasobnika programu klienta.
+	 * @param frame (final JFrame frame) Ramka gÅ‚Ã³wna programu.
+	 */
+	ClientSysTray(final JFrame frame)
 	{
-		@Override
-		public void actionPerformed(ActionEvent e)
+		windowIsHidden = false;
+		systray = SystemTray.getSystemTray();
+		popup = new PopupMenu();
+
+		exitItem = new MenuItem("ZakoÅ„cz");
+		exitItem.setFont(normalFont);
+		exitItem.addActionListener((ActionEvent e) -> System.exit(0));
+
+		showItem = new MenuItem("PowrÃ³t do programu");
+		showItem.setFont(boldFont);
+		showItem.addActionListener((ActionEvent e) ->
 		{
-			System.exit(0);
-		}
-	});
-	
-	showItem = new MenuItem("Powróæ do programu");
-	showItem.setFont(boldFont);
-	showItem.addActionListener(new ActionListener()
-	{
-		@Override
-		public void actionPerformed(ActionEvent e)
-		{
-			setWindowIsHidden(false);
-			frame.setVisible(true);
-		}
-	});
-	
-	infoItem = new MenuItem("Informacje o programie");
-	infoItem.setFont(normalFont);
-	infoItem.addActionListener(new ActionListener()
-	{
-		@Override
-		public void actionPerformed(ActionEvent e)
-		{
-			JOptionPane.showMessageDialog(frame, infoString, "Gadacz - informacje", JOptionPane.INFORMATION_MESSAGE, new ImageIcon(trayIconImage));
-		}
-	});
-	
-	hideToTray = new CheckboxMenuItem("Ukrywaj do SysTray'a", hideOnX);
-	hideToTray.setFont(normalFont);
-	hideToTray.addItemListener(new ItemListener()
-	{
-		@Override
-		public void itemStateChanged(ItemEvent arg0) {
-			setHideOnX(!isHideOnX());
-		}				
-	});
-	
-	popup.add(showItem);
-	popup.addSeparator();
-	popup.add(infoItem);
-	popup.add(hideToTray);
-	popup.addSeparator();
-	popup.add(exitItem);
-	
-	trayIcon = new TrayIcon(trayIconImage, "Aplikacja klienta komunikatora", popup);
-	trayIcon.setImageAutoSize(true);
-	
-	trayIcon.addActionListener(new ActionListener()
-	{
-		@Override
-		public void actionPerformed(ActionEvent e)
-		{
-			setWindowIsHidden(false);
-			frame.setVisible(true);
-		}
-	});
-}
-/** Metoda wyœwietlaj¹ca okreœlony komunikat w zasobniku systemowym.
- * @param msgBold Treœæ g³ówna komunikatu.
- * @param msgPlain Treœæ komunikatu.
- * @param msgType Typ komunikatu.
- */
-public void trayMessage(String msgBold, String msgPlain, TrayIcon.MessageType msgType)
-{
-	trayIcon.displayMessage(msgBold, msgPlain, msgType);
-}
+            setWindowIsHidden(false);
+            frame.setVisible(true);
+		});
 
-/**
- * Metoda inicjuj¹ca zasobnik systemowy.
- */
-public void initialize()
-{
-	if (!SystemTray.isSupported()) {
-		JOptionPane.showMessageDialog(null, "Zasobnik systemowy nie jest dostêpny!", "B³¹d zasobnika systemowego.", JOptionPane.ERROR_MESSAGE);
-		return;
+		infoItem = new MenuItem("Informacje o programie");
+		infoItem.setFont(normalFont);
+		infoItem.addActionListener((ActionEvent e) ->
+                JOptionPane.showMessageDialog(frame, infoString, "Gadacz - informacje", JOptionPane.INFORMATION_MESSAGE, new ImageIcon(trayIconImage)));
+
+		hideToTray = new CheckboxMenuItem("Ukrywaj do SysTray'a", hideOnX);
+		hideToTray.setFont(normalFont);
+		hideToTray.addItemListener(e -> setHideOnX(!isHideOnX()));
+
+		popup.add(showItem);
+		popup.addSeparator();
+		popup.add(infoItem);
+		popup.add(hideToTray);
+		popup.addSeparator();
+		popup.add(exitItem);
+
+		trayIcon = new TrayIcon(trayIconImage, "Aplikacja klienta komunikatora", popup);
+		trayIcon.setImageAutoSize(true);
+
+		trayIcon.addActionListener((ActionEvent e) ->
+		{
+            setWindowIsHidden(false);
+            frame.setVisible(true);
+		});
 	}
-	
-	try {
-		systray.add(trayIcon);
-	}
-	catch (AWTException awte)
-	{
-		awte.printStackTrace();
-		System.exit(-1);
-	}
-}
 
-/** Metoda zwracaj¹ca wartoœæ true lub false odnoœnie ukrytego okna g³ównego aplikacji.
- * @return windowIsHidden.
- */
-public boolean windowIsHidden()
-{
-	return windowIsHidden;
-}
+    /** Metoda wyÅ›wietlajÄ…ca okreÅ›lony komunikat w zasobniku systemowym.
+     * @param msgBold TreÅ›Ä‡ gÅ‚Ã³wna komunikatu.
+     * @param msgPlain TreÅ›Ä‡ komunikatu.
+     * @param msgType Typ komunikatu.
+     */
+    void trayMessage(String msgBold, String msgPlain, TrayIcon.MessageType msgType)
+    {
+        trayIcon.displayMessage(msgBold, msgPlain, msgType);
+    }
 
-/** Metoda ustaiwaj¹ca wartoœæ true lub false odnoœnie ukrytego okna g³ównego aplikacji.
- * @param b (Boolean) true / false
- */
-public void setWindowIsHidden(Boolean b)
-{
-	windowIsHidden = b;
-}
+    /**
+     * Metoda inicjujÄ…ca zasobnik systemowy.
+     */
+    void initialize()
+    {
+        if (!SystemTray.isSupported()) {
+            JOptionPane.showMessageDialog(null, "Zasobnik systemowy nie jest dostÄ™pny!", "BÅ‚Ä…d zasobnika systemowego.", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try {
+            systray.add(trayIcon);
+        }
+        catch (AWTException awte)
+        {
+            awte.printStackTrace();
+            System.exit(-1);
+        }
+    }
+
+    /** Metoda zwracajÄ…ca wartoÅ›Ä‡ true lub false odnoÅ›nie ukrytego okna gÅ‚Ã³wnego aplikacji.
+     * @return windowIsHidden.
+     */
+    public boolean windowIsHidden()
+    {
+        return windowIsHidden;
+    }
+
+    /** Metoda ustaiwajÄ…ca wartoÅ›Ä‡ true lub false odnoÅ›nie ukrytego okna gÅ‚Ã³wnego aplikacji.
+     * @param b (Boolean) true / false
+     */
+    void setWindowIsHidden(Boolean b)
+    {
+        windowIsHidden = b;
+    }
 
 
-/** Metoda zwracaj¹ca wartoœæ hideOnX
- * @return hideOnX
- */
-public boolean isHideOnX() {
-	return hideOnX;
-}
+    /** Metoda zwracajÄ…ca wartoÅ›Ä‡ hideOnX
+     * @return hideOnX
+     */
+    boolean isHideOnX() {
+        return hideOnX;
+    }
 
 
-/** Metoda ustaiwaj¹ca wartoœæ hideOnX
- * @param hideOnX True lub False - czy klikniêcie w X ma zamykaæ aplikacjê (true) czy tylko j¹ ukrywaæ do systraya (false)
- */
-public void setHideOnX(boolean hideOnX) {
-	this.hideOnX = hideOnX;
-}
-
-
+    /** Metoda ustaiwajÄ…ca wartoÅ›Ä‡ hideOnX
+     * @param hideOnX True lub False - czy klikniÄ™cie w X ma zamykaÄ‡ aplikacjÄ™ (true) czy tylko jÄ… ukrywaÄ‡ do systraya (false)
+     */
+    private void setHideOnX(boolean hideOnX) {
+        this.hideOnX = hideOnX;
+    }
 
 }

@@ -42,34 +42,34 @@ private String mImie;
  */
 private String mNazwisko;
 /**
- * E-mail u�ytkownika wysy�aj�cego wiadomość.
+ * E-mail użytkownika wysyłającego wiadomość.
  */
 private String mEmail;
 /**
- * Has�o u�ytkownika wysy�aj�cego wiadomość.
+ * Hasło użytkownika wysyłającego wiadomość.
  */
 private char[] mHaslo;
 /**
- * HashMapa znajomych u�ytkownika wysy�aj�cego wiadomość.
+ * HashMapa znajomych użytkownika wysyłającego wiadomość.
  */
 private HashMap<Integer, Znajomy> mZnajomi;
 /**
- * Tre�� wiadomo�ci.
+ * Treść wiadomości.
  */
 private String mWiadomosc;
 
 
 /** Konstruktor klasy Dane.
- * @param kto Numer u�ytkownika, od kt�rego pochodzi wiadomość.
- * @param typDanych Typ wiadmo�ci.
- * @param doKogo Numer u�ytkownika, do kt�rego wiadomość jest wysy�ana.
- * @param nazwa Nazwa u�ytkownika.
- * @param imie Imi� u�ytkownika.
- * @param nazwisko Nazwisko u�ytkownika.
- * @param email E-mail u�ytkownika.
- * @param haslo Has�o u�ytkownika.
- * @param znajomi HashMapa znajomych u�ytkownika.
- * @param wiadomosc Tre�� wiadpmo�ci.
+ * @param kto Numer użytkownika, od którego pochodzi wiadomość.
+ * @param typDanych Typ wiadmości.
+ * @param doKogo Numer użytkownika, do którego wiadomość jest wysyłana.
+ * @param nazwa Nazwa użytkownika.
+ * @param imie Imię użytkownika.
+ * @param nazwisko Nazwisko użytkownika.
+ * @param email E-mail użytkownika.
+ * @param haslo Hasło użytkownika.
+ * @param znajomi HashMapa znajomych użytkownika.
+ * @param wiadomosc Treść wiadpmości.
  */
 public Dane(int kto, TypDanych typDanych, int doKogo, String nazwa, String imie, String nazwisko, String email, char[] haslo, HashMap<Integer, Znajomy> znajomi, String wiadomosc)
 {
@@ -86,9 +86,9 @@ public Dane(int kto, TypDanych typDanych, int doKogo, String nazwa, String imie,
 }
 
 
-/** Metoda zwracaj�ca numer u�ytkownika, kt�ry wysy�a wiadomość.
+/** Metoda zwracająca numer użytkownika, który wysyła wiadomość.
  * 
- * @return Numer u�ytkownika
+ * @return Numer użytkownika
  */
 public int getKto()
 {
@@ -96,9 +96,9 @@ public int getKto()
 }
 
 
-/**Metoda ustawiaj�ca warto�� u�ytkownika, kt�y wysy�a wiadomość.
+/**Metoda ustawiająca wartość numeru użytkownika, któy wysyła wiadomość.
  * 
- * @param kto Numer u�ytkownika
+ * @param kto Numer użytkownika
  */
 public void setKto(int kto)
 {
@@ -106,7 +106,7 @@ public void setKto(int kto)
 }
 
 
-/** Metoda zwracaj�ca Typ Danych
+/** Metoda zwracająca Typ Danych
  * @see TypDanych
  * @return Typ danych.
  */
@@ -115,7 +115,7 @@ public TypDanych getTypDanych() {
 }
 
 
-/** Metoda ustawiaj�ca warto�� typu danych.
+/** Metoda ustawiająca wartość typu danych.
  * @param typDanych Typ danych.
  */
 public void setTypDanych(TypDanych typDanych) {
@@ -123,103 +123,103 @@ public void setTypDanych(TypDanych typDanych) {
 }
 
 
-/** Metoda zwracaj�ca numer u�ytkownika, do kt�rego przekazywana jest wiadomość.
- * @return numer u�ytkownika.
+/** Metoda zwracająca numer użytkownika, do którego przekazywana jest wiadomość.
+ * @return numer użytkownika.
  */
 public int getDoKogo() {
 	return mDoKogo;
 }
 
 
-/** Metoda ustawiaj�ca numer u�ytkownika, do kt�rego przekazywana jest wiadomość.
- * @param doKogo Numer u�ytkownika.
+/** Metoda ustawiająca numer użytkownika, do którego przekazywana jest wiadomość.
+ * @param doKogo Numer użytkownika.
  */
 public void setDoKogo(int doKogo) {
 	mDoKogo = doKogo;
 }
 
 
-/** Metoda zwracaj�ca nazw� u�ytkownika, kt�ry wysy�a wiadomość.
- * @return nazwa u�ytkownika.
+/** Metoda zwracająca nazwę użytkownika, który wysyła wiadomość.
+ * @return nazwa użytkownika.
  */
 public String getNazwa() {
 	return mNazwa;
 }
 
 
-/** Metoda ustawiaj�ca nazw� u�ytkownika, do kt�rego przekazywana jest wiadomość.
- * @param  nazwa nazwa u�ytkownika.
+/** Metoda ustawiająca nazwę użytkownika, do którego przekazywana jest wiadomość.
+ * @param  nazwa nazwa użytkownika.
  */
 public void setNazwa(String nazwa) {
 	mNazwa = nazwa;
 }
 
 
-/** Metoda zwracaj�ca imi� u�ytkownika, kt�ry wysy�a wiadomość.
- * @return imi� u�ytkownika.
+/** Metoda zwracająca imię użytkownika, który wysyła wiadomość.
+ * @return imię użytkownika.
  */
 public String getImie() {
 	return mImie;
 }
 
 
-/** Metoda ustawiaj�ca imi� u�ytkownika, do kt�rego przekazywana jest wiadomość.
- * @param imie Nazwa u�ytkownika.
+/** Metoda ustawiająca imię użytkownika, do którego przekazywana jest wiadomość.
+ * @param imie Nazwa użytkownika.
  */
 public void setImie(String imie) {
 	mImie = imie;
 }
 
 
-/** Metoda zwracaj�ca nazwisko u�ytkownika, kt�ry wysy�a wiadomość.
- * @return Nazwisko u�ytkownika.
+/** Metoda zwracająca nazwisko użytkownika, który wysyła wiadomość.
+ * @return Nazwisko użytkownika.
  */
 public String getNazwisko() {
 	return mNazwisko;
 }
 
 
-/** Metoda ustawiaj�ca nazwisko u�ytkownika, do kt�rego przekazywana jest wiadomość.
- * @param nazwisko Nazwisko u�ytkownika.
+/** Metoda ustawiająca nazwisko użytkownika, do którego przekazywana jest wiadomość.
+ * @param nazwisko Nazwisko użytkownika.
  */
 public void setNazwisko(String nazwisko) {
 	mNazwisko = nazwisko;
 }
 
 
-/** Metoda zwracaj�ca e-mail u�ytkownika, kt�ry wysy�a wiadomość.
- * @return E-mail u�ytkownika.
+/** Metoda zwracająca e-mail użytkownika, który wysyła wiadomość.
+ * @return E-mail użytkownika.
  */
 public String getEmail() {
 	return mEmail;
 }
 
 
-/** Metoda ustawiaj�ca e-mail u�ytkownika, do kt�rego przekazywana jest wiadomość.
- * @param email E-mail u�ytkownika.
+/** Metoda ustawiająca e-mail użytkownika, do którego przekazywana jest wiadomość.
+ * @param email E-mail użytkownika.
  */
 public void setEmail(String email) {
 	mEmail = email;
 }
 
 
-/** Metoda zwracaj�ca has�o u�ytkownika, kt�ry wysy�a wiadomo��.
- * @return Has�o u�ytkownika.
+/** Metoda zwracająca hasło użytkownika, który wysyła wiadomość.
+ * @return Hasło użytkownika.
  */
 public char[] getHaslo() {
 	return mHaslo;
 }
 
 
-/** Metoda ustawiaj�ca has�o u�ytkownika, do kt�rego przekazywana jest wiadomo��.
- * @param haslo Has�o u�ytkownika.
+/** Metoda ustawiająca hasło użytkownika, do którego przekazywana jest wiadomość.
+ * @param haslo Hasło użytkownika.
  */
 public void setHaslo(char[] haslo) {
 	mHaslo = haslo;
 }
 
 
-/** Metoda zwracaj�ca HashMap� znajomych u�ytkownika, kt�ry wysy�a wiadomo��.
+/** Metoda zwracająca HashMapę znajomych użytkownika, który wysyła wiadomość.
  * @return HashMapa znajomych.
  */
 public HashMap<Integer, Znajomy> getZnajomi() {
@@ -227,24 +227,24 @@ public HashMap<Integer, Znajomy> getZnajomi() {
 }
 
 
-/** Metoda ustawiaj�ca HashMap� znajomych u�ytkownika, do kt�rego przekazywana jest wiadomo��.
- * @param znajomi HashMapa znajomych u�ytkownika.
+/** Metoda ustawiająca HashMapę znajomych użytkownika, do którego przekazywana jest wiadomość.
+ * @param znajomi HashMapa znajomych użytkownika.
  */
 public void setZnajomi(HashMap<Integer, Znajomy> znajomi) {
 	mZnajomi = znajomi;
 }
 
 
-/** Metoda zwracaj�ca tre�� wiadomości u�ytkownika.
- * @return Wiadomo�� od u�ytkownika.
+/** Metoda zwracająca treść wiadomości użytkownika.
+ * @return Wiadomość od użytkownika.
  */
 public String getWiadomosc() {
 	return mWiadomosc;
 }
 
 
-/** Metoda ustawiaj�ca tre�� wiadomości wysy�anej przez u�ytkownika.
- * @param wiadomosc Wiadomo�� u�ytkownika.
+/** Metoda ustawiająca treść wiadomości wysyłanej przez użytkownika.
+ * @param wiadomosc Wiadomość użytkownika.
  */
 public void setWiadomosc(String wiadomosc) {
 	mWiadomosc = wiadomosc;
