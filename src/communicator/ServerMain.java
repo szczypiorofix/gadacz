@@ -183,41 +183,36 @@ public class ServerMain implements WindowListener
 		panelPoludniowy = new JPanel(new FlowLayout());
 		bCheckIP = new JButton("Sprawdź mój IP");
 
-		bCheckIP.addActionListener(new ActionListener()
+		bCheckIP.addActionListener((ActionEvent e) ->
 		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			// POBIERANIE ZEWNĘTRZNEGO ADRESU IP SERWERA
+			Boolean checkIP = true;
 
-				// POBIERANIE ZEWN�TRZNEGO ADRESU IP SERWERA
-				Boolean checkIP = true;
-
-				try {
-					whatismyip = new URL("http://checkip.amazonaws.com");
-					readerIP = new BufferedReader(new InputStreamReader(whatismyip.openStream()));
-					externalIP = readerIP.readLine();
-				}
-				catch (Exception uhe)
-				{
-					checkIP = false;
-					bCheckIP.setText("Błąd połączenia!");
-				}
-				finally
-				{
-					if (readerIP != null)
-						{
-							try {
-							readerIP.close();
-							}
-							catch (Exception e1)
-							{
-								e1.printStackTrace();
-								System.exit(-1);
-							}
-						}
-				}
-				if (checkIP) bCheckIP.setText("Moje IP: " +externalIP);
+			try {
+				whatismyip = new URL("http://checkip.amazonaws.com");
+				readerIP = new BufferedReader(new InputStreamReader(whatismyip.openStream()));
+				externalIP = readerIP.readLine();
 			}
+			catch (Exception uhe)
+			{
+				checkIP = false;
+				bCheckIP.setText("Błąd połączenia!");
+			}
+			finally
+			{
+				if (readerIP != null)
+					{
+						try {
+						readerIP.close();
+						}
+						catch (Exception e1)
+						{
+							e1.printStackTrace();
+							System.exit(-1);
+						}
+					}
+			}
+			if (checkIP) bCheckIP.setText("Moje IP: " +externalIP);
 		});
 
 		panelPoludniowy.add(bCheckIP);
@@ -232,11 +227,11 @@ public class ServerMain implements WindowListener
 		message("Serwer", "Start serwera");
 		message("Serwer", "Otwieranie gniazdka: " +SERVER_PORT);
 
-		bazaUzytkownikow = new HashMap<Integer, Uzytkownik>();
-		whoIsOnline = new HashMap<Integer, Boolean>();
-		sockets = new HashMap<Integer, Socket>();
-		outStreams = new HashMap<Integer, ObjectOutputStream>();
-		inStreams = new HashMap<Integer, ObjectInputStream>();
+		bazaUzytkownikow = new HashMap<>();
+		whoIsOnline = new HashMap<>();
+		sockets = new HashMap<>();
+		outStreams = new HashMap<>();
+		inStreams = new HashMap<>();
 
 		try {
 
@@ -261,7 +256,7 @@ public class ServerMain implements WindowListener
 						 +" " +dane.getNazwisko() +" " +dane.getEmail() +" " +new String(dane.getHaslo()));
 						if (serverSysTray.windowIsHidden()) serverSysTray.trayMessage("Serwer komunikatora", "Zarejestrowano nowego użytkownika!", TrayIcon.MessageType.INFO);
 
-						// DODAWANIE DO BAZY TYLKO ZAREJESTROWANYCH U�YTKOWNIK�W
+						// DODAWANIE DO BAZY TYLKO ZAREJESTROWANYCH UŻYTKOWNIKÓW
 						sockets.put(count, tempSocket);
 						outStreams.put(count, tempStreamOut);
 						inStreams.put(count, tempStreamIn);
@@ -285,7 +280,7 @@ public class ServerMain implements WindowListener
 						//while (keys.hasNext())
 						//{
 						//	Integer x = keys.next();
-						//	System.out.println("Keys: " +x +" warto��: " +bazaUzytkownikow.get(x).getNumer());
+						//	System.out.println("Keys: " +x +" wartość: " +bazaUzytkownikow.get(x).getNumer());
 						//}
 
 					}
@@ -329,7 +324,7 @@ public class ServerMain implements WindowListener
 
 
 
-	/** Klasa w�tku klienta po stronie serwera.
+	/** Klasa wątku klienta po stronie serwera.
 	 * @author Piotrek
 	 *
 	 */
@@ -430,7 +425,7 @@ public class ServerMain implements WindowListener
 	/** Metoda zrzucająca treść wyjątku do pliku Loggera.
 	 * @param e Wyjątek.
 	 */
-	public void zrzutLoga(Exception e)
+	private void zrzutLoga(Exception e)
 	{
 		LOGGER.log(Level.WARNING, e.getMessage(), e);
 		//System.exit(-1);
@@ -440,7 +435,7 @@ public class ServerMain implements WindowListener
 	 * @param name Nazwa użytkownika.
 	 * @param msg Treść wiadomości.
 	 */
-	public void message(String name, String msg)
+	private void message(String name, String msg)
 	{
 		currentDate = new Date();
 		sdf = new SimpleDateFormat("HH:mm:ss");
@@ -475,6 +470,5 @@ public class ServerMain implements WindowListener
 
 	@Override
 	public void windowOpened(WindowEvent arg0) {}
-
 
 }

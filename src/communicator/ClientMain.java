@@ -231,7 +231,7 @@ public class ClientMain implements WindowListener
             poleNumeru.setEnabled(!registered);
 		});
 
-		bDodajZnajomego.addActionListener(e ->
+		bDodajZnajomego.addActionListener((ActionEvent e) ->
 		{
             dialogDodajZnajomego = new JDialog(ramka, "Dodaj znajomego", true);
             dialogDodajZnajomego.setResizable(false);
@@ -251,7 +251,7 @@ public class ClientMain implements WindowListener
             dialogDodajZnajomego.setVisible(true);
 		});
 
-		bDodaj.addActionListener(e ->
+		bDodaj.addActionListener((ActionEvent e) ->
 		{
             if ((nazwaZnajomego.getText().length() > 0) && (numerZnajomego.getText().length() > 0)) {
                 znajomy = new Znajomy(Integer.valueOf(numerZnajomego.getText()), nazwaZnajomego.getText(), false);
@@ -268,7 +268,7 @@ public class ClientMain implements WindowListener
             poleListyUserow.repaint();
 		});
 
-		bPolacz.addActionListener(e ->
+		bPolacz.addActionListener((ActionEvent e) ->
 		{
             dialogPolacz = new JDialog(ramka, "Logowanie/Rejestracja", true);
             dialogPolacz.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
@@ -333,7 +333,7 @@ public class ClientMain implements WindowListener
             dialogPolacz.setVisible(true);
 		});
 
-		bOK.addActionListener(e ->
+		bOK.addActionListener((ActionEvent e) ->
 		{
             dialogPolacz.setVisible(false);
 
@@ -370,14 +370,7 @@ public class ClientMain implements WindowListener
             t.start();
 		});
 
-		bAnuluj.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				dialogPolacz.setVisible(false);
-			}
-		});
+		bAnuluj.addActionListener((ActionEvent e) -> dialogPolacz.setVisible(false));
 	}
 
 	/**
