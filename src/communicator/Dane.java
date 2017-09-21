@@ -8,7 +8,7 @@ import java.util.HashMap;
  * @author Piotrek
  *
  */
-public class Dane implements Serializable{
+public class Dane implements Serializable {
 	 
 private static final long serialVersionUID = 100L;
 
@@ -71,8 +71,7 @@ private String mWiadomosc;
  * @param znajomi HashMapa znajomych użytkownika.
  * @param wiadomosc Treść wiadpmości.
  */
-public Dane(int kto, TypDanych typDanych, int doKogo, String nazwa, String imie, String nazwisko, String email, char[] haslo, HashMap<Integer, Znajomy> znajomi, String wiadomosc)
-{
+public Dane(int kto, TypDanych typDanych, int doKogo, String nazwa, String imie, String nazwisko, String email, char[] haslo, HashMap<Integer, Znajomy> znajomi, String wiadomosc) {
 	mKto = kto;
 	mTypDanych = typDanych;
 	mDoKogo = doKogo;

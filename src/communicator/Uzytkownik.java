@@ -21,7 +21,6 @@ public class Uzytkownik implements Serializable{
 	private HashMap<Integer, Znajomy> znajomi;
 
 
-
 	/** Podstawowy konstruktor klasy Użytkownik.
 	 * @param numer Numer użytkownika.
 	 * @param nazwa Nazwa.

@@ -9,9 +9,6 @@ import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -95,8 +92,7 @@ public class ClientSysTray {
 	/** Podstawowy konstruktor systemowego zasobnika programu klienta.
 	 * @param frame (final JFrame frame) Ramka główna programu.
 	 */
-	ClientSysTray(final JFrame frame)
-	{
+	ClientSysTray(final JFrame frame) {
 		windowIsHidden = false;
 		systray = SystemTray.getSystemTray();
 		popup = new PopupMenu();
@@ -107,8 +103,7 @@ public class ClientSysTray {
 
 		showItem = new MenuItem("Powrót do programu");
 		showItem.setFont(boldFont);
-		showItem.addActionListener((ActionEvent e) ->
-		{
+		showItem.addActionListener((ActionEvent e) -> {
             setWindowIsHidden(false);
             frame.setVisible(true);
 		});
@@ -132,8 +127,7 @@ public class ClientSysTray {
 		trayIcon = new TrayIcon(trayIconImage, "Aplikacja klienta komunikatora", popup);
 		trayIcon.setImageAutoSize(true);
 
-		trayIcon.addActionListener((ActionEvent e) ->
-		{
+		trayIcon.addActionListener((ActionEvent e) -> {
             setWindowIsHidden(false);
             frame.setVisible(true);
 		});
@@ -152,8 +146,7 @@ public class ClientSysTray {
     /**
      * Metoda inicjująca zasobnik systemowy.
      */
-    void initialize()
-    {
+    void initialize() {
         if (!SystemTray.isSupported()) {
             JOptionPane.showMessageDialog(null, "Zasobnik systemowy nie jest dostępny!", "Błąd zasobnika systemowego.", JOptionPane.ERROR_MESSAGE);
             return;
@@ -161,9 +154,7 @@ public class ClientSysTray {
 
         try {
             systray.add(trayIcon);
-        }
-        catch (AWTException awte)
-        {
+        } catch (AWTException awte) {
             awte.printStackTrace();
             System.exit(-1);
         }
@@ -172,16 +163,14 @@ public class ClientSysTray {
     /** Metoda zwracająca wartość true lub false odnośnie ukrytego okna głównego aplikacji.
      * @return windowIsHidden.
      */
-    public boolean windowIsHidden()
-    {
+    public boolean windowIsHidden() {
         return windowIsHidden;
     }
 
     /** Metoda ustaiwająca wartość true lub false odnośnie ukrytego okna głównego aplikacji.
      * @param b (Boolean) true / false
      */
-    void setWindowIsHidden(Boolean b)
-    {
+    void setWindowIsHidden(Boolean b) {
         windowIsHidden = b;
     }
 
@@ -200,5 +189,4 @@ public class ClientSysTray {
     private void setHideOnX(boolean hideOnX) {
         this.hideOnX = hideOnX;
     }
-
 }

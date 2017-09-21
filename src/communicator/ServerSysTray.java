@@ -8,7 +8,6 @@ import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -66,8 +65,7 @@ class ServerSysTray {
 	/** Podstawowy konstruktor systemowego zasobnika programu serwera.
 	 * @param frame (final JFrame frame) Ramka główna programu.
 	 */
-	ServerSysTray(final JFrame frame)
-	{
+	ServerSysTray(final JFrame frame) {
 		windowIsHidden = false;
 		systray = SystemTray.getSystemTray();
 		popup = new PopupMenu();
@@ -97,8 +95,7 @@ class ServerSysTray {
 		trayIcon = new TrayIcon(trayIconImage, "Serwer komunikatora", popup);
 		trayIcon.setImageAutoSize(true);
 
-		trayIcon.addActionListener((ActionEvent e) ->
-		{
+		trayIcon.addActionListener((ActionEvent e) -> {
 			setWindowIsHidden(false);
 			frame.setVisible(true);
 		});
@@ -109,16 +106,14 @@ class ServerSysTray {
 	 * @param msgPlain Treść komunikatu.
 	 * @param msgType Typ komunikatu.
 	 */
-	void trayMessage(String msgBold, String msgPlain, TrayIcon.MessageType msgType)
-	{
+	void trayMessage(String msgBold, String msgPlain, TrayIcon.MessageType msgType) {
 		trayIcon.displayMessage(msgBold, msgPlain, msgType);
 	}
 
 	/**
 	 * Metoda inicjująca zasobnik systemowy.
 	 */
-	void initialize()
-	{
+	void initialize() {
 		if (!SystemTray.isSupported()) {
 			JOptionPane.showMessageDialog(null, "Zasobnik systemowy nie jest dostępny!", "Błąd zasobnika systemowego!", JOptionPane.ERROR_MESSAGE);
 			return;
@@ -126,9 +121,7 @@ class ServerSysTray {
 
 		try {
 			systray.add(trayIcon);
-		}
-		catch (AWTException awte)
-		{
+		} catch (AWTException awte) {
 			awte.printStackTrace();
 			System.exit(-1);
 		}
@@ -137,16 +130,14 @@ class ServerSysTray {
 	/** Metoda zwracająca wartość true lub false odnośnie ukrytego okna głównego aplikacji.
 	 * @return windowIsHidden.
 	 */
-	boolean windowIsHidden()
-	{
+	boolean windowIsHidden() {
 		return windowIsHidden;
 	}
 
 	/** Metoda ustawiająca wartość 'true' lub 'false' odnośnie ukrytego okna głównego aplikacji.
 	 * @param b (Boolean) true / false
 	 */
-	void setWindowIsHidden(Boolean b)
-	{
+	void setWindowIsHidden(Boolean b) {
 		windowIsHidden = b;
 	}
 

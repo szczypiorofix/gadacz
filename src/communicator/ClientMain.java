@@ -36,9 +36,6 @@ import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -67,8 +64,7 @@ import java.text.SimpleDateFormat;
  * @see Znajomy
  */
 
-public class ClientMain implements WindowListener
-{
+public class ClientMain implements WindowListener {
 
 	private final static Logger LOGGER = Logger.getLogger(ServerMain.class.getName());
 	private FileHandler fileHandler = null;
@@ -112,16 +108,12 @@ public class ClientMain implements WindowListener
 
 
 
-	public static void main(String[] args)
-	{
-
-	EventQueue.invokeLater(() -> new ClientMain());
+	public static void main(String[] args) {
+		EventQueue.invokeLater(ClientMain::new);
 	}
 
 
-	public ClientMain()
-	{
-
+	public ClientMain() {
 		try {
 			fileHandler = new FileHandler("client.log", false);
 		}
@@ -134,8 +126,8 @@ public class ClientMain implements WindowListener
 		fileHandler.setLevel(Level.ALL);
 		LOGGER.addHandler(fileHandler);
 
-		znajomi = new HashMap<Integer, Znajomy>();
-		dialogCzat = new HashMap<Integer, Czat>();
+		znajomi = new HashMap<>();
+		dialogCzat = new HashMap<>();
 
 		ramka = new JFrame("Gadacz");
 		ramka.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
@@ -161,34 +153,31 @@ public class ClientMain implements WindowListener
 
 		panelWschodni.add(new JLabel("Użytkownicy:     "), BorderLayout.NORTH);
 		modelList = new DefaultListModel<>();
-		poleListyUserow = new JList<String>(modelList);
+		poleListyUserow = new JList<>(modelList);
 
-		poleListyUserow.addMouseListener(new MouseListener()
-			{
-				@Override
-				public void mouseClicked(MouseEvent m)
-				{
-					JList<String> list = (JList)m.getSource();
-					if (m.getClickCount() == 2)
-					{
-						int indeks = list.locationToIndex(m.getPoint());
-						dialogCzat.get(indeks).setVisible(true);
-						dialogCzat.get(indeks).ustawTytul(znajomi.get(indeks).getNazwa() +" ("+znajomi.get(indeks).getNumer() +")");
-					}
-				}
+		poleListyUserow.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent m) {
+                JList<String> list = (JList)m.getSource();
+                if (m.getClickCount() == 2) {
+                    int indeks = list.locationToIndex(m.getPoint());
+                    dialogCzat.get(indeks).setVisible(true);
+                    dialogCzat.get(indeks).ustawTytul(znajomi.get(indeks).getNazwa() +" ("+znajomi.get(indeks).getNumer() +")");
+                }
+            }
 
-				@Override
-				public void mouseEntered(MouseEvent e) {}
+            @Override
+            public void mouseEntered(MouseEvent e) {}
 
-				@Override
-				public void mouseExited(MouseEvent e) {}
+            @Override
+            public void mouseExited(MouseEvent e) {}
 
-				@Override
-				public void mousePressed(MouseEvent e) {}
+            @Override
+            public void mousePressed(MouseEvent e) {}
 
-				@Override
-				public void mouseReleased(MouseEvent e) {}
-			});
+            @Override
+            public void mouseReleased(MouseEvent e) {}
+        });
 
 
 		panelWschodni.add(poleListyUserow, BorderLayout.CENTER);
@@ -221,8 +210,7 @@ public class ClientMain implements WindowListener
 		ramka.setVisible(true);
 
 		logRej = new JCheckBox("Rejestracja?", registered);
-		logRej.addItemListener(e ->
-		{
+		logRej.addItemListener(e -> {
             registered = !registered;
             poleImienia.setEnabled(registered);
             poleNazwiska.setEnabled(registered);
@@ -231,8 +219,7 @@ public class ClientMain implements WindowListener
             poleNumeru.setEnabled(!registered);
 		});
 
-		bDodajZnajomego.addActionListener((ActionEvent e) ->
-		{
+		bDodajZnajomego.addActionListener((ActionEvent e) -> {
             dialogDodajZnajomego = new JDialog(ramka, "Dodaj znajomego", true);
             dialogDodajZnajomego.setResizable(false);
             dialogDodajZnajomego.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
@@ -251,8 +238,7 @@ public class ClientMain implements WindowListener
             dialogDodajZnajomego.setVisible(true);
 		});
 
-		bDodaj.addActionListener((ActionEvent e) ->
-		{
+		bDodaj.addActionListener((ActionEvent e) -> {
             if ((nazwaZnajomego.getText().length() > 0) && (numerZnajomego.getText().length() > 0)) {
                 znajomy = new Znajomy(Integer.valueOf(numerZnajomego.getText()), nazwaZnajomego.getText(), false);
 
@@ -268,8 +254,7 @@ public class ClientMain implements WindowListener
             poleListyUserow.repaint();
 		});
 
-		bPolacz.addActionListener((ActionEvent e) ->
-		{
+		bPolacz.addActionListener((ActionEvent e) -> {
             dialogPolacz = new JDialog(ramka, "Logowanie/Rejestracja", true);
             dialogPolacz.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
             dialogPolacz.setResizable(false);
@@ -333,8 +318,7 @@ public class ClientMain implements WindowListener
             dialogPolacz.setVisible(true);
 		});
 
-		bOK.addActionListener((ActionEvent e) ->
-		{
+		bOK.addActionListener((ActionEvent e) -> {
             dialogPolacz.setVisible(false);
 
             if (registered) {
@@ -355,9 +339,7 @@ public class ClientMain implements WindowListener
             try {
                 socket = new Socket();
                 socket.connect(new InetSocketAddress(host, port), 3000); // 3 sek. timeout
-            }
-            catch (IOException ioe)
-            {
+            } catch (IOException ioe) {
                 zrzutLoga(ioe);
             }
 
@@ -386,8 +368,7 @@ public class ClientMain implements WindowListener
 	 * @param s Wiadomość do użytkownika "doKogo".
 	 * @param doKogo Numer użytkownika, do którego wysyłana jest wiadmość.
 	 */
-	private void wyslij(TypDanych td, String s, int doKogo)
-	{
+	private void wyslij(TypDanych td, String s, int doKogo) {
 		try {
 			if (oos == null)
 				oos = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
@@ -406,24 +387,20 @@ public class ClientMain implements WindowListener
 	/**
 	 * Klasa wątku klienta.
 	 */
-	public class WatekKlienta implements Runnable
-	{
+	public class WatekKlienta implements Runnable {
 
 	@Override
-	public void run()
-	{
+	public void run() {
 		try {
 			if (ois == null)
 				ois = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
 
-			while (true)
-			{
+			while (true) {
 				data = (Dane) ois.readObject();
 
 				message(info, data.getNazwa() +" do " +data.getDoKogo() +" : " +data.getWiadomosc());
 
-				if (data.getTypDanych() == TypDanych.MESSAGE)
-				{
+				if (data.getTypDanych() == TypDanych.MESSAGE) {
 					messageSound();
 					dialogCzat.get(0).ustawTytul("NOWY "+data.getDoKogo());
 					currentDate = new Date();
@@ -452,9 +429,7 @@ public class ClientMain implements WindowListener
 					data.setTypDanych(TypDanych.MESSAGE);
 				}
 			}
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			JOptionPane.showMessageDialog(ramka, "Połączenie z serwerem zostało przerwane!", "Błąd połączenia!", JOptionPane.ERROR_MESSAGE);
 			zrzutLoga(e);
 		}
@@ -463,39 +438,31 @@ public class ClientMain implements WindowListener
 	/**
 	 * Metoda ładująca z pliku informacje o znajomych użytkownika.
 	 */
-	void friendsLoad()
-	{
+	void friendsLoad() {
 		try {
-		prop = new Properties();
-		propFileIn = new FileInputStream("friends"+userNumber+".txt");
-		prop.load(propFileIn);
+            prop = new Properties();
+            propFileIn = new FileInputStream("friends"+userNumber+".txt");
+            prop.load(propFileIn);
 
-		Enumeration<?> e = prop.propertyNames();
+            Enumeration<?> e = prop.propertyNames();
 
-		while (e.hasMoreElements()) {
-		  String key = (String) e.nextElement();
-		  znajomy = new Znajomy(Integer.valueOf(key), prop.getProperty(key), false);
-		  znajomi.put(znajomi.size(), znajomy);
-		  modelList.addElement(prop.getProperty(key)+"("+znajomy.getNumer()+")");
-		  dialogCzat.put(znajomi.size(), new Czat(Integer.valueOf(key)));
-		}
+            while (e.hasMoreElements()) {
+              String key = (String) e.nextElement();
+              znajomy = new Znajomy(Integer.valueOf(key), prop.getProperty(key), false);
+              znajomi.put(znajomi.size(), znajomy);
+              modelList.addElement(prop.getProperty(key)+"("+znajomy.getNumer()+")");
+              dialogCzat.put(znajomi.size(), new Czat(Integer.valueOf(key)));
+            }
+            poleListyUserow.revalidate();
+            poleListyUserow.repaint();
 
-		poleListyUserow.revalidate();
-		poleListyUserow.repaint();
-
-		}
-		catch (IOException ioe)
-		{
+		} catch (IOException ioe) {
 			ioe.printStackTrace();
 			System.exit(-1);
-		}
-		finally
-		{
+		} finally {
 			try {
-			propFileIn.close();
-			}
-			catch (IOException e)
-			{
+			    propFileIn.close();
+			} catch (IOException e)			{
 				e.printStackTrace();
 				System.exit(-1);
 			}
@@ -570,16 +537,11 @@ public class ClientMain implements WindowListener
 		wpisCzat.requestFocus();
 		wpisCzat.addKeyListener(this);
 
-		bW.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				wyslij(TypDanych.MESSAGE, wpisCzat.getText() , getDoUzytkownika());
-				message(historiaCzat, "Do: " +getDoUzytkownika()+" "+wpisCzat.getText() +"\n");
-				wpisCzat.setText("");
-				wpisCzat.requestFocus();
-			}
+		bW.addActionListener(e -> {
+			wyslij(TypDanych.MESSAGE, wpisCzat.getText() , getDoUzytkownika());
+			message(historiaCzat, "Do: " +getDoUzytkownika()+" "+wpisCzat.getText() +"\n");
+			wpisCzat.setText("");
+			wpisCzat.requestFocus();
 		});
 	}
 
@@ -607,7 +569,6 @@ public class ClientMain implements WindowListener
 
 	@Override
 	public void keyTyped(KeyEvent e) {}
-
 	}
 
 	/** Metoda zrzutu błędu do pliku Loggera.
@@ -651,31 +612,26 @@ public class ClientMain implements WindowListener
 			prop = new Properties();
 			propFileOut = new FileOutputStream("friends"+userNumber+".txt");
 
-			if (znajomi.size() > 0)
-			{
+			if (znajomi.size() > 0) {
 				for (int i = 0; i < znajomi.size(); i++) prop.setProperty(znajomi.get(i).getNumer()+"", znajomi.get(i).getNazwa());
 			}
-
 			prop.store(propFileOut, "Lista znajomych klienta o numerze: "+userNumber);
-
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-				System.exit(-1);
-			}
-			finally
-			{
-				if (propFileOut != null)
-				{
-					try {
-						propFileOut.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-						System.exit(-1);
-					}
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		finally {
+			if (propFileOut != null) {
+				try {
+					propFileOut.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+					System.exit(-1);
 				}
 			}
+		}
 	}
 
 	/// WINDOWLISTENER INFEFACE METHODS
@@ -687,14 +643,15 @@ public class ClientMain implements WindowListener
 
 	@Override
 	public void windowClosing(WindowEvent arg0) {
-
 		if (!doOnce) {
 			clientSysTray.trayMessage("Gadacz działa w tle!", "Żeby zamknąć kliknij prawym klawiszem myszy i wybierz opcję 'Zamknij'", TrayIcon.MessageType.INFO);
 			doOnce = true;
-			}
-		if (clientSysTray.isHideOnX())
-		clientSysTray.setWindowIsHidden(true);
-		else System.exit(0);
+		}
+		if (clientSysTray.isHideOnX()) {
+            clientSysTray.setWindowIsHidden(true);
+		} else {
+		    System.exit(0);
+        }
 	}
 
 	@Override
