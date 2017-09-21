@@ -337,10 +337,18 @@ public class ClientMain implements WindowListener
 		{
             dialogPolacz.setVisible(false);
 
-            if (registered) userName = poleNazwy.getText().toString(); else userName = "";
-            if (registered) userFirstName = poleImienia.getText().toString(); else userFirstName = "";
-            if (registered) userLastName = poleNazwiska.getText().toString(); else userLastName = "";
-            if (registered) userEmail = poleEmail.getText().toString(); else userEmail = "";
+            if (registered) {
+            	userName = poleNazwy.getText();
+                poleImienia.getText();
+                poleNazwiska.getText();
+                poleEmail.getText();
+			} else {
+                userName = "";
+                userFirstName = "";
+                userLastName = "";
+                userEmail = "";
+            }
+
             userPassword = poleHasla.getPassword();
             userNumber = Integer.valueOf(poleNumeru.getText());
 
@@ -545,7 +553,7 @@ public class ClientMain implements WindowListener
 		historiaCzat.setLineWrap(true);
 		historiaCzat.setWrapStyleWord(true);
 		wpisCzat = new JTextField(35);
-		bW = new JButton("Wy�lij");
+		bW = new JButton("Wyślij");
 		panelHistorii = new JPanel(new BorderLayout());
 		sp = new JScrollPane(historiaCzat);
 		DefaultCaret caret = (DefaultCaret)wpisCzat.getCaret();
@@ -567,8 +575,8 @@ public class ClientMain implements WindowListener
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				wyslij(TypDanych.MESSAGE, wpisCzat.getText().toString() , getDoUzytkownika());
-				message(historiaCzat, "Do: " +getDoUzytkownika()+" "+wpisCzat.getText().toString()+"\n");
+				wyslij(TypDanych.MESSAGE, wpisCzat.getText() , getDoUzytkownika());
+				message(historiaCzat, "Do: " +getDoUzytkownika()+" "+wpisCzat.getText() +"\n");
 				wpisCzat.setText("");
 				wpisCzat.requestFocus();
 			}
@@ -587,8 +595,8 @@ public class ClientMain implements WindowListener
 	public void keyPressed(KeyEvent keyE) {
 		if (keyE.getKeyCode() == KeyEvent.VK_ENTER)
 		{
-			message(historiaCzat, userName +" do: " +getDoUzytkownika()+" "+wpisCzat.getText().toString()+"\n");
-			wyslij(TypDanych.MESSAGE, wpisCzat.getText().toString() , getDoUzytkownika());
+			message(historiaCzat, userName +" do: " +getDoUzytkownika()+" "+wpisCzat.getText() +"\n");
+			wyslij(TypDanych.MESSAGE, wpisCzat.getText() , getDoUzytkownika());
 			wpisCzat.setText("");
 			wpisCzat.requestFocus();
 		}
